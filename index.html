@@ -1,0 +1,2780 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MyFinCryptoZone V.42 (Corrected)</title>
+  <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+  <link href="https://fonts.googleapis.com/css2?family=Iceland&family=Quantico&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/three@0.146.0/build/three.min.js"></script>
+  <style>
+    :root {
+      --primary-glow: #66aaff;
+      --primary-border: #3399ff;
+      --primary-text: #a0d8f7;
+      --positive-change: #00ff88;
+      --negative-change: #ff4444;
+      --bg-dark: #0a1a2f;
+      --bg-panel: rgba(0,0,20,0.7);
+      --bg-input: rgba(50,50,60,0.5);
+      --bg-header: rgba(50, 100, 160, 0.6);
+      --btn-bg: #223344cc;
+      --btn-hover-bg: #3399ffcc;
+      --liquid-color: #00ff88;
+      --fixed-color: #66aaff;
+      --crypto-color: #ffaa00;
+      /* Styles from new module */
+      --glow: 0 0 15px rgba(0, 170, 255, 0.4);
+      --card-deposits: #28a745;
+      --card-withdrawals: #dc3545;
+      --card-crypto: #6f42c1;
+      --card-net: #007bff;
+      --card-pnl-profit: #ffc107; /* Changed from green to yellow */
+      --card-pnl-loss: #bb2d3b;
+      --dropdown-font: #000066;
+      --dropdown-bg: #99ccff;
+    }
+    * { 
+        box-sizing: border-box; 
+        margin: 0;
+        padding: 0;
+    }
+    body {
+      font-family: 'Quantico', sans-serif;
+      color: var(--primary-text);
+      overflow-x: hidden;
+      background: #000;
+    }
+    
+    .background-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background: linear-gradient(135deg, #000000 0%, #001122 25%, #002244 50%, #001122 75%, #000000 100%);
+        overflow: hidden;
+        z-index: -2;
+    }
+    .grid-overlay {
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        background-image: 
+            linear-gradient(rgba(0, 150, 255, 0.1) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0, 150, 255, 0.1) 1px, transparent 1px);
+        background-size: 50px 50px;
+        animation: gridMove 20s linear infinite;
+    }
+    @keyframes gridMove {
+        0% { transform: translate(0, 0); }
+        100% { transform: translate(50px, 50px); }
+    }
+    .floating-particles { position: absolute; width: 100%; height: 100%; pointer-events: none; }
+    .particle {
+        position: absolute; width: 2px; height: 2px; background: #FFD700;
+        border-radius: 50%; animation: float 10s linear infinite; opacity: 0.7;
+    }
+    @keyframes float {
+        0% { transform: translateY(100vh) scale(0); opacity: 0; }
+        10% { opacity: 1; }
+        90% { opacity: 1; }
+        100% { transform: translateY(-100px) scale(1); opacity: 0; }
+    }
+    .data-streams { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+    .stream {
+        position: absolute; font-size: 12px; font-family: 'Courier New', monospace; color: #00FF88;
+        animation: streamFlow 15s linear infinite; opacity: 0.6; font-weight: bold;
+    }
+    @keyframes streamFlow {
+        0% { transform: translateX(-200px); opacity: 0; }
+        10% { opacity: 0.8; }
+        90% { opacity: 0.8; }
+        100% { transform: translateX(calc(100vw + 200px)); opacity: 0; }
+    }
+    .crypto-symbols { position: absolute; width: 100%; height: 100%; pointer-events: none; }
+    .symbol {
+        position: absolute; font-size: 20px; font-weight: bold; color: #FFD700;
+        animation: symbolPulse 8s ease-in-out infinite; opacity: 0.3;
+    }
+    @keyframes symbolPulse {
+        0%, 100% { transform: scale(1); opacity: 0.2; }
+        50% { transform: scale(1.2); opacity: 0.5; }
+    }
+    .price-ticker {
+        position: fixed; bottom: 0; left: 0; width: 100%;
+        background: rgba(0, 0, 0, 0.7); padding: 10px; font-size: 14px;
+        color: #FFD700; overflow: hidden; z-index: 100;
+    }
+    .ticker-content { display: flex; animation: tickerScroll 40s linear infinite; white-space: nowrap; }
+    @keyframes tickerScroll {
+        0% { transform: translateX(100%); }
+        100% { transform: translateX(-150%); }
+    }
+    .ticker-item { margin-right: 50px; display: flex; align-items: center; }
+    .price-up { color: #00FF88; }
+    .price-down { color: #FF4444; }
+
+    #header {
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      right: 200px;
+      display: flex;
+      align-items: center;
+      z-index: 10;
+    }
+    #topRightLinks {
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      z-index: 10;
+    }
+    
+    #title {
+      font-family: 'Iceland', sans-serif;
+      font-size: 2.8rem;
+      margin: 0 0 0 15px;
+      line-height: 65px;
+      background: var(--bg-panel);
+      padding: 12px 25px;
+      border-radius: 8px;
+      box-shadow: 0 0 15px var(--primary-glow), inset 0 0 8px var(--primary-border);
+      position: relative;
+      overflow: hidden;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #e0f7ff;
+      text-shadow: 0 0 5px #00aaff, 0 0 10px #00aaff;
+    }
+    #title::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      animation: shine 3s infinite;
+    }
+    .avatar-container {
+      margin-left: 25px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px; 
+      flex-shrink: 0;
+    }
+    #avatar {
+      width: 65px;
+      height: 65px;
+      background-color: #223344;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      border-radius: 6px;
+      border: 2px solid var(--primary-glow);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #6699ccaa;
+      font-size: 0.75rem;
+      outline: none;
+      flex-shrink: 0;
+    }
+    #topRightLinks a, #topRightLinks button {
+      font-size: 0.8rem;
+      padding: 8px 12px;
+      background: var(--btn-bg);
+      border-radius: 6px;
+      color: var(--primary-text);
+      text-decoration: none;
+      font-weight: 700;
+      box-shadow: 0 0 4px #3399ffcc;
+      font-family: 'Quantico', sans-serif;
+      border: none;
+    }
+    #topRightLinks a:hover, #topRightLinks button:hover { background: var(--btn-hover-bg); }
+    #printReportBtn {
+        background: #00aaffcc;
+        color: #e0f7ff;
+        cursor: pointer;
+    }
+    #printReportBtn:hover { background: #33bbffcc; }
+    #mainContent {
+      position: relative;
+      z-index: 1;
+      margin-top: 120px;
+      max-width: 1200px;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      border-radius: 8px;
+      overflow: hidden;
+      background: rgba(0,0,30,0.7);
+      color: var(--primary-text);
+      box-shadow: 0 0 12px #00aaff88;
+    }
+    table caption {
+      font-weight: 700;
+      font-size: 1.3rem;
+      margin: 12px 0;
+      padding: 8px 0;
+    }
+    th, td {
+      padding: 12px 15px;
+      border-bottom: 2px solid var(--primary-border);
+      text-align: center;
+      vertical-align: middle;
+    }
+    
+    th { background: var(--bg-header); }
+    tr:hover { background: rgba(60, 130, 220, 0.3); }
+    .empty { opacity: 0.4; }
+    #cryptoTable { width: 100%; table-layout: fixed;}
+    #cryptoTable th, #cryptoTable td { font-size: 0.85rem; padding: 10px 8px; }
+    #cryptoTable td.holdings-cell {
+      background: var(--bg-input);
+      border-radius: 4px;
+      cursor: text;
+    }
+    #cryptoTable tfoot td {
+      font-weight: 700;
+      background: var(--bg-input);
+      text-align: center;
+      padding: 12px 8px;
+    }
+    .coin-info {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      white-space: nowrap;
+    }
+    .coin-info img {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      object-fit: contain;
+    }
+    .coin-info img:hover { box-shadow: 0 0 4px var(--primary-glow); }
+    .change-positive { color: var(--positive-change); }
+    .change-negative { color: var(--negative-change); }
+    .crypto-chart-row {
+      display: flex;
+      gap: 20px;
+      align-items: stretch;
+      width: 100%;
+    }
+    .crypto-chart-row .crypto-column { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+    .crypto-chart-row .chart-column { flex: 0 0 350px; display: flex; flex-direction: column; }
+    .chart-title {
+      font-weight: 700;
+      font-size: 1.1rem;
+      margin-bottom: 12px;
+      text-align: center;
+      padding: 8px 0;
+    }
+    #holdingsChartBlock {
+      background: var(--bg-panel);
+      background-image: repeating-linear-gradient(45deg, rgba(255,255,255,0.05) 0px, rgba(255,255,255,0.05) 2px, transparent 2px, transparent 4px);
+      border-radius: 8px;
+      padding: 15px;
+      box-shadow: 0 0 8px #004488aa;
+      color: var(--primary-text);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    #holdingsChart {
+      display: block;
+      width: 100%;
+      height: 280px;
+      margin: 0 auto;
+      flex-shrink: 0;
+      cursor: grab;
+    }
+    #chartLabelsContainer {
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid #3399ff88;
+    }
+    .chart-labels {
+      font-size: 13px;
+      width: 100%;
+      text-align: center;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 6px 10px;
+    }
+    section[id$="Block"] {
+      background: var(--bg-panel);
+      border-radius: 8px;
+      padding: 15px;
+      color: var(--primary-text);
+      font-size: 0.85rem;
+      box-shadow: 0 0 8px #004488aa;
+      display: flex;
+      flex-direction: column;
+      max-width: 100%;
+    }
+    #greetingBlock, #snapshotHistoryBlock {
+      display: flex;
+      flex-direction: column;
+    }
+    section[id$="Block"] h2, h3 {
+      margin-top: 0;
+      font-weight: 600;
+      font-size: 1.1rem;
+      border-bottom: 1px solid #3399ff88;
+      padding-bottom: 8px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      font-family: 'Iceland', sans-serif;
+      letter-spacing: 1px;
+    }
+    .snapshot-container {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+    #greetingBlock p {
+      margin: 0;
+      flex: 1;
+      line-height: 1.6;
+    }
+    #assetAllocationChart {
+        flex-shrink: 0;
+        cursor: grab;
+    }
+    #greetingBlock p {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    .value-line {
+        display: grid;
+        grid-template-columns: 110px 1fr 75px;
+        align-items: baseline;
+        gap: 18px;
+        font-size: 0.95rem;
+        margin-bottom: 6px;
+    }
+    .value-line > span:first-child {
+        font-weight: bold;
+        text-align: left;
+    }
+    .value-line > span:nth-child(2),
+    .value-line > strong {
+        text-align: right;
+    }
+    .value-line .change-positive,
+    .value-line .change-negative {
+        font-size: 0.9em;
+        font-weight: 700;
+        text-align: right;
+    }
+    .liquid-label { color: var(--liquid-color); }
+    .fixed-label { color: var(--fixed-color); }
+    .crypto-label { color: var(--crypto-color); }
+    .value-label { color: var(--primary-text); }
+    #assetAllocationChart {
+        width: 160px !important;
+        height: 160px !important;
+    }
+    #snapshotHistoryList {
+        flex: 1; /* Make list grow to fill space */
+        overflow-y: auto;
+        list-style: none;
+        padding: 0;
+        margin: 10px 0 0 0;
+        font-size: 0.8rem;
+    }
+    #snapshotHistoryList li {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        padding: 6px 0;
+        border-bottom: 1px solid #3399ff33;
+    }
+    #snapshotHistoryList li:last-child { border-bottom: none; }
+    .snapshot-date {
+        grid-column: 1 / -1;
+        font-style: italic;
+        color: var(--primary-glow);
+        text-align: left;
+        margin-bottom: 6px;
+    }
+    .snapshot-total {
+        background: rgba(30,40,50,0.5);
+        border-radius: 4px;
+        padding: 4px 8px;
+    }
+    select, input[type=number], input[type=date] {
+      background: var(--bg-input);
+      border: 1px solid #3399ff55;
+      border-radius: 4px;
+      color: var(--primary-text);
+      font-family: 'Quantico', sans-serif;
+      font-size: 0.85rem;
+      padding: 8px;
+      outline: none;
+    }
+    input[type=number] { text-align: right; }
+    select:focus, input[type=number]:focus, input[type=date]:focus {
+      border-color: var(--primary-glow);
+      box-shadow: 0 0 4px #3399ffcc;
+    }
+    input[type=number]::-webkit-outer-spin-button,
+    input[type=number]::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    input[type=number] { -moz-appearance: textfield; }
+
+    .asset-grid, .asset-grid-header {
+      display: grid;
+      grid-template-columns: 80px 1fr 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 10px;
+      align-items: center;
+    }
+    .asset-grid-header span {
+      text-align: center;
+      font-weight: 700;
+      background: var(--bg-header);
+      padding: 8px;
+      border-radius: 4px;
+    }
+    .asset-grid-header span:first-child { background: none; }
+    #liquidAssetsBlock .grand-total-row, #fixedAssetsBlock .grand-total-row {
+        grid-column: 1 / -1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 12px;
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 2px solid var(--primary-glow);
+        font-weight: 700;
+        font-size: 0.95rem;
+    }
+    #cryptoAssetsBlock .crypto-header, #cryptoAssetsBlock .crypto-row {
+      display: grid;
+      grid-template-columns: 110px repeat(6, 1fr) 110px;
+      gap: 10px;
+      margin-bottom: 10px;
+      align-items: center;
+    }
+    #cryptoAssetsBlock .crypto-header span {
+      text-align: center;
+      font-weight: 700;
+      background: var(--bg-header);
+      padding: 8px;
+      border-radius: 4px;
+      font-size: 0.75rem; 
+    }
+    #cryptoAssetsBlock .crypto-header span:first-child,
+    #cryptoAssetsBlock .crypto-row .coin-info {
+      background: none;
+      font-weight: 700;
+      text-align: left;
+      justify-content: flex-start;
+    }
+    #manual-column-header {
+        cursor: text;
+        border-bottom: 1px dashed var(--primary-text);
+    }
+    #cryptoAssetsBlock .crypto-row span {
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px;
+      background: var(--bg-input);
+      border-radius: 4px;
+      min-height: 38px;
+    }
+
+    .totals-row {
+        border-top: 2px solid var(--primary-border);
+        padding-top: 10px;
+        margin-top: 10px;
+    }
+    .totals-row span {
+      text-align: center;
+    }
+    .totals-row span:first-child {
+      background: none;
+      border: none;
+      font-weight: 700;
+    }
+    .quantico-btn {
+      width: 85px;
+      background: var(--btn-bg);
+      border-radius: 6px;
+      color: var(--primary-text);
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 0 4px #3399ffcc;
+      font-weight: 700;
+      font-family: 'Quantico', sans-serif;
+      font-size: 0.8rem;
+      padding: 6px 10px;
+      transition: background-color 0.2s;
+    }
+    .asset-grid .quantico-btn, #cryptoAssetsBlock .quantico-btn {
+        width: 100%;
+        padding: 10px 6px;
+    }
+    #greetingBlock h2 .quantico-btn, #snapshotHistoryBlock h2 .quantico-btn, #cryptoAssetsBlock h2 .quantico-btn {
+        width: auto;
+        padding: 5px 10px;
+        font-size: 0.75rem;
+    }
+    .quantico-btn:hover {
+      background: var(--btn-hover-bg);
+      color: #e0f7ff;
+    }
+    .quantico-btn:disabled {
+      background: #556677;
+      cursor: not-allowed;
+    }
+    #addSnapshotBtn { background: #006622cc; }
+    #addSnapshotBtn:hover { background: #008844cc; }
+    #deleteSnapshotBtn { background: #882222cc; }
+    #deleteSnapshotBtn:hover { background: #ff4444cc; }
+    .usd-input, .zar-input, .vnd-input, .units-input { width: 100%; }
+    
+    /* --- NEW LAYOUT STYLES --- */
+    .top-row-grid, .converter-row-grid {
+      display: grid;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    .top-row-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .converter-row-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    @media (max-width: 1024px) {
+      .top-row-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 768px) {
+      .converter-row-grid { grid-template-columns: 1fr; }
+    }
+
+    .assets-row { display: flex; gap: 20px; align-items: stretch; }
+    #liquidAssetsBlock, #fixedAssetsBlock { flex: 1; }
+    #newsList {
+        list-style: none;
+        padding-left: 0;
+        margin: 10px 0 0 0;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    #newsList li {
+        border-bottom: 1px solid #3399ff33;
+        padding-bottom: 10px;
+    }
+    #newsList li:last-child { border-bottom: none; }
+    #newsList li a {
+        color: #66baff;
+        text-decoration: none;
+        font-style: italic;
+    }
+    #newsList li a:hover { text-decoration: underline; }
+    #newsList li a strong { color: var(--primary-glow); }
+    #newsList li small {
+        color: #88aacc;
+        margin-right: 10px;
+        font-size: 0.9em;
+    }
+    .bottomBlocksRow {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-top: 0;
+      align-items: stretch;
+    }
+    .bottomBlocksRow section { flex: 1; }
+    #xrpPlaygroundBlock table {
+        margin-top: 12px;
+        background: none;
+        box-shadow: none;
+    }
+    #xrpPlaygroundBlock th, #xrpPlaygroundBlock td { border: 1px solid #3399ff55; padding: 8px 12px; }
+    #xrpPlaygroundBlock th { background: rgba(50, 100, 160, 0.4); }
+    #futureValueBlock .calc-row {
+        display: grid;
+        grid-template-columns: 130px 1fr;
+        gap: 10px 18px;
+        align-items: center;
+        margin-top: 12px;
+    }
+    #futureValueBlock .calc-row label { 
+        text-align: left; 
+        font-weight: bold;
+    }
+    #futureValueBlock .calc-row span,
+    #futureValueBlock .calc-row select,
+    #futureValueBlock .calc-row input {
+        width: 100%;
+        text-align: right;
+    }
+    #futureValueBlock .calc-result {
+        grid-column: 1 / -1;
+        text-align: center;
+        font-size: 1.15rem;
+        font-weight: 700;
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid #3399ff88;
+    }
+    .flag-icon {
+      width: 18px;
+      height: auto;
+      vertical-align: middle;
+      margin-right: 8px;
+      border-radius: 2px;
+      border: 1px solid #3399ff55;
+    }
+    .animate-pulse {
+        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+    @keyframes pulse {
+        50% { opacity: .5; }
+    }
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(10, 26, 47, 0.9);
+    }
+    .modal-content {
+        background-color: var(--bg-dark);
+        margin: 10% auto;
+        padding: 25px;
+        border: 1px solid var(--primary-glow);
+        border-radius: 8px;
+        width: 80%;
+        max-width: 500px;
+        box-shadow: 0 0 20px #00aaff88;
+        font-family: 'Quantico', sans-serif;
+        display: flex;
+        flex-direction: column;
+    }
+    .modal-content h2 { margin-top: 0; border-bottom: 1px solid #3399ff88; padding-bottom: 12px; }
+    .modal-content .subtitle { color: var(--primary-text); font-size: 14px; margin-bottom: 25px; }
+    .avatar-box {
+        width: 200px; height: 200px; border: 3px dashed #3399ff55; border-radius: 20px;
+        margin: 0 auto 35px; display: flex; align-items: center; justify-content: center;
+        background: var(--bg-dark); transition: all 0.3s ease; overflow: hidden; position: relative;
+    }
+    .avatar-box:hover { border-color: var(--primary-glow); background: #122a4a; }
+    .avatar-box.has-image { border-style: solid; border-color: var(--primary-glow); }
+    .avatar-placeholder { color: #6699ccaa; font-size: 16px; text-align: center; padding: 25px; }
+    .avatar-image { width: 100%; height: 100%; object-fit: cover; border-radius: 17px; }
+    .modal-content .file-input { display: none; }
+    .close-modal { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; align-self: flex-end; }
+    .close-modal:hover, .close-modal:focus { color: #fff; }
+    #coinSelectorModal .modal-content { max-width: 600px; }
+    #coinSearchInput {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 18px;
+      font-size: 1rem;
+    }
+    #coin-selector-list {
+        max-height: 40vh;
+        overflow-y: auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 12px;
+        margin-bottom: 25px;
+    }
+    #coin-selector-list label {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 6px;
+        border-radius: 4px;
+        background: rgba(255,255,255,0.05);
+        cursor: pointer;
+        font-size: 0.8rem;
+    }
+    #coin-selector-list label:hover { background: rgba(255,255,255,0.1); }
+    #coin-selector-list img { width: 20px; height: 20px; }
+    #print-options-list {
+        list-style: none;
+        padding: 0;
+        margin: 25px 0;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+    #print-options-list li label { cursor: pointer; display: flex; align-items: center; gap: 12px; }
+
+    /* --- AI Assistant Styles --- */
+    #aiAssistantModal .modal-content {
+        max-width: 600px;
+        height: 70vh;
+    }
+    #chat-log {
+        flex-grow: 1;
+        overflow-y: auto;
+        padding: 10px;
+        margin-bottom: 15px;
+        background: var(--bg-dark);
+        border: 1px solid var(--primary-border);
+        border-radius: 6px;
+    }
+    .chat-message {
+        margin-bottom: 12px;
+        padding: 8px 12px;
+        border-radius: 8px;
+        max-width: 85%;
+        line-height: 1.5;
+    }
+    .user-message {
+        background: var(--primary-border);
+        color: #fff;
+        margin-left: auto;
+        text-align: right;
+    }
+    .ai-message {
+        background: var(--bg-input);
+        margin-right: auto;
+        text-align: left;
+    }
+    #ai-input-container {
+        display: flex;
+        gap: 10px;
+    }
+    #ai-input {
+        flex-grow: 1;
+    }
+    #api-key-container {
+        border-top: 1px solid var(--primary-border);
+        margin-top: 20px;
+        padding-top: 20px;
+    }
+    
+    /* --- NEW MODULE STYLES --- */
+    .panel {
+        background: var(--bg-panel);
+        border-radius: 12px;
+        padding: 20px;
+        width: 100%;
+        box-shadow: var(--glow);
+        border: 1px solid rgba(51,153,255,0.3);
+    }
+    .panel h2 {
+        font-size: 1.1rem;
+        margin: 0 0 15px 0;
+        text-align: center;
+        letter-spacing: 1px;
+        border-bottom: 1px solid rgba(255,255,255,0.15);
+        padding-bottom: 8px;
+    }
+    .full-panel {
+        background: var(--bg-panel);
+        border-radius: 12px;
+        padding: 25px;
+        box-shadow: var(--glow);
+        border: 1px solid rgba(51,153,255,0.3);
+        width: 100%;
+    }
+    .full-panel h2 {
+        font-size: 1.1rem;
+    }
+    .panel table {
+        text-align: left;
+        margin-top: 10px;
+        color: white;
+        box-shadow: none;
+        background: none;
+    }
+    .panel th, .panel td {
+        padding: 8px;
+        vertical-align: middle;
+        text-align: left;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .panel thead tr {
+        border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+    .panel label {
+        display: block;
+        font-size: 0.9rem;
+        margin-top: 10px;
+    }
+    .panel .flag {
+        width: 20px;
+        height: 14px;
+        margin-right: 8px;
+        border-radius: 2px;
+        vertical-align: middle;
+    }
+    .controls {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-bottom: 25px;
+        padding: 15px;
+        background: rgba(0,0,20,0.7);
+        border-radius: 8px;
+    }
+    .controls select {
+        background: rgba(255,255,255,0.1);
+        border: 1px solid var(--primary-border);
+    }
+    .controls label {
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        margin-top: 0;
+    }
+    #unitSelect, #fromCurrency, #toCurrency {
+        background: var(--dropdown-bg);
+        color: var(--dropdown-font);
+        pointer-events: auto;
+    }
+    #unitSelect option, #fromCurrency option, #toCurrency option {
+        background: var(--dropdown-bg);
+        color: var(--dropdown-font);
+    }
+    .summary-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+    .card {
+        padding: 20px;
+        border-radius: 8px;
+        color: white;
+        text-align: center;
+        transition: background-color 0.3s ease;
+    }
+    .card h3 {
+        margin-top: 0;
+        font-size: 1.1em;
+        opacity: 0.9;
+        border: none;
+        padding: 0;
+    }
+    .card .amount {
+        font-size: 1.6em; /* Font size reduced */
+        font-weight: bold;
+    }
+    .card-deposits { background-color: var(--card-deposits); }
+    .card-withdrawals { background-color: var(--card-withdrawals); }
+    .card-crypto { background-color: var(--card-crypto); }
+    .card-net { background-color: var(--card-net); }
+    .card-pnl-profit { background-color: var(--card-pnl-profit); }
+    .card-pnl-loss { background-color: var(--card-pnl-loss); }
+    .table-wrapper {
+        max-height: 350px;
+        overflow-y: auto;
+        border: 1px solid rgba(255,255,255,0.2);
+        border-radius: 5px;
+    }
+    .table-wrapper th, .table-wrapper td {
+        padding: 12px 15px;
+        text-align: right;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .table-wrapper th {
+        background: rgba(0, 0, 40, 0.9);
+        position: sticky;
+        top: 0;
+    }
+    .table-wrapper td:first-child, .table-wrapper th:first-child {
+        text-align: left;
+    }
+    .table-wrapper th.actions-col, .table-wrapper td.actions-col {
+        width: 100px;
+        text-align: center;
+    }
+    .table-wrapper tbody tr:nth-child(even) {
+        background-color: rgba(255,255,255,0.05);
+    }
+    .table-wrapper tfoot {
+        font-weight: bold;
+        background-color: rgba(255,255,255,0.1);
+        position: sticky;
+        bottom: 0;
+    }
+    .delete-btn {
+        padding: 5px 10px;
+        font-size: 0.8em;
+        color: white;
+        background-color: var(--card-withdrawals);
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    .input-box {
+        padding: 20px;
+        border: 1px solid rgba(255,255,255,0.2);
+        border-radius: 8px;
+        background: var(--bg-panel);
+        margin-top: 25px;
+    }
+    .input-form {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        align-items: center;
+    }
+    .input-form input, .input-form select {
+        padding: 10px;
+        border: 1px solid var(--primary-border);
+        border-radius: 4px;
+        background: rgba(255,255,255,0.1);
+    }
+    .input-form input[type="date"] { flex-basis: 150px; }
+    .input-form input[type="number"] { flex-grow: 1; flex-basis: 120px; }
+    .input-form select { flex-basis: 120px; }
+    .input-form button {
+        padding: 10px 25px;
+        background-color: var(--primary-border);
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+        flex-grow: 1;
+    }
+    #convertResult {
+        margin-top: 10px;
+        text-align: center;
+        font-size: 1.2em;
+    }
+    @media (max-width: 900px) {
+        .assets-row, .crypto-chart-row { flex-direction: column; }
+    }
+    @media (max-width: 600px) {
+        .bottomBlocksRow { grid-template-columns: 1fr; }
+    }
+
+
+    /* --- PRINT STYLES --- */
+    @media print {
+        body, .modal-content { background: #fff !important; color: #000 !important; }
+        #header, #topRightLinks, .avatar-container, .quantico-btn, #cryptoTable tfoot, #printReportBtn, .modal, .background-container, .price-ticker { display: none !important; }
+        section, table, #mainContent, .panel, .full-panel { margin: 0; padding: 0; box-shadow: none !important; border: 1px solid #ccc; }
+        .assets-row, .crypto-chart-row, .bottomBlocksRow, .top-row-grid, .converter-row-grid { page-break-inside: avoid; flex-direction: column !important; }
+        .no-print { display: none !important; }
+    }
+  </style>
+<script type="importmap">
+{
+  "imports": {
+    "@google/generative-ai": "https://esm.run/@google/generative-ai"
+  }
+}
+</script>
+</head>
+<body>
+    <div class="background-container">
+        <div class="grid-overlay"></div>
+        <div class="floating-particles" id="particles"></div>
+        <div class="data-streams" id="dataStreams"></div>
+        <div class="crypto-symbols" id="cryptoSymbols"></div>
+    </div>
+
+  <div id="header" role="banner" aria-label="Site header">
+    <div style="display: flex; align-items: center;">
+      <h1 id="title">My FinCrypto Zone</h1>
+       <div class="avatar-container">
+        <div id="avatar" class="empty"></div>
+      </div>
+    </div>
+  </div>
+  <nav id="topRightLinks" aria-label="External crypto related links">
+      <button id="aiAssistantBtn" class="quantico-btn">AI Assistant</button>
+      <button id="printReportBtn">Print Report</button>
+      <a href="https://bitcoinvn.io" target="_blank" rel="noopener" title="BitcoinVN">BitcoinVN</a>
+      <a href="https://www.luno.com" target="_blank" rel="noopener" title="Luno">Luno</a>
+      <a href="https://www.binance.com" target="_blank" rel="noopener" title="Binance">Binance</a>
+      <a href="https://trustwallet.com" target="_blank" rel="noopener" title="Trust Wallet">Trust Wallet</a>
+      <a href="https://x.com" target="_blank" rel="noopener" title="X">X</a>
+  </nav>
+  <main id="mainContent" role="main">
+
+    <div class="top-row-grid">
+        <section id="greetingBlock" aria-label="Greeting and portfolio total">
+          <h2>Portfolio Snapshot <button id="addSnapshotBtn" class="quantico-btn">Save</button></h2>
+          <div class="snapshot-container">
+              <p id="greetingText"></p>
+              <canvas id="assetAllocationChart" width="140" height="140" aria-label="Asset allocation torus chart"></canvas>
+          </div>
+        </section>
+        <section id="snapshotHistoryBlock" aria-label="Portfolio history">
+            <h2>History <button id="deleteSnapshotBtn" class="quantico-btn">Delete</button></h2>
+            <ul id="snapshotHistoryList"></ul>
+        </section>
+    </div>
+    
+    <div class="converter-row-grid">
+        <div class="panel">
+            <h2>Exchange Rates</h2>
+            <table>
+                <thead><tr><th>Currency</th><th>Rate (vs USD)</th></tr></thead>
+                <tbody id="exchangeRatesBody"><tr><td colspan="2">Loading...</td></tr></tbody>
+            </table>
+        </div>
+        <div class="panel">
+            <h2>Gold (XAU) Converter</h2>
+            <label for="goldAmount">Gold Amount:</label>
+            <input type="number" id="goldAmount" value="1">
+            <label for="unitSelect">Select Unit:</label>
+            <select id="unitSelect">
+                <option value="ounce">Ounce (oz)</option><option value="gram">Gram (g)</option>
+                <option value="kg">Kilogram (kg)</option><option value="tael">Tael</option>
+                <option value="chi">Chi</option>
+            </select>
+            <table id="goldTable">
+                <thead><tr><th>Currency</th><th>Value</th></tr></thead>
+                <tbody><tr><td colspan="2">Loading data...</td></tr></tbody>
+            </table>
+        </div>
+        <div class="panel">
+            <h2>Currency Converter</h2>
+            <label for="convertAmount">Amount:</label>
+            <input type="number" id="convertAmount" value="1">
+            <label for="fromCurrency">From:</label><select id="fromCurrency"></select>
+            <label for="toCurrency">To:</label><select id="toCurrency"></select>
+            <div id="convertResult">1 USD = Loading...</div>
+        </div>
+    </div>
+
+    <div class="crypto-chart-row">
+      <div class="crypto-column">
+        <table id="cryptoTable" aria-label="Cryptocurrency prices and holdings">
+          <caption>Cryptocurrency Prices</caption>
+          <thead><tr><th>Coin</th><th>Exchange Rate</th><th>ZAR</th><th>VND</th><th>Holdings</th><th>Value (USD)</th><th>24h Change</th></tr></thead>
+          <tbody id="cryptoBody"></tbody>
+          <tfoot><tr><td colspan="5"></td><td>Total Value:</td><td id="totalValueUSD">-</td><td></td></tr></tfoot>
+        </table>
+      </div>
+      <div class="chart-column">
+        <div class="chart-title">Holdings Distribution</div>
+        <div id="holdingsChartBlock">
+          <canvas id="holdingsChart" role="img" aria-label="3D hi-tech torus chart of holdings USD value distribution"></canvas>
+          <div id="chartLabelsContainer"></div>
+        </div>
+      </div>
+    </div>
+    
+    <h2>Assets</h2>
+    <div class="assets-row">
+        <section id="liquidAssetsBlock" aria-label="Liquid assets">
+          <h3>Liquid Assets</h3>
+          <div class="asset-grid-header"><span></span><span>USD</span><span>ZAR</span><span>VND</span></div>
+          <div id="liquid-assets-body"></div>
+          <div class="totals-row asset-grid"><span>Total</span><span id="totalUSD">$0</span><span id="totalZAR">R0</span><span id="totalVND">₫0</span></div>
+          <div class="grand-total-row"><span>Grand Total (USD):</span><span id="liquidGrandTotalUSD">$0.00</span></div>
+        </section>
+        <section id="fixedAssetsBlock" aria-label="Fixed assets">
+          <h3>Fixed Assets</h3>
+          <div class="asset-grid-header"><span></span><span>USD</span><span>ZAR</span><span>VND</span></div>
+          <div id="fixed-assets-body"></div>
+          <div class="totals-row asset-grid"><span>Total</span><span id="fixedTotalUSD">$0</span><span id="fixedTotalZAR">R0</span><span id="fixedTotalVND">₫0</span></div>
+          <div class="grand-total-row"><span>Grand Total (USD):</span><span id="fixedGrandTotalUSD">$0.00</span></div>
+        </section>
+    </div>
+
+    <section id="cryptoAssetsBlock" aria-label="Crypto assets">
+        <h2>Crypto Assets <button id="manageCoinsBtn" class="quantico-btn">Add/Remove Coins</button></h2>
+        <div class="crypto-header">
+        <span class="coin-label">Coin</span><span>BitcoinVN</span><span>Binance</span><span>Luno</span><span>Trust</span><span>Xaman</span><span id="manual-column-header" contenteditable="true">Manual</span><span>Total Units</span>
+        </div>
+        <div id="crypto-assets-body"></div>
+    </section>
+
+    <div class="bottomBlocksRow">
+      <section id="xrpPlaygroundBlock">
+          <h2>XRP History</h2>
+          <label for="historySelect">Select Month (1st):</label>
+          <select id="historySelect"></select>
+          <table id="historyTable"><thead><tr><th>Date</th><th>Price (USD)</th></tr></thead><tbody><tr><td colspan="2">Loading...</td></tr></tbody></table>
+      </section>
+      <section id="futureValueBlock">
+          <h2>Future Value Calculator</h2>
+          <div class="calc-row"><label for="future-asset-select">Asset:</label><select id="future-asset-select"></select></div>
+          <div class="calc-row"><label>Current Units:</label><span id="future-current-units">-</span></div>
+          <div class="calc-row"><label for="future-price-input">Future Price ($):</label><input type="number" id="future-price-input" min="0" placeholder="e.g., 3.50"></div>
+          <div class="calc-row"><label for="future-additional-usd">Additional USD:</label><input type="number" id="future-additional-usd" min="0" placeholder="e.g., 1000"></div>
+          <div class="calc-result"><span>Future Value: </span><span id="future-calculated-value">$0.00</span></div>
+      </section>
+    </div>
+
+    <section id="newsBlock" aria-label="Crypto news">
+        <h2>Crypto News</h2>
+        <ul id="newsList"></ul>
+    </section>
+    
+    <div class="full-panel">
+        <div class="controls">
+            <select id="year-filter"><option value="all">All Years</option></select>
+            <select id="month-filter">
+                <option value="all">All Months</option>
+                <option value="0">January</option><option value="1">February</option><option value="2">March</option>
+                <option value="3">April</option><option value="4">May</option><option value="5">June</option>
+                <option value="6">July</option><option value="7">August</option><option value="8">September</option>
+                <option value="9">October</option><option value="10">November</option><option value="11">December</option>
+            </select>
+            <label for="currency-select">Display Currency:</label>
+            <select id="currency-select">
+                <option value="VND">VND</option><option value="ZAR">ZAR</option><option value="USD">USD</option>
+            </select>
+        </div>
+        <div class="summary-cards">
+            <div class="card card-deposits"><h3>Total Deposits</h3><p class="amount" id="total-deposits-card">--</p></div>
+            <div class="card card-withdrawals"><h3>Total Withdrawals</h3><p class="amount" id="total-withdrawals-card">--</p></div>
+            <div class="card card-crypto"><h3>Current Crypto Value</h3><p class="amount" id="crypto-value-card">--</p></div>
+            <div class="card card-net"><h3>Total Profit / Loss</h3><p class="amount" id="net-balance-card">--</p></div>
+            <div class="card" id="pnl-card"><h3>% PnL (ROI)</h3><p class="amount" id="pnl-amount">--</p></div>
+        </div>
+        <h2>Transactions</h2>
+        <div class="table-wrapper" id="table-wrapper">
+            <table>
+                <thead><tr><th>Date</th><th>Deposit</th><th>Withdrawal</th><th class="actions-col">Actions</th></tr></thead>
+                <tbody id="tableBody"></tbody>
+                <tfoot id="tableFooter"></tfoot>
+            </table>
+        </div>
+        <div class="input-box">
+            <h2>Add New Transaction</h2>
+            <div class="input-form">
+                <input type="date" id="newDate">
+                <select id="newType"><option value="deposit">Deposit</option><option value="withdrawal">Withdrawal</option></select>
+                <input type="number" id="newAmount" placeholder="Amount">
+                <select id="newCurrency"><option value="VND">VND</option><option value="ZAR">ZAR</option><option value="USD">USD</option></select>
+                <button id="addNewTxBtn">Add Transaction</button>
+            </div>
+        </div>
+    </div>
+
+  </main>
+    <div class="price-ticker">
+        <div class="ticker-content" id="tickerContent"></div>
+    </div>
+
+  <div id="newAvatarModal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h2 class="title">Avatar Selector</h2>
+        <p class="subtitle">Choose your profile picture</p>
+        <div class="avatar-box" id="avatarBox"><div class="avatar-placeholder" id="placeholder">Click to select an image</div></div>
+        <input type="file" id="fileInput" class="file-input" accept="image/*">
+        <div>
+          <button class="quantico-btn upload-button" onclick="document.getElementById('fileInput').click()">Choose Avatar</button>
+          <button class="quantico-btn clear-button" id="clearButton" style="background: #882222cc; display: none;">Clear</button>
+        </div>
+    </div>
+  </div>
+
+  <div id="printModal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      <h2>Select Sections to Print</h2>
+      <ul id="print-options-list"></ul>
+      <button id="confirmPrintBtn" class="quantico-btn">Confirm Print</button>
+    </div>
+  </div>
+
+  <div id="coinSelectorModal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      <h2>Select Cryptocurrencies</h2>
+      <p class="subtitle">Select the crypto assets you want to track. Data from CoinGecko.</p>
+      <input type="text" id="coinSearchInput" class="units-input" placeholder="Search for a coin...">
+      <div id="coin-selector-list"><p>Loading available coins...</p></div>
+      <button id="saveCoinsBtn" class="quantico-btn" style="width: 100%; padding: 10px; margin-top: 10px;">Save Selections</button>
+    </div>
+  </div>
+  
+  <div id="aiAssistantModal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h2>AI Assistant</h2>
+        <div id="chat-log"></div>
+        <div id="api-key-container">
+            <p class="subtitle">Please enter your Google AI Studio API key to begin.</p>
+            <input type="password" id="api-key-input" class="units-input" placeholder="Enter your API key here...">
+            <button id="save-api-key-btn" class="quantico-btn" style="width: 100%; margin-top: 10px;">Save Key</button>
+        </div>
+        <div id="ai-input-container" style="display: none;">
+            <input type="text" id="ai-input" class="units-input" placeholder="Ask a question...">
+            <button id="send-ai-btn" class="quantico-btn">Send</button>
+        </div>
+    </div>
+</div>
+  
+    <script type="module">
+    import { GoogleGenerativeAI } from "@google/generative-ai";
+    // --- APP STATE & CONFIG ---
+    window.myFinApp = {
+        totalCryptoUSD: 0
+    };
+
+    const CRYPTOCOMPARE_API_KEY = '30eb96c83a3a177efc3569cbdb16ea81239d471c2e2ac8b61e7d1799eefe0091';
+
+    let activeCoins = [];
+    let priceDataCache = {};
+    const platforms = ['bitcoinvn', 'binance', 'luno', 'trust', 'xaman', 'manual'];
+    const liquidAssetTypes = [
+        { id: 'cash', name: 'Cash' }, { id: 'bank1', name: 'Bank 1' },
+        { id: 'bank2', name: 'Bank 2' }, { id: 'bank3', name: 'Bank 3' },
+        { id: 'gold', name: 'Gold' }
+    ];
+    const fixedAssetTypes = [ { id: 'property1', name: 'Property 1' }, { id: 'property2', name: 'Property 2' } ];
+    let exchangeRates = { USD: 1, ZAR: 18.5, VND: 25500, GBP: 0.79, EUR: 0.92, JPY: 150, THB: 36.5 };
+    let lastRefresh = 0;
+    const refreshCooldown = 30000;
+
+    const sampleNewsData = { Data: [ { title: "Welcome! Live news will be fetched shortly.", url: "#", published_on: Date.now() / 1000 } ]};
+    const sampleXrpHistory = { Data: { Data: [{time: Date.now()/1000, close: 0.52}] } };
+
+
+    // --- THREE.JS SCENE VARIABLES ---
+    let holdingsScene, holdingsCamera, holdingsRenderer, holdingsChartMesh;
+    let assetScene, assetCamera, assetRenderer, assetChartMesh;
+
+    // --- UTILITY FUNCTIONS ---
+    const $ = (selector) => document.querySelector(selector);
+    const $$ = (selector) => document.querySelectorAll(selector);
+
+    function handleError(msg, error) { console.error(msg, error); }
+
+    function formatVndCustom(number) {
+        if (isNaN(number) || number === null) return '-';
+        const fixed = number.toFixed(0);
+        return fixed.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
+    
+    function formatCurrency(value, currency, noDecimals = false) {
+        if(isNaN(value)) value = 0;
+        const options = { 
+            minimumFractionDigits: noDecimals ? 0 : 2, 
+            maximumFractionDigits: noDecimals ? 0 : 2 
+        };
+        if (currency === 'VND' || currency === 'JPY') {
+            options.minimumFractionDigits = 0;
+            options.maximumFractionDigits = 0;
+        }
+
+        if (currency === 'VND') return `₫${formatVndCustom(value)}`;
+        if (currency === 'ZAR') return `R${value.toLocaleString('en-ZA', options)}`;
+        if (currency === 'THB') return `฿${value.toLocaleString('en-US', options)}`;
+        if (currency === 'GBP') return `£${value.toLocaleString('en-GB', options)}`;
+        if (currency === 'EUR') return `€${value.toLocaleString('de-DE', options)}`;
+        if (currency === 'JPY') return `¥${value.toLocaleString('ja-JP', options)}`;
+
+        return `$${value.toLocaleString('en-US', options)}`;
+    }
+
+    const createChangeHtml = (current, previous) => {
+        if (previous === undefined || previous === null || current <= 0 || previous <= 0) return '<span>-</span>';
+        const change = ((current - previous) / previous) * 100;
+        const changeClass = change >= 0 ? 'change-positive' : 'change-negative';
+        const sign = change > 0 ? '+' : '';
+        return `<span class="${changeClass}">${sign}${change.toFixed(2)}%</span>`;
+    };
+
+    // --- DATA FETCHING & CACHING ---
+    const apiCache = new Map();
+    const CACHE_DURATION = 60 * 1000; // 1 minute
+
+    async function fetchWithCache(url, options = {}) {
+        const now = Date.now();
+        if (apiCache.has(url)) {
+            const cachedItem = apiCache.get(url);
+            if (now - cachedItem.timestamp < CACHE_DURATION) {
+                return cachedItem.data;
+            }
+        }
+        
+        const response = await fetch(url, options);
+        if (!response.ok) {
+            throw new Error(`API request failed with status ${response.status}`);
+        }
+        const data = await response.json();
+        apiCache.set(url, { data, timestamp: now });
+        return data;
+    }
+
+    async function fetchCryptoPrices() {
+        if (activeCoins.length === 0) return {};
+        try {
+            const ids = activeCoins.map(c => c.id).join(',');
+            const url = `https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd&include_24hr_change=true`;
+            const data = await fetchWithCache(url);
+
+            const formattedData = {};
+            for (const coin of activeCoins) {
+                const coinData = data[coin.id];
+                if (coinData) {
+                    formattedData[coin.id] = {
+                        id: coin.id,
+                        symbol: coin.symbol,
+                        name: coin.name,
+                        image: coin.image,
+                        current_price: coinData.usd,
+                        price_change_percentage_24h: coinData.usd_24h_change || 0,
+                    };
+                }
+            }
+            return formattedData;
+        } catch (e) {
+            handleError('Could not fetch crypto prices from CoinGecko:', e);
+            return {};
+        }
+    }
+    
+    async function fetchNews(force = false) {
+        const newsList = $('#newsList');
+        if (!newsList) return;
+        const CACHE_KEY = 'cachedNews_cc_v3';
+        const lastFetch = parseInt(localStorage.getItem('lastNewsFetch') || '0');
+        const oneHour = 60 * 60 * 1000;
+        const cachedNews = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
+
+        const displayNews = (articles) => {
+            if (!articles || articles.length === 0) {
+                newsList.innerHTML = `<li>No recent news found.</li>`;
+                return;
+            }
+            newsList.innerHTML = articles.map(article => {
+                const pubDate = new Date(article.published_on * 1000).toLocaleString('en-US', { month: 'short', day: 'numeric', hour:'2-digit', minute:'2-digit' });
+                return `<li><small>(${pubDate})</small><a href="${article.url}" target="_blank" rel="noopener noreferrer">${article.title}</a></li>`;
+            }).join('');
+        };
+
+        if (!force && (Date.now() - lastFetch < oneHour) && cachedNews) {
+            return displayNews(cachedNews);
+        }
+
+        try {
+            newsList.innerHTML = '<li>Fetching latest news...</li>';
+            const url = `https://min-api.cryptocompare.com/data/v2/news/?lang=EN&api_key=${CRYPTOCOMPARE_API_KEY}`;
+            const data = await fetchWithCache(url);
+
+            if (data.Type !== 100 || !data.Data) throw new Error('Invalid news format');
+            
+            const articlesToDisplay = data.Data.slice(0, 5);
+            displayNews(articlesToDisplay);
+            
+            localStorage.setItem(CACHE_KEY, JSON.stringify(articlesToDisplay));
+            localStorage.setItem('lastNewsFetch', Date.now().toString());
+        } catch (e) {
+            handleError('News fetch error: ', e);
+            displayNews(cachedNews || sampleNewsData.Data);
+        }
+    }
+
+    let monthlyXRPData = [];
+    async function fetchXRPHistoryData(force = false) {
+        const CACHE_KEY = 'cachedXrpHistory_cc_v2';
+        const lastFetch = parseInt(localStorage.getItem('lastXrpHistoryFetch') || '0');
+        const oneHour = 60 * 60 * 1000;
+        const cachedData = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
+
+        const processAndDisplay = (data) => {
+            if (!data || !Array.isArray(data.Data?.Data)) return;
+            
+            const historyData = data.Data.Data;
+            const seenMonths = new Set();
+            monthlyXRPData = [];
+            for(let i = historyData.length - 1; i >= 0; i--) {
+                const item = historyData[i];
+                const d = new Date(item.time * 1000);
+                const monthKey = `${d.getFullYear()}-${d.getMonth()}`;
+                if (!seenMonths.has(monthKey)) {
+                    seenMonths.add(monthKey);
+                    monthlyXRPData.push({
+                        label: d.toLocaleString("default", { month: "long", year: "numeric" }),
+                        value: d.toISOString().split('T')[0],
+                        price: item.close.toFixed(4)
+                    });
+                }
+            }
+            monthlyXRPData.reverse();
+            const select = $("#historySelect");
+            select.innerHTML = monthlyXRPData.map(e => `<option value="${e.value}">${e.label}</option>`).join('');
+            if (monthlyXRPData.length > 0) {
+                select.selectedIndex = monthlyXRPData.length - 1;
+                select.dispatchEvent(new Event('change'));
+            }
+        };
+
+        if (!force && (Date.now() - lastFetch < oneHour) && cachedData) {
+            return processAndDisplay(cachedData);
+        }
+
+        try {
+            const url = `https://min-api.cryptocompare.com/data/v2/histoday?fsym=XRP&tsym=USD&limit=365&api_key=${CRYPTOCOMPARE_API_KEY}`;
+            const data = await fetchWithCache(url);
+            if (data.Response !== 'Success') throw new Error(data.Message);
+            localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+            localStorage.setItem('lastXrpHistoryFetch', Date.now().toString());
+            processAndDisplay(data);
+        } catch (err) {
+            handleError("Error fetching XRP history: ", err);
+            processAndDisplay(cachedData || sampleXrpHistory);
+        }
+    }
+
+    function loadActiveCoins() {
+        return new Promise(async (resolve) => {
+            const storedIDs = JSON.parse(localStorage.getItem('activeCoinIDs_cg_v2') || '["bitcoin", "ethereum", "ripple", "solana", "cardano", "stellar"]');
+            getAllCoins();
+            activeCoins = allCoinsList.filter(coin => storedIDs.includes(coin.id));
+            resolve();
+        });
+    }
+
+    function updateAssetValue(storageKey, value) {
+        localStorage.setItem(storageKey, isNaN(parseFloat(value)) || value < 0 ? '0' : value);
+        recalculateAllTotals();
+        refresh(true);
+    }
+
+    // --- UI RENDERING & UPDATES ---
+    function buildAssetTable(containerId, assetTypes, prefix) {
+        const container = $(containerId);
+        container.innerHTML = assetTypes.map(asset => `
+            <div class="asset-grid">
+                <button class="quantico-btn">${asset.name}</button>
+                <input type="number" class="asset-input usd-input" data-key="${prefix}-${asset.id}-USD" min="0" step="1" aria-label="${asset.name} in USD">
+                <input type="number" class="asset-input zar-input" data-key="${prefix}-${asset.id}-ZAR" min="0" step="1" aria-label="${asset.name} in ZAR">
+                <input type="number" class="asset-input vnd-input" data-key="${prefix}-${asset.id}-VND" min="0" step="1" aria-label="${asset.name} in VND">
+            </div>
+        `).join('');
+    }
+
+    function buildCryptoAssetsTable() {
+        const container = $('#crypto-assets-body');
+        if (!container) return;
+        container.innerHTML = activeCoins.map(coin => `
+            <div class="crypto-row">
+                <div class="coin-info">
+                    <img src="${coin.image || ''}" alt="${coin.symbol}" onerror="this.style.display='none'"/>
+                    <span>${(coin.symbol || '').toUpperCase()}</span>
+                </div>
+                ${platforms.map(p => `<input type="number" class="units-input" data-key="${coin.id}-${p}" min="0" step="0.0001" aria-label="${coin.symbol} on ${p}">`).join('')}
+                <span id="total-units-${coin.id}">0</span>
+            </div>
+        `).join('');
+    }
+    
+    function loadInitialData() {
+        $$('.asset-input, .units-input').forEach(input => {
+            const storedValue = localStorage.getItem(input.dataset.key);
+            input.value = (storedValue && parseFloat(storedValue) > 0) ? parseFloat(storedValue) : '';
+        });
+        recalculateAllTotals();
+    }
+
+    function recalculateAllTotals() {
+        const liquidTotals = { USD: 0, ZAR: 0, VND: 0 };
+        liquidAssetTypes.forEach(asset => {
+            liquidTotals.USD += parseFloat(localStorage.getItem(`liquid-${asset.id}-USD`) || 0);
+            liquidTotals.ZAR += parseFloat(localStorage.getItem(`liquid-${asset.id}-ZAR`) || 0);
+            liquidTotals.VND += parseFloat(localStorage.getItem(`liquid-${asset.id}-VND`) || 0);
+        });
+        const fixedTotals = { USD: 0, ZAR: 0, VND: 0 };
+        fixedAssetTypes.forEach(asset => {
+            fixedTotals.USD += parseFloat(localStorage.getItem(`fixed-${asset.id}-USD`) || 0);
+            fixedTotals.ZAR += parseFloat(localStorage.getItem(`fixed-${asset.id}-ZAR`) || 0);
+            fixedTotals.VND += parseFloat(localStorage.getItem(`fixed-${asset.id}-VND`) || 0);
+        });
+        
+        $('#totalUSD').textContent = formatCurrency(liquidTotals.USD, 'USD', true);
+        $('#totalZAR').textContent = formatCurrency(liquidTotals.ZAR, 'ZAR', true);
+        $('#totalVND').textContent = formatCurrency(liquidTotals.VND, 'VND', true);
+        $('#fixedTotalUSD').textContent = formatCurrency(fixedTotals.USD, 'USD', true);
+        $('#fixedTotalZAR').textContent = formatCurrency(fixedTotals.ZAR, 'ZAR', true);
+        $('#fixedTotalVND').textContent = formatCurrency(fixedTotals.VND, 'VND', true);
+
+        activeCoins.forEach(coin => {
+            const total = platforms.reduce((sum, p) => sum + (parseFloat(localStorage.getItem(`${coin.id}-${p}`)) || 0), 0);
+            localStorage.setItem(coin.id, total);
+            const totalEl = $(`#total-units-${coin.id}`);
+            if (totalEl) totalEl.textContent = total > 0 ? total.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 4 }) : '0';
+        });
+
+        const { liquidUSD, fixedUSD } = calculateTotalAssetUSD();
+        $('#liquidGrandTotalUSD').textContent = formatCurrency(liquidUSD, 'USD');
+        $('#fixedGrandTotalUSD').textContent = formatCurrency(fixedUSD, 'USD');
+    }
+    
+    function calculateTotalAssetUSD() {
+        let liquidUSD = 0, fixedUSD = 0;
+        const ER = exchangeRates;
+        liquidAssetTypes.forEach(asset => {
+            liquidUSD += parseFloat(localStorage.getItem(`liquid-${asset.id}-USD`) || 0);
+            if(ER.ZAR) liquidUSD += (parseFloat(localStorage.getItem(`liquid-${asset.id}-ZAR`) || 0) / ER.ZAR);
+            if(ER.VND) liquidUSD += (parseFloat(localStorage.getItem(`liquid-${asset.id}-VND`) || 0) / ER.VND);
+        });
+        fixedAssetTypes.forEach(asset => {
+            fixedUSD += parseFloat(localStorage.getItem(`fixed-${asset.id}-USD`) || 0);
+            if(ER.ZAR) fixedUSD += (parseFloat(localStorage.getItem(`fixed-${asset.id}-ZAR`) || 0) / ER.ZAR);
+            if(ER.VND) fixedUSD += (parseFloat(localStorage.getItem(`fixed-${asset.id}-VND`) || 0) / ER.VND);
+        });
+        return { liquidUSD, fixedUSD };
+    }
+
+    async function refresh(force = false) {
+      const now = Date.now();
+      if (!force && now - lastRefresh < refreshCooldown) return;
+      lastRefresh = now;
+
+      const cryptoPrices = await fetchCryptoPrices();
+      
+      priceDataCache = cryptoPrices;
+      
+      recalculateAllTotals();
+      
+      const tbody = $('#cryptoBody');
+      tbody.innerHTML = '';
+      let totalCryptoUSD = 0;
+      let chartData = [];
+
+      for (const coin of activeCoins) {
+        const coinData = priceDataCache[coin.id] || {};
+        const usd = coinData.current_price || 0;
+        const holdings = parseFloat(localStorage.getItem(coin.id)) || 0;
+        const valUSD = holdings * usd;
+        totalCryptoUSD += valUSD;
+        
+        const tr = document.createElement('tr');
+        if (!holdings) tr.classList.add('empty');
+        tr.innerHTML = `
+          <td><div class="coin-info"><img src="${coin.image || ''}" alt="${coin.symbol}"/>${(coin.symbol || '').toUpperCase()}</div></td>
+          <td>${formatCurrency(usd, 'USD')}</td>
+          <td>${formatCurrency(usd * (exchangeRates.ZAR || 0), 'ZAR')}</td>
+          <td>${formatCurrency(usd * (exchangeRates.VND || 0), 'VND')}</td>
+          <td class="holdings-cell" contenteditable="true" data-coin-id="${coin.id}">${holdings.toLocaleString('en-US', { maximumFractionDigits: 4 })}</td>
+          <td>${formatCurrency(valUSD, 'USD')}</td>
+          <td class="${(coinData.price_change_percentage_24h || 0) >= 0 ? 'change-positive' : 'change-negative'}">${(coinData.price_change_percentage_24h || 0).toFixed(2)}%</td>
+        `;
+        tbody.appendChild(tr);
+        if (valUSD > 0.01) chartData.push({ label: coin.symbol.toUpperCase(), value: valUSD, color: coin.color || `#${(Math.random().toString(16) + '000000').substring(2,8)}` });
+      }
+
+      window.myFinApp.totalCryptoUSD = totalCryptoUSD;
+      if (window.renderTrackerUI) {
+          window.renderTrackerUI();
+      }
+
+      const { liquidUSD, fixedUSD } = calculateTotalAssetUSD();
+      const totalAssetValue = totalCryptoUSD + liquidUSD + fixedUSD;
+      
+      $('#totalValueUSD').textContent = formatCurrency(totalCryptoUSD, 'USD');
+      updateGreetingBlock(totalAssetValue, liquidUSD, fixedUSD, totalCryptoUSD);
+      updateHoldingsChart(chartData);
+      displaySnapshotHistory();
+    }
+    
+    function updateGreetingBlock(totalAssetValue, liquidUSD, fixedUSD, cryptoUSD) {
+        const greetingBlock = $('#greetingText');
+        const history = JSON.parse(localStorage.getItem('snapshotHistory')) || [];
+        const last = history.length > 0 ? history[history.length - 1] : {};
+        const now = new Date();
+        const greeting = now.getHours() < 12 ? 'Good Morning!' : now.getHours() < 18 ? 'Good Afternoon!' : 'Good Evening!';
+        const timestamp = now.toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false });
+
+        greetingBlock.innerHTML = `
+            <div style="margin-bottom: 12px;">
+                <strong style="font-size: 1.1em;">${greeting}</strong>
+                <small style="display: block; font-style: italic; color: var(--primary-glow); margin-top: 4px;">${timestamp}</small>
+            </div>
+            <div class="value-line">
+                <span class="liquid-label">Liquid Assets:</span> 
+                <span>${formatCurrency(liquidUSD, 'USD')}</span> 
+                ${createChangeHtml(liquidUSD, last.liquid)}
+            </div>
+            <div class="value-line">
+                <span class="fixed-label">Fixed Assets:</span> 
+                <span>${formatCurrency(fixedUSD, 'USD')}</span> 
+                ${createChangeHtml(fixedUSD, last.fixed)}
+            </div>
+            <div class="value-line">
+                <span class="crypto-label">Crypto Assets:</span> 
+                <span>${formatCurrency(cryptoUSD, 'USD')}</span> 
+                ${createChangeHtml(cryptoUSD, last.crypto)}
+            </div>
+            <div style="border-top: 1px solid #3399ff88; padding-top: 8px; margin-top: 8px;">
+                <div class="value-line">
+                    <span class="value-label">Total:</span> 
+                    <strong>${formatCurrency(totalAssetValue, 'USD')}</strong> 
+                    ${createChangeHtml(totalAssetValue, last.total)}
+                </div>
+            </div>
+        `;
+        drawAssetAllocationChart(liquidUSD, fixedUSD, cryptoUSD);
+    }
+    
+    function initAssetChart() {
+        const canvas = $('#assetAllocationChart');
+        if (!canvas) return;
+        assetScene = new THREE.Scene();
+        assetCamera = new THREE.PerspectiveCamera(50, canvas.width / canvas.height, 0.1, 1000);
+        assetCamera.position.z = 8;
+        assetRenderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+        assetRenderer.setSize(canvas.width, canvas.height);
+        assetRenderer.setPixelRatio(window.devicePixelRatio);
+        
+        const pointLight1 = new THREE.PointLight(0x66aaff, 1.2);
+        pointLight1.position.set(5, 5, 5);
+        const pointLight2 = new THREE.PointLight(0x00ff88, 0.8);
+        pointLight2.position.set(-5, -5, 5);
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+        assetScene.add(pointLight1, pointLight2, ambientLight);
+        
+        let isDragging = false, previousMousePosition = { x: 0, y: 0 };
+        canvas.addEventListener('mousedown', () => isDragging = true);
+        canvas.addEventListener('mouseup', () => isDragging = false);
+        canvas.addEventListener('mouseout', () => isDragging = false);
+        canvas.addEventListener('mousemove', (e) => {
+            if (isDragging && assetChartMesh) {
+                const deltaMove = { x: e.offsetX - previousMousePosition.x, y: e.offsetY - previousMousePosition.y };
+                assetChartMesh.rotation.y += deltaMove.x * 0.02;
+                assetChartMesh.rotation.x += deltaMove.y * 0.02;
+            }
+            previousMousePosition = { x: e.offsetX, y: e.offsetY };
+        });
+        const animate = () => {
+            requestAnimationFrame(animate);
+            if (assetChartMesh && !isDragging) assetChartMesh.rotation.y += 0.008;
+            if(assetRenderer && assetScene && assetCamera) assetRenderer.render(assetScene, assetCamera);
+        };
+        animate();
+    }
+    
+    function drawAssetAllocationChart(liquid, fixed, crypto) {
+        if (!assetScene) return; 
+        if (assetChartMesh) { 
+            assetScene.remove(assetChartMesh); 
+            assetChartMesh.children.forEach(c => { 
+                if(c.geometry) c.geometry.dispose(); 
+                if(c.material) c.material.dispose(); 
+            }); 
+        }
+        const total = liquid + fixed + crypto;
+        if (total === 0) { if(assetRenderer) assetRenderer.clear(); return; }
+        
+        const data = [
+            { value: liquid, color: getComputedStyle(document.documentElement).getPropertyValue('--liquid-color').trim() }, 
+            { value: fixed, color: getComputedStyle(document.documentElement).getPropertyValue('--fixed-color').trim() }, 
+            { value: crypto, color: getComputedStyle(document.documentElement).getPropertyValue('--crypto-color').trim() }
+        ];
+
+        assetChartMesh = new THREE.Group();
+        let currentAngle = -Math.PI / 2;
+        
+        data.forEach(item => {
+            const angle = (item.value / total) * Math.PI * 2;
+            if (angle > 0) {
+                const geometry = new THREE.TorusGeometry(2.5, 0.8, 16, 100, angle);
+                const material = new THREE.MeshStandardMaterial({ 
+                    color: item.color, 
+                    metalness: 0.7, 
+                    roughness: 0.2,
+                    emissive: item.color,
+                    emissiveIntensity: 0.3
+                });
+                const slice = new THREE.Mesh(geometry, material);
+                slice.rotation.z = currentAngle;
+                assetChartMesh.add(slice);
+                currentAngle += angle;
+            }
+        });
+        assetChartMesh.rotation.x = -Math.PI / 6;
+        assetScene.add(assetChartMesh);
+    }
+    
+    function initHoldingsChart() {
+        const canvas = $('#holdingsChart');
+        if (!canvas) return;
+        holdingsScene = new THREE.Scene();
+        holdingsCamera = new THREE.PerspectiveCamera(50, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
+        holdingsCamera.position.set(0, 0, 12);
+        holdingsRenderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+        holdingsRenderer.setSize(canvas.clientWidth, canvas.clientHeight);
+        holdingsRenderer.setPixelRatio(window.devicePixelRatio);
+        
+        const pointLight1 = new THREE.PointLight(0x66aaff, 1.5);
+        pointLight1.position.set(10, 10, 10);
+        const pointLight2 = new THREE.PointLight(0x00ff88, 1.0);
+        pointLight2.position.set(-10, -10, 10);
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+        holdingsScene.add(pointLight1, pointLight2, ambientLight);
+        
+        let isDragging = false, previousMousePosition = { x: 0, y: 0 };
+        canvas.addEventListener('mousedown', () => isDragging = true);
+        canvas.addEventListener('mouseup', () => isDragging = false);
+        canvas.addEventListener('mouseout', () => isDragging = false);
+        canvas.addEventListener('mousemove', (e) => {
+            if (isDragging && holdingsChartMesh) {
+                const deltaMove = { x: e.offsetX - previousMousePosition.x, y: e.offsetY - previousMousePosition.y };
+                holdingsChartMesh.rotation.y += deltaMove.x * 0.01;
+                holdingsChartMesh.rotation.x += deltaMove.y * 0.01;
+            }
+            previousMousePosition = { x: e.offsetX, y: e.offsetY };
+        });
+        const animate = () => {
+            requestAnimationFrame(animate);
+            if(holdingsChartMesh && !isDragging) holdingsChartMesh.rotation.y += 0.005;
+            if(holdingsRenderer && holdingsScene && holdingsCamera) holdingsRenderer.render(holdingsScene, holdingsCamera);
+        };
+        animate();
+    }
+    
+    function updateHoldingsChart(data) {
+        if(!holdingsScene) return;
+        if(holdingsChartMesh) { 
+            holdingsScene.remove(holdingsChartMesh); 
+            holdingsChartMesh.children.forEach(c => { 
+                if(c.geometry) c.geometry.dispose(); 
+                if(c.material) c.material.dispose(); 
+            }); 
+        }
+        const chartLabelsContainer = $('#chartLabelsContainer');
+        if (!chartLabelsContainer) return;
+        
+        chartLabelsContainer.innerHTML = '';
+        if (data.length === 0 || data.reduce((a, b) => a + b.value, 0) === 0) { 
+            if(holdingsRenderer) holdingsRenderer.clear(); 
+            return; 
+        }
+
+        const total = data.reduce((sum, val) => sum + val.value, 0);
+        let currentAngle = 0;
+        holdingsChartMesh = new THREE.Group();
+
+        data.forEach(({ value, color, label }) => {
+            const angle = (value / total) * Math.PI * 2;
+            if(angle === 0) return;
+            
+            const geometry = new THREE.TorusGeometry(3.5, 1.2, 20, 100, angle);
+            const material = new THREE.MeshStandardMaterial({ 
+                color: color, 
+                emissive: color, 
+                emissiveIntensity: 0.4, 
+                metalness: 0.8, 
+                roughness: 0.1,
+                transparent: true,
+                opacity: 0.9
+            });
+            const slice = new THREE.Mesh(geometry, material);
+            slice.rotation.z = currentAngle;
+            holdingsChartMesh.add(slice);
+            currentAngle += angle;
+        });
+        holdingsChartMesh.rotation.x = -Math.PI / 4;
+        holdingsScene.add(holdingsChartMesh);
+
+        const labelDiv = document.createElement('div');
+        labelDiv.className = 'chart-labels';
+        labelDiv.innerHTML = data.map(({label, value, color}) => 
+            `<span style="background: rgba(0,0,30,0.7); padding: 4px 8px; border-radius: 4px; border: 1px solid ${color};">
+                <span style="color:${color}">${label}</span> (${((value / total) * 100).toFixed(1)}%)
+            </span>`
+        ).join('');
+        chartLabelsContainer.appendChild(labelDiv);
+    }
+
+    // --- EVENT HANDLERS & BINDING ---
+    function setupEventListeners() {
+        document.body.addEventListener('blur', (e) => {
+            if (e.target.matches('.asset-input, .units-input')) updateAssetValue(e.target.dataset.key, e.target.value);
+            else if (e.target.matches('.holdings-cell')) {
+                const coinId = e.target.dataset.coinId;
+                const newHoldings = parseFloat(e.target.innerText.replace(/,/g, '')) || 0;
+                localStorage.setItem(coinId, newHoldings.toFixed(4));
+                platforms.forEach(p => localStorage.setItem(`${coinId}-${p}`, '0'));
+                loadInitialData();
+                refresh(true);
+            } else if (e.target.matches('#manual-column-header')) localStorage.setItem('manualColumnName', e.target.innerText);
+        }, true);
+        $$('#future-asset-select, #future-price-input, #future-additional-usd').forEach(el => el.addEventListener('input', calculateFutureValue));
+        $('#historySelect').addEventListener("change", (e) => showXRPHistoryPrice(e.target.value));
+        $('#addSnapshotBtn').addEventListener('click', saveManualSnapshot);
+        $('#deleteSnapshotBtn').addEventListener('click', deleteSnapshot);
+        setupModalEvents();
+        initPrinting();
+        initAiAssistant();
+    }
+    
+    function displaySnapshotHistory() {
+        const history = JSON.parse(localStorage.getItem('snapshotHistory')) || [];
+        const list = $('#snapshotHistoryList');
+        list.innerHTML = history.slice().reverse().map((snap, i, arr) => {
+            const date = new Date(snap.date).toLocaleString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+            const prev = arr[i + 1];
+            return `<li>
+                <div class="snapshot-date">${date}</div>
+                <span class="snapshot-total">${formatCurrency(snap.total, 'USD')}</span>
+                ${createChangeHtml(snap.total, prev ? prev.total : null)}
+            </li>`;
+        }).join('');
+    }
+
+    function saveManualSnapshot() {
+        const cryptoUSD = activeCoins.reduce((sum, c) => {
+            const price = priceDataCache[c.id]?.current_price || 0;
+            const holdings = parseFloat(localStorage.getItem(c.id)) || 0;
+            return sum + (holdings * price);
+        }, 0);
+        const { liquidUSD, fixedUSD } = calculateTotalAssetUSD();
+        const totalValue = cryptoUSD + liquidUSD + fixedUSD;
+        if (totalValue === 0) { alert("Cannot save an empty snapshot."); return; }
+        const history = JSON.parse(localStorage.getItem('snapshotHistory')) || [];
+        history.push({ date: new Date().toISOString(), total: totalValue, liquid: liquidUSD, fixed: fixedUSD, crypto: cryptoUSD });
+        localStorage.setItem('snapshotHistory', JSON.stringify(history));
+        displaySnapshotHistory();
+        refresh(true);
+    }
+
+    function deleteSnapshot() {
+        let history = JSON.parse(localStorage.getItem('snapshotHistory')) || [];
+        if (history.length === 0) return alert("There are no snapshots to delete.");
+        let promptText = "Enter the number of the snapshot to delete (e.g., '1' for the most recent):\n\n";
+        history.slice().reverse().forEach((s, i) => { promptText += `${i + 1}: ${new Date(s.date).toLocaleString('en-GB')} - ${formatCurrency(s.total, 'USD')}\n`; });
+        const choice = prompt(promptText);
+        if (choice === null) return;
+        const indexToDelete = parseInt(choice, 10) - 1;
+        if (!isNaN(indexToDelete) && indexToDelete >= 0 && indexToDelete < history.length) {
+            const originalIndex = history.length - 1 - indexToDelete;
+            history.splice(originalIndex, 1);
+            localStorage.setItem('snapshotHistory', JSON.stringify(history));
+            displaySnapshotHistory();
+            refresh(true);
+        } else { alert("Invalid selection."); }
+    }
+    
+    let allCoinsList = [];
+    function getAllCoins() {
+        // This is now a static list as requested
+        allCoinsList = [
+            { id: 'bitcoin', symbol: 'btc', name: 'Bitcoin', image: 'https://assets.coingecko.com/coins/images/1/large/bitcoin.png' },
+            { id: 'ethereum', symbol: 'eth', name: 'Ethereum', image: 'https://assets.coingecko.com/coins/images/279/large/ethereum.png' },
+            { id: 'binancecoin', symbol: 'bnb', name: 'BNB', image: 'https://assets.coingecko.com/coins/images/825/large/bnb-icon2_2x.png' },
+            { id: 'ripple', symbol: 'xrp', name: 'XRP', image: 'https://assets.coingecko.com/coins/images/44/large/xrp-symbol-white-128.png' },
+            { id: 'tether', symbol: 'usdt', name: 'Tether USDt', image: 'https://assets.coingecko.com/coins/images/325/large/Tether.png' },
+            { id: 'solana', symbol: 'sol', name: 'Solana', image: 'https://assets.coingecko.com/coins/images/4128/large/solana.png' },
+            { id: 'usd-coin', symbol: 'usdc', name: 'USDC', image: 'https://assets.coingecko.com/coins/images/6319/large/usdc.png' },
+            { id: 'dogecoin', symbol: 'doge', name: 'Dogecoin', image: 'https://assets.coingecko.com/coins/images/5/large/dogecoin.png' },
+            { id: 'tron', symbol: 'trx', name: 'TRON', image: 'https://assets.coingecko.com/coins/images/1094/large/tron-logo.png' },
+            { id: 'cardano', symbol: 'ada', name: 'Cardano', image: 'https://assets.coingecko.com/coins/images/975/large/cardano.png' },
+            { id: 'chainlink', symbol: 'link', name: 'Chainlink', image: 'https://assets.coingecko.com/coins/images/877/large/chainlink-new-logo.png' },
+            { id: 'ethena-usde', symbol: 'usde', name: 'Ethena USDe', image: 'https://assets.coingecko.com/coins/images/34970/large/usde.png' },
+            { id: 'sui', symbol: 'sui', name: 'Sui', image: 'https://assets.coingecko.com/coins/images/26375/large/sui_asset.jpeg' },
+            { id: 'stellar', symbol: 'xlm', name: 'Stellar', image: 'https://assets.coingecko.com/coins/images/100/large/Stellar_symbol_black_RGB.png' },
+            { id: 'avalanche-2', symbol: 'avax', name: 'Avalanche', image: 'https://assets.coingecko.com/coins/images/12559/large/Avalanche_AVAX_RedWhite.png' },
+            { id: 'bitcoin-cash', symbol: 'bch', name: 'Bitcoin Cash', image: 'https://assets.coingecko.com/coins/images/780/large/bitcoin-cash-circle.png' },
+            { id: 'hedera-hashgraph', symbol: 'hbar', name: 'Hedera', image: 'https://assets.coingecko.com/coins/images/3688/large/hbar.png' },
+            { id: 'litecoin', symbol: 'ltc', name: 'Litecoin', image: 'https://assets.coingecko.com/coins/images/2/large/litecoin.png' },
+            { id: 'unus-sed-leo', symbol: 'leo', name: 'UNUS SED LEO', image: 'https://assets.coingecko.com/coins/images/8418/large/leo-token.png' },
+            { id: 'mantle', symbol: 'mnt', name: 'Mantle', image: 'https://assets.coingecko.com/coins/images/30940/large/mantle.png' },
+            { id: 'shiba-inu', symbol: 'shib', name: 'Shiba Inu', image: 'https://assets.coingecko.com/coins/images/11939/large/shiba.png' },
+            { id: 'cronos', symbol: 'cro', name: 'Cronos', image: 'https://assets.coingecko.com/coins/images/7310/large/cro_token_logo.png' },
+            { id: 'the-open-network', symbol: 'ton', name: 'Toncoin', image: 'https://assets.coingecko.com/coins/images/17980/large/ton_symbol.png' },
+            { id: 'polkadot', symbol: 'dot', name: 'Polkadot', image: 'https://assets.coingecko.com/coins/images/12171/large/polkadot.png' },
+            { id: 'monero', symbol: 'xmr', name: 'Monero', image: 'https://assets.coingecko.com/coins/images/69/large/monero_logo.png' },
+            { id: 'dai', symbol: 'dai', name: 'Dai', image: 'https://assets.coingecko.com/coins/images/9956/large/dai-multi-collateral-mcd.png' },
+            { id: 'uniswap', symbol: 'uni', name: 'Uniswap', image: 'https://assets.coingecko.com/coins/images/12504/large/uni.jpg' },
+            { id: 'world-liberty-financial', symbol: 'wlf', name: 'World Liberty Financial', image: 'https://assets.coingecko.com/coins/images/31834/large/wlf_200x200.png' },
+            { id: 'okb', symbol: 'okb', name: 'OKB', image: 'https://assets.coingecko.com/coins/images/4463/large/okb_token.png' },
+            { id: 'aave', symbol: 'aave', name: 'Aave', image: 'https://assets.coingecko.com/coins/images/12645/large/AAVE.png' },
+            { id: 'ethena', symbol: 'ena', name: 'Ethena', image: 'https://assets.coingecko.com/coins/images/34778/large/ena.jpg' },
+            { id: 'pepe', symbol: 'pepe', name: 'Pepe', image: 'https://assets.coingecko.com/coins/images/29850/large/pepe.jpeg' },
+            { id: 'bitget-token', symbol: 'bgb', name: 'Bitget Token', image: 'https://assets.coingecko.com/coins/images/11610/large/bitget-token-logo.png' },
+            { id: 'aptos', symbol: 'apt', name: 'Aptos', image: 'https://assets.coingecko.com/coins/images/26455/large/aptos_round.png' },
+            { id: 'near', symbol: 'near', name: 'NEAR Protocol', image: 'https://assets.coingecko.com/coins/images/10365/large/near_icon.png' },
+            { id: 'bittensor', symbol: 'tao', name: 'Bittensor', image: 'https://assets.coingecko.com/coins/images/28452/large/TAO.png' },
+            { id: 'astar', symbol: 'astr', name: 'Aster', image: 'https://assets.coingecko.com/coins/images/22617/large/astar.png' },
+            { id: 'ethereum-classic', symbol: 'etc', name: 'Ethereum Classic', image: 'https://assets.coingecko.com/coins/images/453/large/ethereum-classic-logo.png' },
+            { id: 'ondo-finance', symbol: 'ondo', name: 'Ondo', image: 'https://assets.coingecko.com/coins/images/33561/large/Ondo_Symbol_Bright.png' },
+            { id: 'worldcoin-wld', symbol: 'wld', name: 'Worldcoin', image: 'https://assets.coingecko.com/coins/images/31069/large/worldcoin.jpeg' },
+            { id: 'matic-network', symbol: 'polygon', name: 'Polygon', image: 'https://assets.coingecko.com/coins/images/4713/large/matic-token-icon.png' },
+            { id: 'paypal-usd', symbol: 'pyusd', name: 'PayPal USD', image: 'https://assets.coingecko.com/coins/images/31514/large/PYUSD_200x200.png' },
+            { id: 'internet-computer', symbol: 'icp', name: 'Internet Computer', image: 'https://assets.coingecko.com/coins/images/14495/large/Internet_Computer_logo.png' },
+            { id: 'arbitrum', symbol: 'arb', name: 'Arbitrum', image: 'https://assets.coingecko.com/coins/images/16547/large/photo_2023-03-23_01.40.18.jpeg' },
+            { id: 'zcash', symbol: 'zec', name: 'Zcash', image: 'https://assets.coingecko.com/coins/images/486/large/circle-zcash-color.png' },
+            { id: 'kucoin-shares', symbol: 'kcs', name: 'KuCoin Token', image: 'https://assets.coingecko.com/coins/images/1047/large/sa9z79.png' },
+            { id: 'kaspa', symbol: 'kas', name: 'Kaspa', image: 'https://assets.coingecko.com/coins/images/25751/large/kaspa-icon-200.png' },
+            { id: 'pudgy-penguins', symbol: 'pudgy', name: 'Pudgy Penguins', image: 'https://assets.coingecko.com/coins/images/31652/large/pudgy.jpg' },
+            { id: 'vechain', symbol: 'vet', name: 'VeChain', image: 'https://assets.coingecko.com/coins/images/1167/large/VeChain-Logo-768x725.png' },
+            { id: 'algorand', symbol: 'algo', name: 'Algorand', image: 'https://assets.coingecko.com/coins/images/4380/large/download.png' },
+            { id: 'cosmos', symbol: 'atom', name: 'Cosmos', image: 'https://assets.coingecko.com/coins/images/1481/large/cosmos_hub.png' },
+            { id: 'sei-network', symbol: 'sei', name: 'Sei', image: 'https://assets.coingecko.com/coins/images/28205/large/sei-logo-2.png' },
+            { id: 'flare-networks', symbol: 'flr', name: 'Flare', image: 'https://assets.coingecko.com/coins/images/28623/large/FLR-icon200x200.png' },
+            { id: 'render-token', symbol: 'rndr', name: 'Render', image: 'https://assets.coingecko.com/coins/images/11636/large/rndr.png' },
+            { id: 'plasma-finance', symbol: 'ppay', name: 'Plasma', image: 'https://assets.coingecko.com/coins/images/12719/large/PlasmaPay_Logo.png' },
+            { id: 'bonk', symbol: 'bonk', name: 'Bonk', image: 'https://assets.coingecko.com/coins/images/28600/large/bonk.jpg' },
+            { id: 'filecoin', symbol: 'fil', name: 'Filecoin', image: 'https://assets.coingecko.com/coins/images/12817/large/filecoin.png' },
+            { id: 'jupiter-project', symbol: 'jup', name: 'Jupiter', image: 'https://assets.coingecko.com/coins/images/34213/large/jup.png' },
+            { id: 'immutable-x', symbol: 'imx', name: 'Immutable', image: 'https://assets.coingecko.com/coins/images/17233/large/imx.png' },
+            { id: 'gatechain-token', symbol: 'gt', name: 'GateToken', image: 'https://assets.coingecko.com/coins/images/8183/large/gt.png' },
+            { id: 'pancakeswap-token', symbol: 'cake', name: 'PancakeSwap', image: 'https://assets.coingecko.com/coins/images/12632/large/pancakeswap-cake-logo.png' },
+            { id: 'fetch-ai', symbol: 'fet', name: 'Artificial Superintelligence Alliance', image: 'https://assets.coingecko.com/coins/images/5681/large/Fetch.jpg' },
+            { id: 'xdce-token', symbol: 'xdc', name: 'XDC Network', image: 'https://assets.coingecko.com/coins/images/2912/large/xdc-icon.png' },
+            { id: 'optimism', symbol: 'op', name: 'Optimism', image: 'https://assets.coingecko.com/coins/images/25244/large/Optimism.png' },
+            { id: 'injective-protocol', symbol: 'inj', name: 'Injective', image: 'https://assets.coingecko.com/coins/images/12882/large/Secondary_Symbol.png' },
+            { id: 'quant-network', symbol: 'qnt', name: 'Quant', image: 'https://assets.coingecko.com/coins/images/3370/large/5ZOu7brX_400x400.jpg' },
+            { id: 'celestia', symbol: 'tia', name: 'Celestia', image: 'https://assets.coingecko.com/coins/images/32727/large/TIA.png' },
+            { id: 'pax-gold', symbol: 'paxg', name: 'PAX Gold', image: 'https://assets.coingecko.com/coins/images/9519/large/paxgold.png' },
+            { id: 'blockstack', symbol: 'stx', name: 'Stacks', image: 'https://assets.coingecko.com/coins/images/2069/large/stacks_logo.png' },
+            { id: 'lido-dao', symbol: 'ldo', name: 'Lido DAO', image: 'https://assets.coingecko.com/coins/images/13573/large/Lido_DAO.png' },
+            { id: 'first-digital-usd', symbol: 'fdusd', name: 'First Digital USD', image: 'https://assets.coingecko.com/coins/images/31037/large/logomark-color.png' },
+            { id: 'curve-dao-token', symbol: 'crv', name: 'Curve DAO Token', image: 'https://assets.coingecko.com/coins/images/12124/large/Curve.png' },
+            { id: 'dexe', symbol: 'dexe', name: 'DeXe', image: 'https://assets.coingecko.com/coins/images/12693/large/dexe.png' },
+            { id: 'aerodrome-finance', symbol: 'aero', name: 'Aerodrome Finance', image: 'https://assets.coingecko.com/coins/images/31545/large/aerodrome.jpg' },
+            { id: 'floki', symbol: 'floki', name: 'FLOKI', image: 'https://assets.coingecko.com/coins/images/16746/large/floki-inu.png' },
+            { id: 'tether-gold', symbol: 'xaut', name: 'Tether Gold', image: 'https://assets.coingecko.com/coins/images/10481/large/tether-gold.png' },
+            { id: 'pyth-network', symbol: 'pyth', name: 'Pyth Network', image: 'https://assets.coingecko.com/coins/images/32822/large/pyth.png' },
+            { id: 'ether-fi', symbol: 'ethfi', name: 'ether.fi', image: 'https://assets.coingecko.com/coins/images/34932/large/etherfi.png' },
+            { id: 'klay-token', symbol: 'kaia', name: 'Kaia', image: 'https://assets.coingecko.com/coins/images/9676/large/klaytn.png' },
+            { id: 'the-graph', symbol: 'grt', name: 'The Graph', image: 'https://assets.coingecko.com/coins/images/13397/large/Graph_Token.png' },
+            { id: 'pendle', symbol: 'pendle', name: 'Pendle', image: 'https://assets.coingecko.com/coins/images/15178/large/pendle.png' },
+            { id: 'nexo', symbol: 'nexo', name: 'Nexo', image: 'https://assets.coingecko.com/coins/images/3695/large/nexo.png' },
+            { id: 'ethereum-name-service', symbol: 'ens', name: 'Ethereum Name Service', image: 'https://assets.coingecko.com/coins/images/19785/large/acatxTm8_400x400.jpg' },
+            { id: 'raydium', symbol: 'ray', name: 'Raydium', image: 'https://assets.coingecko.com/coins/images/13928/large/PSigc4ie_400x400.jpg' },
+            { id: 'dogwifcoin', symbol: 'wif', name: 'dogwifhat', image: 'https://assets.coingecko.com/coins/images/33566/large/dogwifhat.jpg' },
+            { id: 'iota', symbol: 'iota', name: 'IOTA', image: 'https://assets.coingecko.com/coins/images/692/large/IOTA_Swirl.png' },
+            { id: 'eigenlayer', symbol: 'egn', name: 'EigenLayer', image: 'https://assets.coingecko.com/coins/images/35824/large/EigenLayer_logo_200x200.png' },
+            { id: 'theta-token', symbol: 'theta', name: 'Theta Network', image: 'https://assets.coingecko.com/coins/images/2538/large/theta-token-logo.png' },
+            { id: 'conflux-token', symbol: 'cfx', name: 'Conflux', image: 'https://assets.coingecko.com/coins/images/13079/large/3_20221017110415.png' },
+            { id: 'starknet', symbol: 'strk', name: 'Starknet', image: 'https://assets.coingecko.com/coins/images/31411/large/Starknet.png' },
+            { id: 'virtual-protocol', symbol: 'virtual', name: 'Virtuals Protocol', image: 'https://assets.coingecko.com/coins/images/32281/large/VIRTUAL.png' },
+            { id: 'gala', symbol: 'gala', name: 'Gala', image: 'https://assets.coingecko.com/coins/images/12493/large/GALA-COINGECKO.png' },
+            { id: 'tezos', symbol: 'xtz', name: 'Tezos', image: 'https://assets.coingecko.com/coins/images/976/large/Tezos-logo.png' },
+            { id: 'the-sandbox', symbol: 'sand', name: 'The Sandbox', image: 'https://assets.coingecko.com/coins/images/12129/large/sandbox_logo.jpg' },
+            { id: 'trust-wallet-token', symbol: 'twt', name: 'Trust Wallet Token', image: 'https://assets.coingecko.com/coins/images/11085/large/Trust.png' },
+            { id: 'aethir', symbol: 'ath', name: 'Aethir', image: 'https://assets.coingecko.com/coins/images/36254/large/aethir_logo_200x200.png' },
+            { id: 'decentraland', symbol: 'mana', name: 'Decentraland', image: 'https://assets.coingecko.com/coins/images/878/large/decentraland-mana.png' },
+            { id: 'jasmycoin', symbol: 'jasmy', name: 'JasmyCoin', image: 'https://assets.coingecko.com/coins/images/13876/large/JASMY-logo.jpg' },
+            { id: 'morpho', symbol: 'morpho', name: 'Morpho', image: 'https://assets.coingecko.com/coins/images/34336/large/morpho.jpeg' },
+            { id: 'jito-governance-token', symbol: 'jto', name: 'Jito', image: 'https://assets.coingecko.com/coins/images/33221/large/jto.png' },
+            { id: '0g', symbol: '0g', name: '0G', image: 'https://assets.coingecko.com/coins/images/36262/large/0G_Labs.jpg' },
+            { id: 'layerzero', symbol: 'zro', name: 'LayerZero', image: 'https://assets.coingecko.com/coins/images/36429/large/layerzero.jpeg' },
+            { id: 'wormhole', symbol: 'w', name: 'Wormhole', image: 'https://assets.coingecko.com/coins/images/34903/large/wormhole_logo_full_color_rgb_2000px_72dpi.png' },
+            { id: 'flow', symbol: 'flow', name: 'Flow', image: 'https://assets.coingecko.com/coins/images/13446/large/5f6294c0c7a8cda55cb1c936_Flow_Wordmark.png' },
+            { id: 'bittorrent', symbol: 'btt', name: 'BitTorrent [New]', image: 'https://assets.coingecko.com/coins/images/22457/large/btt_logo.png' },
+            { id: 'bitcoin-sv', symbol: 'bsv', name: 'Bitcoin SV', image: 'https://assets.coingecko.com/coins/images/6799/large/BSV.png' },
+            { id: 'true-usd', symbol: 'tusd', name: 'TrueUSD', image: 'https://assets.coingecko.com/coins/images/3449/large/TUSD.png' },
+            { id: 'sun-token', symbol: 'sun', name: 'Sun [New]', image: 'https://assets.coingecko.com/coins/images/12421/large/sun-logo.png' },
+            { id: 'maple', symbol: 'mpl', name: 'Maple Finance', image: 'https://assets.coingecko.com/coins/images/15454/large/MPL-200x200.png' },
+            { id: 'dydx', symbol: 'dydx', name: 'dYdX', image: 'https://assets.coingecko.com/coins/images/17500/large/hjnIm9bV.jpg' },
+            { id: 'xai', symbol: 'xai', name: 'Xai', image: 'https://assets.coingecko.com/coins/images/33947/large/XAI_Dark_Logo_200x200.png' },
+            { id: 'eigenpie', symbol: 'egp', name: 'EigenPie', image: 'https://assets.coingecko.com/coins/images/36423/large/eigenpie.png' },
+            { id: 'zetachain', symbol: 'zeta', name: 'ZetaChain', image: 'https://assets.coingecko.com/coins/images/31940/large/zetachain_logo_200x200.png' },
+            { id: 'gmx', symbol: 'gmx', name: 'GMX', image: 'https://assets.coingecko.com/coins/images/18323/large/GMX-Launch-Avatar-2-1-200x200.png' },
+            { id: 'ethfi', symbol: 'ethfi', name: 'ETHFI', image: 'https://assets.coingecko.com/coins/images/34932/large/etherfi.png' },
+            { id: 'metis-token', symbol: 'metis', name: 'Metis', image: 'https://assets.coingecko.com/coins/images/15564/large/metis-token-logo.png' },
+            { id: 'ethena-staked-usde', symbol: 'susde', name: 'Ethena Staked USDe', image: 'https://assets.coingecko.com/coins/images/36284/large/susde.jpeg' },
+            { id: 'fasttoken', symbol: 'ftn', name: 'Fasttoken', image: 'https://assets.coingecko.com/coins/images/28359/large/fasttoken_logo_200x200.png' },
+            { id: 'kyber-network-crystal', symbol: 'knc', name: 'Kyber Network Crystal v2', image: 'https://assets.coingecko.com/coins/images/94/large/kyber-network-crystal-v2-logo.png' },
+            { id: 'wrapped-eeth', symbol: 'weeth', name: 'Wrapped eETH', image: 'https://assets.coingecko.com/coins/images/34934/large/weETH_logo_200x200.png' },
+            { id: 'rlc', symbol: 'rlc', name: 'iExec RLC', image: 'https://assets.coingecko.com/coins/images/805/large/RLC-Logo.png' },
+            { id: 'degen-base', symbol: 'degen', name: 'Degen', image: 'https://assets.coingecko.com/coins/images/34537/large/degen.jpeg' },
+            { id: 'popcat-solana', symbol: 'popcat', name: 'Popcat', image: 'https://assets.coingecko.com/coins/images/33788/large/popcat.jpg' },
+            { id: 'notcoin', symbol: 'not', name: 'Notcoin', image: 'https://assets.coingecko.com/coins/images/35921/large/notcoin_logo_200x200.png' },
+            { id: 'nervos-network', symbol: 'ckb', name: 'Nervos Network', image: 'https://assets.coingecko.com/coins/images/9566/large/Nervos_White.png' },
+            { id: 'core-dao', symbol: 'core', name: 'Core', image: 'https://assets.coingecko.com/coins/images/28114/large/coredao.png' },
+            { id: 'singularitynet', symbol: 'agix', name: 'SingularityNET', image: 'https://assets.coingecko.com/coins/images/2138/large/singularitynet.png' },
+            { id: 'holotoken', symbol: 'hot', name: 'Holo', image: 'https://assets.coingecko.com/coins/images/3348/large/Holologo_Profile.png' },
+            { id: 'arkham', symbol: 'arkm', name: 'Arkham', image: 'https://assets.coingecko.com/coins/images/30932/large/arkham.jpg' },
+            { id: 'ronin', symbol: 'ron', name: 'Ronin', image: 'https://assets.coingecko.com/coins/images/21575/large/ronin.jpg' },
+            { id: 'helium', symbol: 'hnt', name: 'Helium', image: 'https://assets.coingecko.com/coins/images/4284/large/Helium_HNT.png' },
+            { id: 'hashflow', symbol: 'hft', name: 'Hashflow', image: 'https://assets.coingecko.com/coins/images/21914/large/hft.png' },
+            { id: 'origintrail', symbol: 'trac', name: 'OriginTrail', image: 'https://assets.coingecko.com/coins/images/1544/large/OriginTrail-Logo.png' },
+            { id: 'stader', symbol: 'sd', name: 'Stader', image: 'https://assets.coingecko.com/coins/images/22378/large/stader.png' },
+            { id: 'sushi', symbol: 'sushi', name: 'SushiSwap', image: 'https://assets.coingecko.com/coins/images/12271/large/sushi-circle-filled-128x128.png' },
+            { id: 'playdapp', symbol: 'pda', name: 'PlayDapp', image: 'https://assets.coingecko.com/coins/images/12693/large/dexe.png' },
+            { id: 'tellor', symbol: 'trb', name: 'Tellor Tributes', image: 'https://assets.coingecko.com/coins/images/9655/large/tellor-tributes-logo.png' },
+            { id: 'omg-network', symbol: 'omg', name: 'OMG Network', image: 'https://assets.coingecko.com/coins/images/776/large/OMG_Network.jpg' },
+            { id: 'axelar', symbol: 'axl', name: 'Axelar', image: 'https://assets.coingecko.com/coins/images/23363/large/axelar.png' },
+            { id: 'cartesi', symbol: 'ctsi', name: 'Cartesi', image: 'https://assets.coingecko.com/coins/images/11033/large/cartesi.png' },
+            { id: 'axie-infinity', symbol: 'axs', name: 'Axie Infinity', image: 'https://assets.coingecko.com/coins/images/13029/large/axie_infinity_logo.png' },
+            { id: 'band-protocol', symbol: 'band', name: 'Band Protocol', image: 'https://assets.coingecko.com/coins/images/9545/large/band-protocol.png' },
+            { id: 'gitcoin', symbol: 'gtc', name: 'Gitcoin', image: 'https://assets.coingecko.com/coins/images/15720/large/gitcoin.png' },
+            { id: 'space-id', symbol: 'id', name: 'Space ID', image: 'https://assets.coingecko.com/coins/images/29329/large/spaceid.png' },
+            { id: 'alchemy-pay', symbol: 'ach', name: 'Alchemy Pay', image: 'https://assets.coingecko.com/coins/images/11252/large/Alchemy_Pay_Logo.png' },
+            { id: 'ark', symbol: 'ark', name: 'Ark', image: 'https://assets.coingecko.com/coins/images/14/large/ark-logo-sq-R.png' },
+            { id: 'woo-network', symbol: 'woo', name: 'WOO Network', image: 'https://assets.coingecko.com/coins/images/12939/large/woonetwork.jpg' },
+            { id: 'magic', symbol: 'magic', name: 'Magic', image: 'https://assets.coingecko.com/coins/images/18621/large/magic.png' },
+            { id: 'dodo', symbol: 'dodo', name: 'DODO', image: 'https://assets.coingecko.com/coins/images/12557/large/DODO.png' },
+            { id: 'euler', symbol: 'eul', name: 'Euler', image: 'https://assets.coingecko.com/coins/images/26207/large/200_200.png' },
+            { id: 'bad-idea-ai', symbol: 'bad', name: 'Bad Idea AI', image: 'https://assets.coingecko.com/coins/images/30349/large/bad-idea-ai.jpg' },
+            { id: 'celer-network', symbol: 'celr', name: 'Celer Network', image: 'https://assets.coingecko.com/coins/images/4379/large/Celr.png' },
+            { id: 'vethor-token', symbol: 'vtho', name: 'VeThor Token', image: 'https://assets.coingecko.com/coins/images/2399/large/VTHO.png' },
+            { id: 'orbs', symbol: 'orbs', name: 'Orbs', image: 'https://assets.coingecko.com/coins/images/4287/large/Orbs-Transparent-300x300.png' },
+            { id: 'pirate-chain', symbol: 'arrr', name: 'Pirate Chain', image: 'https://assets.coingecko.com/coins/images/5082/large/imO2TfV.png' },
+            { id: 'nym', symbol: 'nym', name: 'Nym', image: 'https://assets.coingecko.com/coins/images/24813/large/nym_logo.png' },
+            { id: 'verasity', symbol: 'vra', name: 'Verasity', image: 'https://assets.coingecko.com/coins/images/4915/large/Verasity_icon_200x200.png' },
+            { id: 'metaplex', symbol: 'mplx', name: 'Metaplex', image: 'https://assets.coingecko.com/coins/images/27042/large/metaplex.png' },
+            { id: 'coti', symbol: 'coti', name: 'COTI', image: 'https://assets.coingecko.com/coins/images/5632/large/coti.png' },
+            { id: 'merit-circle', symbol: 'mc', name: 'Merit Circle', image: 'https://assets.coingecko.com/coins/images/19914/large/merit-circle.png' },
+            { id: 'dent', symbol: 'dent', name: 'Dent', image: 'https://assets.coingecko.com/coins/images/853/large/dent-logo.png' },
+            { id: 'loom-network-new', symbol: 'loom', name: 'Loom Network', image: 'https://assets.coingecko.com/coins/images/2200/large/loom_new_logo.png' },
+            { id: 'iq-wiki', symbol: 'iq', name: 'IQ', image: 'https://assets.coingecko.com/coins/images/1693/large/iq-logo.png' },
+            { id: 'everscale', symbol: 'ever', name: 'Everscale', image: 'https://assets.coingecko.com/coins/images/13017/large/everscale-logo.png' },
+            { id: 'civic', symbol: 'cvc', name: 'Civic', image: 'https://assets.coingecko.com/coins/images/846/large/civic-logo.png' },
+            { id: 'strike', symbol: 'strk', name: 'Strike', image: 'https://assets.coingecko.com/coins/images/12836/large/strike-governance-token_200x200.png' },
+            { id: 'aioz-network', symbol: 'aioz', name: 'AIOZ Network', image: 'https://assets.coingecko.com/coins/images/14518/large/AIOZ_Logo_200x200.png' },
+            { id: 'ankr', symbol: 'ankr', name: 'Ankr', image: 'https://assets.coingecko.com/coins/images/4324/large/ankr-white-200x200.png' },
+            { id: 'request-network', symbol: 'req', name: 'Request', image: 'https://assets.coingecko.com/coins/images/1110/large/Request_Logo_-_Blue_badge.png' },
+            { id: 'velodrome-finance', symbol: 'velo', name: 'Velodrome Finance', image: 'https://assets.coingecko.com/coins/images/25615/large/velodrome.png' },
+            { id: 'origin-protocol', symbol: 'ogn', name: 'Origin Protocol', image: 'https://assets.coingecko.com/coins/images/1601/large/origin-protocol-logo.png' },
+            { id: 'aleph-zero', symbol: 'azero', name: 'Aleph Zero', image: 'https://assets.coingecko.com/coins/images/21996/large/aleph-zero-logo-new-light.png' },
+            { id: 'clore-ai', symbol: 'clore', name: 'Clore.ai', image: 'https://assets.coingecko.com/coins/images/28399/large/clore.png' },
+            { id: 'aergo', symbol: 'aergo', name: 'Aergo', image: 'https://assets.coingecko.com/coins/images/6817/large/aergo_logo_200x200.png' },
+            { id: 'liquity', symbol: 'lqty', name: 'Liquity', image: 'https://assets.coingecko.com/coins/images/14711/large/liquity-logo.png' },
+            { id: 'arpa', symbol: 'arpa', name: 'ARPA', image: 'https://assets.coingecko.com/coins/images/8643/large/arpa_logo_200x200.png' },
+            { id: 'bluzelle', symbol: 'blz', name: 'Bluzelle', image: 'https://assets.coingecko.com/coins/images/2330/large/Bluzelle-logo-blue-singapore-B.png' },
+            { id: 'moonbeam', symbol: 'glmr', name: 'Moonbeam', image: 'https://assets.coingecko.com/coins/images/22459/large/glmr.png' },
+            { id: 'manta-network', symbol: 'manta', name: 'Manta Network', image: 'https://assets.coingecko.com/coins/images/33719/large/manta-network.png' },
+            { id: 'shiden-network', symbol: 'sdn', name: 'Shiden Network', image: 'https://assets.coingecko.com/coins/images/17616/large/shiden_round.png' },
+            { id: 'sologenic', symbol: 'solo', name: 'Sologenic', image: 'https://assets.coingecko.com/coins/images/10214/large/sologenic_logo_200.png' },
+            { id: 'radiant-capital', symbol: 'rdnt', name: 'Radiant Capital', image: 'https://assets.coingecko.com/coins/images/26659/large/radiant_capital.jpg' }
+        ];
+    }
+    
+    function populateCoinSelector(filter = '') {
+        const list = $('#coin-selector-list');
+        const lowerFilter = filter.toLowerCase();
+        const filtered = allCoinsList.filter(c => c.name.toLowerCase().includes(lowerFilter) || c.symbol.toLowerCase().includes(lowerFilter));
+        list.innerHTML = filtered.map(coin => {
+            const isChecked = activeCoins.some(ac => ac.id === coin.id);
+            return `<label><input type="checkbox" value="${coin.id}" ${isChecked ? 'checked' : ''}><img src="${coin.image || ''}" alt=""><span>${coin.name} (${coin.symbol.toUpperCase()})</span></label>`;
+        }).join('');
+    }
+
+    function calculateFutureValue() {
+        const assetId = $('#future-asset-select').value;
+        if (!assetId) return;
+        const currentUnits = parseFloat(localStorage.getItem(assetId)) || 0;
+        const futurePrice = parseFloat($('#future-price-input').value) || 0;
+        const additionalUsd = parseFloat($('#future-additional-usd').value) || 0;
+        $('#future-current-units').textContent = currentUnits.toLocaleString('en-US', { maximumFractionDigits: 4 });
+        const totalValue = (currentUnits * futurePrice) + additionalUsd;
+        $('#future-calculated-value').textContent = formatCurrency(totalValue, 'USD');
+    }
+    
+    function showXRPHistoryPrice(dateValue) {
+      const entry = monthlyXRPData.find(e => e.value === dateValue);
+      const tbody = $("#historyTable tbody");
+      if (entry) {
+        tbody.innerHTML = `<tr><td>${new Date(entry.value).toLocaleDateString('en-GB')}</td><td>$${entry.price}</td></tr>`;
+      }
+    }
+    
+    function initAvatar() {
+        const avatarDisplay = $('#avatar'), avatarModal = $('#newAvatarModal'), avatarBox = $('#avatarBox');
+        const placeholder = $('#placeholder'), fileInput = $('#fileInput'), clearButton = $('#clearButton');
+        let db;
+        const setupDB = () => new Promise((res, rej) => {
+            const req = indexedDB.open('avatarDB', 1);
+            req.onupgradeneeded = e => e.target.result.createObjectStore('avatarStore');
+            req.onsuccess = e => { db = e.target.result; res(); };
+            req.onerror = e => rej("IndexedDB error: " + e.target.errorCode);
+        });
+        const dbAction = (type, action) => new Promise(async (res, rej) => {
+            if (!db) await setupDB();
+            const tx = db.transaction(['avatarStore'], type);
+            const req = action(tx.objectStore('avatarStore'));
+            req.onsuccess = () => res(req.result);
+            req.onerror = (e) => rej(`DB action failed: ${e.target.error}`);
+        });
+        const displayAvatar = (imageSrc) => {
+            placeholder.style.display = 'none'; avatarBox.innerHTML = `<img src="${imageSrc}" class="avatar-image">`;
+            avatarBox.classList.add('has-image'); clearButton.style.display = 'inline-block';
+            avatarDisplay.style.backgroundImage = `url(${imageSrc})`; avatarDisplay.classList.remove('empty');
+        };
+        const clearAvatar = () => {
+            avatarDisplay.style.backgroundImage = 'none'; avatarDisplay.classList.add('empty');
+            avatarBox.classList.remove('has-image'); avatarBox.innerHTML = ''; avatarBox.appendChild(placeholder);
+            placeholder.style.display = 'block'; clearButton.style.display = 'none'; fileInput.value = '';
+        };
+        const loadAvatar = async () => {
+            const dbImage = await dbAction('readonly', store => store.get('userAvatar')).catch(() => null);
+            if (dbImage) displayAvatar(URL.createObjectURL(dbImage));
+        };
+        fileInput.addEventListener('change', async e => {
+            const file = e.target.files[0];
+            if (file) {
+                await dbAction('readwrite', store => store.put(file, 'userAvatar'));
+                displayAvatar(URL.createObjectURL(file));
+                avatarModal.style.display = 'none';
+            }
+        });
+        clearButton.onclick = async () => { await dbAction('readwrite', store => store.delete('userAvatar')); clearAvatar(); };
+        setupDB().then(loadAvatar);
+    }
+    
+    function setupModalEvents() {
+        $$('.modal').forEach(modal => {
+            modal.addEventListener('click', (e) => { if (e.target === modal || e.target.classList.contains('close-modal')) modal.style.display = 'none'; });
+        });
+        $('#avatar').addEventListener('click', () => $('#newAvatarModal').style.display = 'block');
+        $('#manageCoinsBtn').addEventListener('click', async () => {
+            $('#coinSelectorModal').style.display = 'block';
+            getAllCoins();
+            populateCoinSelector($('#coinSearchInput').value.toLowerCase());
+        });
+        $('#coinSearchInput').addEventListener('input', (e) => populateCoinSelector(e.target.value.toLowerCase()));
+        $('#saveCoinsBtn').addEventListener('click', () => {
+            const selectedIDs = Array.from($$('#coin-selector-list input:checked')).map(cb => cb.value);
+            activeCoins = allCoinsList.filter(coin => selectedIDs.includes(coin.id));
+            localStorage.setItem('activeCoinIDs_cg_v2', JSON.stringify(selectedIDs)); // Use new key
+            
+            $('#coinSelectorModal').style.display = 'none';
+            buildCryptoAssetsTable();
+            loadInitialData();
+            populateFutureAssetDropdown();
+            refresh(true);
+        });
+    }
+
+    function initPrinting() {
+        const printBtn = $('#printReportBtn'), printModal = $('#printModal'), optionsList = $('#print-options-list'), confirmBtn = $('#confirmPrintBtn');
+        const sections = [
+            { id: 'greetingBlock', name: 'Portfolio Snapshot' }, { id: 'snapshotHistoryBlock', name: 'History' },
+            { id: 'exchangeRatesBody', name: 'Exchange Rates' }, { id: 'cryptoTable', name: 'Crypto Prices' },
+            { id: 'holdingsChartBlock', name: 'Holdings Chart' }, { id: 'liquidAssetsBlock', name: 'Liquid Assets' },
+            { id: 'fixedAssetsBlock', name: 'Fixed Assets' }, { id: 'cryptoAssetsBlock', name: 'Crypto Assets' },
+            { id: 'goldTable', name: 'Gold Converter' }, { id: 'convertResult', name: 'Currency Converter' },
+            { id: 'newsBlock', name: 'Crypto News' }
+        ];
+        optionsList.innerHTML = sections.map(s => `<li><label><input type="checkbox" data-id="${s.id}" checked> ${s.name}</label></li>`).join('');
+        printBtn.onclick = () => printModal.style.display = 'block';
+        confirmBtn.onclick = () => {
+            $$('#print-options-list input').forEach(cb => { 
+                const element = $(`#${cb.dataset.id}`);
+                const parentPanel = element.closest('section, .panel, .full-panel') || element;
+                parentPanel.classList.toggle('no-print', !cb.checked);
+            });
+            printModal.style.display = 'none';
+            window.print();
+        };
+    }
+    
+    function populateFutureAssetDropdown() {
+        $('#future-asset-select').innerHTML = activeCoins.map(c => `<option value="${c.id}">${c.symbol.toUpperCase()}</option>`).join('');
+        calculateFutureValue();
+    }
+    
+    function initDynamicBackground() {
+        const particles = $('#particles');
+        if(particles) for (let i = 0; i < 50; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            p.style.left = `${Math.random()*100}%`;
+            p.style.animationDelay = `${Math.random()*10}s`;
+            p.style.animationDuration = `${Math.random()*10+10}s`;
+            particles.appendChild(p);
+        }
+        const streams = $('#dataStreams');
+        if(streams) {
+            const data = ['BTC: 47250.00', 'ETH: 2840.50', 'FUTURES', 'OPTIONS', 'SWAP'];
+            for (let i = 0; i < 8; i++) {
+                const s = document.createElement('div');
+                s.className = 'stream';
+                s.textContent = data[Math.floor(Math.random()*data.length)];
+                s.style.top = `${Math.random()*80+10}%`;
+                s.style.animationDelay = `${Math.random()*15}s`;
+                s.style.animationDuration = `${Math.random()*10+15}s`;
+                streams.appendChild(s);
+            }
+        }
+        const symbols = $('#cryptoSymbols');
+        if(symbols) {
+            const syms = ['₿', 'Ξ', '◊', '⟠', '◈', '◉', '⬢', '⬡']; 
+            for (let i = 0; i < 15; i++) {
+                const s = document.createElement('div');
+                s.className = 'symbol';
+                s.textContent = syms[Math.floor(Math.random()*syms.length)];
+                s.style.left = `${Math.random()*100}%`;
+                s.style.top = `${Math.random()*100}%`;
+                s.style.animationDelay = `${Math.random()*8}s`;
+                symbols.appendChild(s);
+            }
+        }
+        const updateTicker = () => {
+            const ticker = $('#tickerContent');
+            if(!ticker || Object.keys(priceDataCache).length === 0) return;
+            const items = activeCoins.slice(0, 8).map(coin => {
+                const data = priceDataCache[coin.id] || {};
+                const change = data.price_change_percentage_24h || 0;
+                return `<div class="ticker-item">${coin.symbol.toUpperCase()}/USD <span class="${change >= 0 ? 'price-up' : 'price-down'}">${(data.current_price || 0).toFixed(2)} ${change >= 0 ? '↗' : '↘'} ${change.toFixed(2)}%</span></div>`;
+            }).join('');
+            ticker.innerHTML = items + items; // Duplicate for seamless scroll
+        }
+        setInterval(updateTicker, 60000);
+        updateTicker();
+    }
+    
+    function playGreeting() {
+        if (sessionStorage.getItem('greeted')) return;
+        try {
+            const baseGreeting = "Good day. Welcome back to the crypto realm! Let's analyze your stats and see what financial position you're in today.";
+            const utterance = new SpeechSynthesisUtterance(baseGreeting);
+            const speak = () => {
+                const voices = window.speechSynthesis.getVoices();
+                utterance.voice = voices.find(v => v.lang === 'en-US' && v.name.includes('Female')) || voices.find(v => v.lang === 'en-US');
+                utterance.rate = 0.9;
+                utterance.pitch = 1.1;
+                window.speechSynthesis.speak(utterance);
+                sessionStorage.setItem('greeted', 'true');
+            };
+            speechSynthesis.getVoices().length ? speak() : (speechSynthesis.onvoiceschanged = speak);
+        } catch (e) {
+            handleError("Speech synthesis failed", e);
+        }
+    }
+
+    function initAiAssistant() {
+        const modal = $('#aiAssistantModal');
+        const apiKeyContainer = $('#api-key-container');
+        const aiInputContainer = $('#ai-input-container');
+        const saveApiKeyBtn = $('#save-api-key-btn');
+        const apiKeyInput = $('#api-key-input');
+        const sendBtn = $('#send-ai-btn');
+        const aiInput = $('#ai-input');
+        const chatLog = $('#chat-log');
+        let genAI;
+
+        const checkApiKey = () => {
+            const apiKey = localStorage.getItem('googleAiApiKey');
+            if (apiKey) {
+                genAI = new GoogleGenerativeAI(apiKey);
+                apiKeyContainer.style.display = 'none';
+                aiInputContainer.style.display = 'flex';
+            } else {
+                apiKeyContainer.style.display = 'block';
+                aiInputContainer.style.display = 'none';
+            }
+        };
+
+        saveApiKeyBtn.addEventListener('click', () => {
+            const key = apiKeyInput.value.trim();
+            if (key) {
+                localStorage.setItem('googleAiApiKey', key);
+                checkApiKey();
+            } else {
+                alert('Please enter a valid API key.');
+            }
+        });
+        
+        $('#aiAssistantBtn').addEventListener('click', () => {
+            modal.style.display = 'block';
+            checkApiKey();
+        });
+
+        const sendMessage = async () => {
+            const message = aiInput.value.trim();
+            if (!message || !genAI) return;
+            
+            appendMessage(message, 'user');
+            aiInput.value = '';
+            
+            try {
+                const model = genAI.getGenerativeModel({ model: "gemini-pro"});
+                const result = await model.generateContent(message);
+                const response = await result.response;
+                const text = response.text();
+                appendMessage(text, 'ai');
+            } catch (error) {
+                console.error("AI Error:", error);
+                appendMessage("Sorry, I encountered an error. Please check your API key and network connection.", 'ai');
+            }
+        };
+
+        const appendMessage = (text, sender) => {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `chat-message ${sender}-message`;
+            messageDiv.textContent = text;
+            chatLog.appendChild(messageDiv);
+            chatLog.scrollTop = chatLog.scrollHeight;
+        };
+
+        sendBtn.addEventListener('click', sendMessage);
+        aiInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+    }
+
+    // --- NEW MODULE LOGIC ---
+    function initNewModules() {
+        const newModule = {
+            transactions: [],
+            fxRates: null,
+            goldPriceUSD: 2400,
+            currencies: [
+                {code: 'USD', flag: 'us', name: 'US Dollar'}, {code: 'EUR', flag: 'eu', name: 'Euro'},
+                {code: 'JPY', flag: 'jp', name: 'Japanese Yen'}, {code: 'GBP', flag: 'gb', name: 'British Pound'},
+                {code: 'AUD', flag: 'au', name: 'Australian Dollar'}, {code: 'CAD', flag: 'ca', name: 'Canadian Dollar'},
+                {code: 'CHF', flag: 'ch', name: 'Swiss Franc'}, {code: 'CNY', flag: 'cn', name: 'Chinese Yuan'},
+                {code: 'HKD', flag: 'hk', name: 'Hong Kong Dollar'}, {code: 'NZD', flag: 'nz', name: 'New Zealand Dollar'},
+                {code: 'SEK', flag: 'se', name: 'Swedish Krona'}, {code: 'KRW', flag: 'kr', name: 'South Korean Won'},
+                {code: 'SGD', flag: 'sg', name: 'Singapore Dollar'}, {code: 'NOK', flag: 'no', name: 'Norwegian Krone'},
+                {code: 'MXN', flag: 'mx', name: 'Mexican Peso'}, {code: 'INR', flag: 'in', name: 'Indian Rupee'},
+                {code: 'RUB', flag: 'ru', name: 'Russian Ruble'}, {code: 'ZAR', flag: 'za', name: 'South African Rand'},
+                {code: 'TRY', flag: 'tr', name: 'Turkish Lira'}, {code: 'BRL', flag: 'br', name: 'Brazilian Real'},
+                {code: 'TWD', flag: 'tw', name: 'New Taiwan Dollar'}, {code: 'DKK', flag: 'dk', name: 'Danish Krone'},
+                {code: 'PLN', flag: 'pl', name: 'Polish Zloty'}, {code: 'THB', flag: 'th', name: 'Thai Baht'},
+                {code: 'IDR', flag: 'id', name: 'Indonesian Rupiah'}, {code: 'HUF', flag: 'hu', name: 'Hungarian Forint'},
+                {code: 'CZK', flag: 'cz', name: 'Czech Koruna'}, {code: 'ILS', flag: 'il', name: 'Israeli New Shekel'},
+                {code: 'CLP', flag: 'cl', name: 'Chilean Peso'}, {code: 'PHP', flag: 'ph', name: 'Philippine Peso'},
+                {code: 'AED', flag: 'ae', name: 'UAE Dirham'}, {code: 'COP', flag: 'co', name: 'Colombian Peso'},
+                {code: 'SAR', flag: 'sa', name: 'Saudi Riyal'}, {code: 'MYR', flag: 'my', name: 'Malaysian Ringgit'},
+                {code: 'RON', flag: 'ro', name: 'Romanian Leu'}, {code: 'VND', flag: 'vn', name: 'Vietnamese Dong'}
+            ],
+            rawData: [
+                { date: '05-Nov-2023', deposit: '2000000' }, { date: '15-Nov-2023', deposit: '3000000', withdraw_vnd: '2261538' },
+                { date: '21-Nov-2023', deposit: '5000000' }, { date: '01-Dec-2023', deposit: '1265823' },
+                { date: '05-Dec-2023', deposit: '1000000' }, { date: '13-Dec-2023', deposit: '2000000' },
+                { date: '13-Dec-2023', deposit: '1000000' }, { date: '16-Dec-2023', deposit: '500000' },
+                { date: '18-Jan-2024', deposit: '1000000' }, { date: '20-Jan-2024', deposit: '500000' },
+                { date: '24-Jan-2024', deposit: '1300000' }, { date: '31-Jan-2024', deposit: '1000000' },
+                { date: '03-Feb-2024', deposit: '3000000' }, { date: '22-Feb-2024', deposit: '1000000' },
+                { date: '24-Feb-2024', deposit: '1000000' }, { date: '26-Feb-2024', deposit: '5000000' },
+                { date: '04-Mar-2024', deposit: '1400000' }, { date: '08-Mar-2024', deposit: '2000000' },
+                { date: '09-Mar-2024', deposit: '3000000' }, { date: '10-Mar-2024', withdraw_vnd: '228941' },
+                { date: '11-Mar-2024', withdraw_vnd: '474549' }, { date: '13-Mar-2024', deposit: '2000000' },
+                { date: '14-Mar-2024', deposit: '7000000' }, { date: '17-Mar-2024', deposit: '500000', withdraw_vnd: '243412' },
+                { date: '27-Mar-2024', deposit: '1308970' }, { date: '02-Apr-2024', deposit: '5000000' },
+                { date: '04-Apr-2024', withdraw_vnd: '250867' }, { date: '13-Apr-2024', deposit: '5000000' },
+                { date: '17-Apr-2024', deposit: '2000000' }, { date: '13-May-2024', deposit: '3000000' },
+                { date: '30-May-2024', deposit: '3000000' }, { date: '30-May-2024', deposit: '3000000' },
+                { date: '12-Jun-2024', deposit: '4000000' }, { date: '22-Jun-2024', deposit: '2000000' },
+                { date: '24-Jun-2024', deposit: '1000000' }, { date: '24-Jun-2024', deposit: '2000000' },
+                { date: '26-Jun-2024', withdraw_vnd: '140000' }, { date: '27-Jun-2024', deposit: '2000000' },
+                { date: '29-Jun-2024', deposit: '300000' }, { date: '04-Jul-2024', deposit: '3000000' },
+                { date: '05-Jul-2024', deposit: '2000000' }, { date: '08-Jul-2024', deposit: '600000', withdraw_vnd: '556684' },
+                { date: '09-Jul-2024', deposit: '600000', withdraw_vnd: '663833' }, { date: '10-Jul-2024', deposit: '600000', withdraw_vnd: '568469' },
+                { date: '11-Jul-2024', deposit: '500000', withdraw_vnd: '587498' }, { date: '12-Jul-2024', deposit: '800000', withdraw_vnd: '853566' },
+                { date: '13-Jul-2024', deposit: '600000', withdraw_vnd: '577269' }, { date: '19-Jul-2024', deposit: '600000', withdraw_vnd: '566954' },
+                { date: '21-Jul-2024', deposit: '2000000', withdraw_vnd: '445479' }, { date: '26-Jul-2024', withdraw_vnd: '806891' },
+                { date: '28-Jul-2024', deposit: '4000000' }, { date: '30-Jul-2024', deposit: '2000000' },
+                { date: '01-Aug-2024', deposit: '2000000' }, { date: '02-Aug-2024', deposit: '1000000', withdraw_vnd: '862904' },
+                { date: '05-Aug-2024', deposit: '3000000' }, { date: '06-Aug-2024', deposit: '1000000', withdraw_vnd: '936666' },
+                { date: '07-Aug-2024', deposit: '1000000', withdraw_vnd: '941335' }, { date: '12-Aug-2024', deposit: '1000000', withdraw_vnd: '880073' },
+                { date: '12-Aug-2024', deposit: '0', withdraw_vnd: '855980' }, { date: '13-Aug-2024', deposit: '1000000', withdraw_vnd: '913188' },
+                { date: '13-Aug-2024', withdraw_vnd: '700400' }, { date: '13-Aug-2024', withdraw_vnd: '708169' },
+                { date: '14-Aug-2024', withdraw_vnd: '1392124' }, { date: '15-Aug-2024', withdraw_vnd: '693011' },
+                { date: '16-Aug-2024', withdraw_vnd: '710209' }, { date: '21-Aug-2024', withdraw_vnd: '734598' },
+                { date: '21-Aug-2024', withdraw_vnd: '728661' }, { date: '22-Aug-2024', withdraw_vnd: '1190000' },
+                { date: '23-Aug-2024', withdraw_vnd: '1192224' }, { date: '23-Aug-2024', withdraw_vnd: '7268499' },
+                { date: '26-Aug-2024', withdraw_vnd: '1478782' }, { date: '26-Aug-2024', withdraw_vnd: '724045' },
+                { date: '02-Sep-2024', withdraw_vnd: '660373' }, { date: '06-Sep-2024', withdraw_vnd: '1324878' },
+                { date: '09-Sep-2024', withdraw_vnd: '641092' }, { date: '13-Sep-2024', withdraw_vnd: '1170074' },
+                { date: '16-Sep-2024', withdraw_vnd: '613900' }, { date: '18-Sep-2024', withdraw_vnd: '711983' },
+                { date: '18-Sep-2024', withdraw_vnd: '703516' }, { date: '19-Sep-2024', withdraw_vnd: '859178' },
+                { date: '19-Sep-2024', withdraw_vnd: '704927' }, { date: '22-Sep-2024', withdraw_vnd: '1280751' },
+                { date: '23-Sep-2024', withdraw_vnd: '718187' }, { date: '23-Sep-2024', withdraw_vnd: '686271' },
+                { date: '24-Sep-2024', withdraw_vnd: '1449186' }, { date: '03-Oct-2024', deposit: '998000' },
+                { date: '07-Nov-2024', deposit: '2000000' }, { date: '08-Nov-2024', deposit: '4000000' },
+                { date: '14-Nov-2024', deposit: '2000000' }, { date: '15-Nov-2024', deposit: '3000000' },
+                { date: '17-Nov-2024', deposit: '1000000' }, { date: '21-Nov-2024', deposit: '1000000' },
+                { date: '22-Nov-2024', deposit: '1000002' }, { date: '23-Nov-2024', deposit: '1160000' },
+                { date: '24-Nov-2024', deposit: '2000000' }, { date: '02-Dec-2024', deposit: '2000000' },
+                { date: '07-Dec-2024', deposit: '3000000' }, { date: '20-Dec-2024', deposit: '2000000' },
+                { date: '12-Jan-2025', deposit: '2000000' }, { date: '27-Jan-2025', deposit: '3000000' },
+                { date: '03-Feb-2025', deposit: '2000000' }, { date: '25-Feb-2025', deposit: '3000000' },
+                { date: '09-Mar-2025', withdraw_vnd: '496121' }, { date: '09-Mar-2025', withdraw_vnd: '243880' },
+                { date: '10-Mar-2025', withdraw_vnd: '214475' }, { date: '10-Mar-2025', deposit: '800000' },
+                { date: '10-Mar-2025', deposit: '500000', withdraw_vnd: '490382' }, { date: '14-Mar-2025', deposit: '500000', withdraw_vnd: '419661' },
+                { date: '15-Mar-2025', deposit: '500000', withdraw_vnd: '440856' }, { date: '25-Mar-2025', deposit: '1000000', withdraw_vnd: '964161' },
+                { date: '03-Apr-2025', deposit: '3000000' }, { date: '03-Apr-2025', deposit: '1000000', withdraw_vnd: '969318' },
+                { date: '06-Apr-2025', deposit: '1000000', withdraw_vnd: '967905' }, { date: '07-Apr-2025', deposit: '2000000' },
+                { date: '11-Apr-2025', deposit: '500000', withdraw_vnd: '464877' }, { date: '13-Apr-2025', deposit: '500000', withdraw_vnd: '436617' },
+                { date: '13-Apr-2025', deposit: '500000', withdraw_vnd: '479007' }, { date: '16-Apr-2025', deposit: '500000', withdraw_vnd: '423900' },
+                { date: '16-Apr-2025', deposit: '500000', withdraw_vnd: '452160' }, { date: '18-Apr-2025', deposit: '500000', withdraw_vnd: '452160' },
+                { date: '18-Apr-2025', deposit: '700000', withdraw_vnd: '671175' }, { date: '22-Apr-2025', deposit: '500000', withdraw_vnd: '452160' },
+                { date: '23-Apr-2025', deposit: '1000000', withdraw_vnd: '950949' }, { date: '26-Apr-2025', deposit: '500000', withdraw_vnd: '466290' },
+                { date: '01-May-2025', deposit: '1000000', withdraw_vnd: '941058' }, { date: '01-May-2025', deposit: '500000', withdraw_vnd: '477594' },
+                { date: '02-May-2025', deposit: '1000000', withdraw_vnd: '942471' }, { date: '20-May-2025', deposit: '700000', withdraw_vnd: '598406' },
+                { date: '25-May-2025', deposit: '1400000', withdraw_vnd: '1356452' }, { date: '25-May-2025', deposit: '12600000', withdraw_vnd: '12208320' },
+                { date: '29-May-2025', withdraw_vnd: '700801' }, { date: '05-Jun-2025', deposit: '700000', withdraw_vnd: '620307' },
+                { date: '06-Jun-2025', withdraw_vnd: '2444993' }, { date: '07-Jun-2025', deposit: '2000000', withdraw_vnd: '1928745' },
+                { date: '09-Jun-2025', withdraw_vnd: '1758921' }, { date: '10-Jun-2025', withdraw_vnd: '907854' },
+                { date: '15-Jun-2025', withdraw_vnd: '459631' }, { date: '19-Jun-2025', withdraw_vnd: '3775308' },
+                { date: '21-Jun-2025', withdraw_vnd: '1914411' }, { date: '21-Jun-2025', withdraw_vnd: '948560' },
+                { date: '21-Jun-2025', withdraw_vnd: '837990' }, { date: '22-Jun-2025', withdraw_vnd: '544402' },
+                { date: '23-Jun-2025', withdraw_vnd: '882241' }, { date: '25-Jun-2025', withdraw_vnd: '3542138' },
+                { date: '26-Jun-2025', withdraw_vnd: '1154147' }, { date: '06-Jul-2025', withdraw_vnd: '10903757' },
+                { date: '06-Jul-2025', deposit: '500000', withdraw_vnd: '865579' }, { date: '07-Jul-2025', withdraw_vnd: '413088' },
+                { date: '07-Jul-2025', withdraw_vnd: '411932' }, { date: '09-Jul-2025', withdraw_vnd: '839819' },
+                { date: '10-Jul-2025', withdraw_vnd: '857643' }, { date: '10-Jul-2025', withdraw_vnd: '915560' },
+                { date: '10-Jul-2025', deposit: '2333333' }, { date: '11-Jul-2025', withdraw_vnd: '739194' },
+                { date: '18-Jul-2025', deposit: '500000' }, { date: '20-Jul-2025', withdraw_vnd: '647337' },
+                { date: '21-Jul-2025', deposit: '1000000' }, { date: '23-Jul-2025', withdraw_vnd: '1225412' },
+                { date: '01-Aug-2025', withdraw_vnd: '772175' }, { date: '03-Aug-2025', withdraw_vnd: '1485404' },
+                { date: '13-Aug-2025', withdraw_vnd: '24735611' }, { date: '13-Aug-2025', withdraw_vnd: '6812868' },
+                { date: '17-Aug-2025', withdraw_vnd: '6154696' }, { date: '03-Sep-2025', withdraw_vnd: '9566829' },
+                { date: '03-Sep-2025', withdraw_vnd: '14658746' }
+            ],
+
+            getFlagUrl(countryCode) {
+                if (countryCode.toUpperCase() === 'EU') return "https://twemoji.maxcdn.com/v/latest/72x72/1f1ea-1f1fa.png";
+                const codePoints = countryCode.toUpperCase().split('').map(char => 0x1f1e6 + char.charCodeAt(0) - 'A'.charCodeAt(0));
+                return `https://twemoji.maxcdn.com/v/latest/72x72/${codePoints[0].toString(16)}-${codePoints[1].toString(16)}.png`;
+            },
+            
+            parseValue(text) { return text ? parseFloat(String(text).replace(/[^0-9.-]+/g, '')) : 0; },
+            
+            formatLocalCurrency(value, currency) {
+                const isVND = currency === 'VND';
+                const options = { style: 'currency', currency, maximumFractionDigits: isVND ? 0 : 2, minimumFractionDigits: isVND ? 0 : 2};
+                return new Intl.NumberFormat('en-US', options).format(value);
+            },
+            
+            processRawData() {
+                const storageKey = 'finance_transactions_v41';
+                const storedTransactions = localStorage.getItem(storageKey);
+                if (storedTransactions) {
+                    this.transactions = JSON.parse(storedTransactions, (key, value) => key === 'date' ? new Date(value) : value);
+                    return;
+                }
+                
+                this.transactions = [];
+                this.rawData.forEach((item, index) => {
+                    const date = new Date(item.date);
+                    const deposit = this.parseValue(item.deposit);
+                    const withdrawal = this.parseValue(item.withdraw_vnd);
+                    
+                    if (deposit > 0) {
+                        this.transactions.push({ id: `tx_${date.getTime()}_d_${index}`, date: date, type: 'deposit', currency: 'VND', amount: deposit });
+                    }
+                    if (withdrawal > 0) {
+                        this.transactions.push({ id: `tx_${date.getTime()}_w_${index}`, date: date, type: 'withdrawal', currency: 'VND', amount: withdrawal });
+                    }
+                });
+                
+                this.transactions.sort((a, b) => a.date - b.date);
+                localStorage.setItem(storageKey, JSON.stringify(this.transactions));
+            },
+
+            async loadExchangeRates() {
+                try {
+                    const res = await fetch("https://open.er-api.com/v6/latest/USD");
+                    const data = await res.json();
+                    this.fxRates = data.rates;
+                    exchangeRates = data.rates; // Sync with main app's global state
+                    const tbody = document.getElementById("exchangeRatesBody");
+                    const displayCurrencies = ["ZAR", "VND", "GBP", "EUR"];
+                    tbody.innerHTML = "";
+                    displayCurrencies.forEach(code => {
+                        const rate = data.rates[code];
+                        const row = document.createElement("tr");
+                        row.innerHTML = `
+                            <td><img class="flag" src="${this.getFlagUrl(this.currencies.find(c => c.code === code).flag)}" alt="${code}"> ${code}</td>
+                            <td>${rate.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 4})}</td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                } catch (err) {
+                    console.error("Exchange rate error:", err);
+                    document.getElementById("exchangeRatesBody").innerHTML = `<tr><td colspan="2">Error loading</td></tr>`;
+                }
+            },
+
+            async fetchGoldData() {
+                try {
+                    const goldRes = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=pax-gold&vs_currencies=usd");
+                    const goldJson = await goldRes.json();
+                    this.goldPriceUSD = goldJson["pax-gold"]?.usd || 2400;
+                } catch (err) {
+                    console.error("Gold fetch error:", err);
+                    this.goldPriceUSD = 2400; // Fallback
+                }
+            },
+
+            convertGold() {
+                const amt = parseFloat(document.getElementById("goldAmount").value) || 0;
+                const unit = document.getElementById("unitSelect").value;
+                const tbody = document.querySelector("#goldTable tbody");
+                if (!this.goldPriceUSD || !this.fxRates) return;
+                
+                const unitToOunce = { ounce: 1, gram: 1 / 31.1034768, kg: 32.1507466, tael: 1.20337, chi: 0.120337 };
+                const ounces = amt * unitToOunce[unit];
+                const valueUSD = ounces * this.goldPriceUSD;
+                
+                const rows = [{ code: "USD", value: valueUSD }, { code: "ZAR", value: valueUSD * this.fxRates.ZAR }, { code: "VND", value: valueUSD * this.fxRates.VND }];
+                tbody.innerHTML = "";
+                rows.forEach(r => {
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `
+                    <td><img class="flag" src="${this.getFlagUrl(this.currencies.find(c => c.code === r.code).flag)}" alt="${r.code}"> ${r.code}</td>
+                    <td>${r.value.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>`;
+                    tbody.appendChild(tr);
+                });
+            },
+
+            convertCurrency() {
+                const amount = parseFloat(document.getElementById("convertAmount").value) || 0;
+                const from = document.getElementById("fromCurrency").value;
+                const to = document.getElementById("toCurrency").value;
+                if (!this.fxRates || !this.fxRates[from] || !this.fxRates[to]) {
+                    document.getElementById("convertResult").innerHTML = "Rates loading...";
+                    return;
+                }
+                const rateFrom = this.fxRates[from];
+                const rateTo = this.fxRates[to];
+                const converted = amount * (rateTo / rateFrom);
+                document.getElementById("convertResult").innerHTML = `${amount.toLocaleString()} ${from} = ${converted.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} ${to}`;
+            },
+
+            populateFilters() {
+                const yearFilter = document.getElementById('year-filter');
+                const years = [...new Set(this.transactions.map(tx => new Date(tx.date).getFullYear()))].sort((a,b) => b-a);
+                yearFilter.innerHTML = '<option value="all">All Years</option>'
+                years.forEach(year => {
+                    const option = document.createElement('option');
+                    option.value = year;
+                    option.textContent = year;
+                    yearFilter.appendChild(option);
+                });
+            },
+            
+            convertAmountToTarget(amount, fromCurrency, toCurrency) {
+                if (!this.fxRates || !this.fxRates[fromCurrency] || !this.fxRates[toCurrency]) return 0;
+                const amountInUSD = amount / this.fxRates[fromCurrency];
+                return amountInUSD * this.fxRates[toCurrency];
+            },
+
+            renderUI() {
+                const selectedYear = document.getElementById('year-filter').value;
+                const selectedMonth = document.getElementById('month-filter').value;
+                const targetCurrency = document.getElementById('currency-select').value;
+
+                const filteredData = this.transactions.filter(tx => {
+                    const txDate = new Date(tx.date); // Ensure tx.date is a Date object
+                    const yearMatch = (selectedYear === 'all' || txDate.getFullYear() == selectedYear);
+                    const monthMatch = (selectedMonth === 'all' || txDate.getMonth() == selectedMonth);
+                    return yearMatch && monthMatch;
+                });
+
+                this.renderTable(filteredData, targetCurrency);
+                this.updateSummaries(targetCurrency);
+            },
+
+            renderTable(data, currency) {
+                const tableBody = document.getElementById('tableBody');
+                const tableFooter = document.getElementById('tableFooter');
+                tableBody.innerHTML = '';
+                let totalDeposit = 0, totalWithdrawal = 0;
+
+                data.forEach(tx => {
+                    const convertedAmount = this.convertAmountToTarget(tx.amount, tx.currency, currency);
+                    const row = tableBody.insertRow();
+                    row.innerHTML = `
+                        <td>${new Date(tx.date).toLocaleString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</td>
+                        <td>${tx.type === 'deposit' ? this.formatLocalCurrency(convertedAmount, currency) : ''}</td>
+                        <td>${tx.type === 'withdrawal' ? this.formatLocalCurrency(convertedAmount, currency) : ''}</td>
+                        <td class="actions-col"><button class="delete-btn" data-id="${tx.id}">Delete</button></td>`;
+                    if (tx.type === 'deposit') totalDeposit += convertedAmount;
+                    else totalWithdrawal += convertedAmount;
+                });
+
+                tableFooter.innerHTML = `<tr>
+                    <td><strong>TOTALS (Filtered)</strong></td>
+                    <td><strong>${this.formatLocalCurrency(totalDeposit, currency)}</strong></td>
+                    <td><strong>${this.formatLocalCurrency(totalWithdrawal, currency)}</strong></td>
+                    <td class="actions-col"></td>
+                </tr>`;
+                
+                document.getElementById('table-wrapper').scrollTop = document.getElementById('table-wrapper').scrollHeight;
+            },
+            
+            updateSummaries(currency) {
+                let totalDepositUSD = 0;
+                let totalWithdrawalUSD = 0;
+                this.transactions.forEach(tx => {
+                    const amountInUSD = this.convertAmountToTarget(tx.amount, tx.currency, 'USD');
+                    if (tx.type === 'deposit') totalDepositUSD += amountInUSD;
+                    else totalWithdrawalUSD += amountInUSD;
+                });
+                
+                const currentCryptoValueUSD = window.myFinApp.totalCryptoUSD || 0;
+                
+                const totalPnlUSD = (totalWithdrawalUSD + currentCryptoValueUSD) - totalDepositUSD;
+                const pnlPercentage = (totalDepositUSD > 0) ? (totalPnlUSD / totalDepositUSD) * 100 : 0;
+                
+                const depositDisplay = this.convertAmountToTarget(totalDepositUSD, 'USD', currency);
+                const withdrawalDisplay = this.convertAmountToTarget(totalWithdrawalUSD, 'USD', currency);
+                const cryptoDisplay = this.convertAmountToTarget(currentCryptoValueUSD, 'USD', currency);
+                const netBalanceDisplay = this.convertAmountToTarget(totalPnlUSD, 'USD', currency);
+                
+                document.getElementById('total-deposits-card').textContent = this.formatLocalCurrency(depositDisplay, currency);
+                document.getElementById('total-withdrawals-card').textContent = this.formatLocalCurrency(withdrawalDisplay, currency);
+                document.getElementById('crypto-value-card').textContent = this.formatLocalCurrency(cryptoDisplay, currency);
+                document.getElementById('net-balance-card').textContent = this.formatLocalCurrency(netBalanceDisplay, currency);
+                
+                const pnlCard = document.getElementById('pnl-card');
+                const pnlAmount = document.getElementById('pnl-amount');
+                pnlAmount.textContent = `${pnlPercentage.toFixed(2)}%`;
+                pnlCard.className = 'card ' + (totalPnlUSD >= 0 ? 'card-pnl-profit' : 'card-pnl-loss');
+            },
+
+            addTransaction() {
+                const dateInput = document.getElementById('newDate').value;
+                const typeInput = document.getElementById('newType').value;
+                const amountInput = parseFloat(document.getElementById('newAmount').value);
+                const currencyInput = document.getElementById('newCurrency').value;
+
+                if (!dateInput || isNaN(amountInput) || amountInput <= 0) {
+                    alert('Please provide a valid date and a positive amount.'); return;
+                }
+                const newTx = {
+                    id: 'tx_' + Date.now(), date: new Date(dateInput + 'T12:00:00Z'),
+                    type: typeInput, amount: amountInput, currency: currencyInput
+                };
+                this.transactions.push(newTx);
+                this.transactions.sort((a,b) => new Date(a.date) - new Date(b.date));
+                localStorage.setItem('finance_transactions_v41', JSON.stringify(this.transactions));
+                
+                document.getElementById('newDate').value = ''; document.getElementById('newAmount').value = '';
+                this.renderUI();
+                this.populateFilters();
+            },
+
+            deleteTransaction(transactionId) {
+                if (confirm("Are you sure?")) {
+                    this.transactions = this.transactions.filter(tx => tx.id !== transactionId);
+                    localStorage.setItem('finance_transactions_v41', JSON.stringify(this.transactions));
+                    this.renderUI();
+                    this.populateFilters();
+                }
+            },
+            
+            async init() {
+                this.processRawData();
+                this.populateFilters();
+                
+                await this.loadExchangeRates();
+                await this.fetchGoldData();
+                
+                this.convertGold();
+                
+                const fromSelect = document.getElementById('fromCurrency');
+                const toSelect = document.getElementById('toCurrency');
+                fromSelect.innerHTML = toSelect.innerHTML = '';
+                const sorted = [...this.currencies].sort((a,b) => a.name.localeCompare(b.name));
+                sorted.forEach(c => {
+                    const option = document.createElement('option');
+                    option.value = c.code;
+                    option.textContent = `${c.code} - ${c.name}`;
+                    fromSelect.appendChild(option.cloneNode(true));
+                    toSelect.appendChild(option);
+                });
+                fromSelect.value = 'USD';
+                toSelect.value = 'VND';
+                this.convertCurrency();
+
+                this.renderUI();
+
+                document.getElementById("goldAmount").addEventListener("input", () => this.convertGold());
+                document.getElementById("unitSelect").addEventListener("change", () => this.convertGold());
+                document.getElementById('year-filter').addEventListener("change", () => this.renderUI());
+                document.getElementById('month-filter').addEventListener("change", () => this.renderUI());
+                document.getElementById('currency-select').addEventListener("change", () => {
+                    this.renderUI(); this.convertGold();
+                });
+                document.getElementById("convertAmount").addEventListener("input", () => this.convertCurrency());
+                document.getElementById("fromCurrency").addEventListener("change", () => this.convertCurrency());
+                document.getElementById("toCurrency").addEventListener("change", () => this.convertCurrency());
+                document.getElementById("addNewTxBtn").addEventListener('click', () => this.addTransaction());
+                document.getElementById("tableBody").addEventListener('click', (e) => {
+                    if(e.target.classList.contains('delete-btn')) this.deleteTransaction(e.target.dataset.id);
+                });
+
+                window.renderTrackerUI = () => this.renderUI();
+
+                setInterval(async () => {
+                    await this.loadExchangeRates();
+                    await this.fetchGoldData();
+                    this.convertGold();
+                    this.convertCurrency();
+                    this.renderUI();
+                }, 120000);
+            }
+        };
+        newModule.init();
+    }
+    
+    // --- MAIN INITIALIZATION ---
+    async function init() {
+      try {
+        setTimeout(() => playGreeting(), 2000);
+        
+        $('#manual-column-header').innerText = localStorage.getItem('manualColumnName') || 'Manual';
+        
+        initAvatar();
+        initAssetChart();
+        initHoldingsChart();
+        initDynamicBackground();
+        await loadActiveCoins();
+        
+        initNewModules(); 
+        
+        await refresh(true); 
+
+        buildAssetTable('#liquid-assets-body', liquidAssetTypes, 'liquid');
+        buildAssetTable('#fixed-assets-body', fixedAssetTypes, 'fixed');
+        buildCryptoAssetsTable();
+        loadInitialData();
+        setupEventListeners();
+        populateFutureAssetDropdown();
+
+        await fetchNews(true);
+        await fetchXRPHistoryData(true);
+
+        setInterval(() => {
+            refresh(false);
+            fetchNews(false);
+            fetchXRPHistoryData(false);
+        }, 120000);
+
+      } catch (e) {
+        handleError('Error during initialization: ', e);
+        $('#mainContent').innerHTML = `<h2>An error occurred during initialization. Please check the console for details and refresh the page.</h2><p style="color:red;">${e.message}</p>`;
+      }
+    }
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
