@@ -2775,6 +2775,36 @@
       }
     }
     document.addEventListener('DOMContentLoaded', init);
-  </script>
+  </script><!-- === HISTORY RESTORE MODULE (GitHub Pages compatible) === -->
+<script>
+(async function restoreHistoryFromJson() {
+  try {
+    // Try to load the exported history file from the same folder
+    const res = await fetch('storage_history_dump.json');
+    if (!res.ok) {
+      console.warn('⚠️ No history file found on server.');
+      return;
+    }
+
+    const data = await res.json();
+    if (data.localStorage) {
+      for (const [key, value] of Object.entries(data.localStorage)) {
+        localStorage.setItem(key, value);
+      }
+    }
+    if (data.sessionStorage) {
+      for (const [key, value] of Object.entries(data.sessionStorage)) {
+        sessionStorage.setItem(key, value);
+      }
+    }
+
+    console.log('✅ History successfully restored from JSON');
+  } catch (e) {
+    console.error('❌ Failed to restore history:', e);
+  }
+})();
+</script>
+
+
 </body>
 </html>
