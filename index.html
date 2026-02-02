@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>MyFinCryptoZone V.42 (Corrected)</title>
+  <title>MyFinCryptoZone V.97 </title>
   <link rel="icon" href="data:;base64,iVBORw0KGgo=">
   <link href="https://fonts.googleapis.com/css2?family=Iceland&family=Quantico&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/three@0.146.0/build/three.min.js"></script>
@@ -113,15 +113,122 @@
     .price-up { color: #00FF88; }
     .price-down { color: #FF4444; }
 
+    /* --- CLEAN HEADER SYSTEM --- */
     #header {
       position: fixed;
       top: 15px;
       left: 15px;
-      right: 650px; 
+      /* Adjust this right value: lower = wider, higher = more gap for buttons */
+      right: 580px; 
+      height: 85px;
       display: flex;
       align-items: center;
+      justify-content: space-between;
       z-index: 10;
+      background: var(--bg-panel);
+      padding: 0 25px;
+      border-radius: 8px;
+      box-shadow: 0 0 15px var(--primary-glow), inset 0 0 8px var(--primary-border);
+      overflow: hidden;
+      pointer-events: auto;
     }
+
+    #header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      animation: shine 3s infinite;
+      pointer-events: none;
+    }
+
+     /* --- CLEAN HEADER SYSTEM --- */
+    #header {
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      /* Adjust this right value: lower = wider, higher = more gap for buttons */
+      right: 750px; 
+      height: 85px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 10;
+      background: var(--bg-panel);
+      padding: 0 25px;
+      border-radius: 8px;
+      box-shadow: 0 0 15px var(--primary-glow), inset 0 0 8px var(--primary-border);
+      overflow: hidden;
+      pointer-events: auto;
+    }
+
+    #header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      animation: shine 3s infinite;
+      pointer-events: none;
+    }
+
+    #title {
+  font-family: 'Iceland', sans-serif;
+  font-size: 2.3rem !important;    /* Small, clean size */
+  margin: 0 !important;           /* Remove all old margins */
+  padding: 0 !important;          /* Remove all old padding */
+  line-height: 85px;              /* Vertically centered in the 85px header */
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #e0f7ff;
+  text-shadow: 0 0 5px #00aaff;
+  
+  /* These three lines are the "Secret Sauce" for one-line fixes */
+  white-space: nowrap;            /* Forces text to stay on one line */
+  overflow: visible;              /* Ensures it doesn't get clipped */
+  flex: 1;                        /* Tells it to take up available space */
+  
+  background: none !important;
+  box-shadow: none !important;
+  border: none !important;
+  width: auto !important;         /* Removes any fixed width that was pushing it out */
+}
+
+    .avatar-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    #avatar {
+      width: 60px;
+      height: 60px;
+      background-color: #223344;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      border-radius: 6px;
+      border: 2px solid var(--primary-glow);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #6699ccaa;
+      font-size: 0.75rem;
+      outline: none;
+      transition: box-shadow 0.3s;
+    }
+
+    #avatar:hover {
+        box-shadow: 0 0 10px var(--primary-glow);
+    }
+
     #topRightLinks {
       position: fixed;
       top: 15px;
@@ -129,7 +236,8 @@
       display: flex;
       gap: 10px;
       align-items: center;
-      z-index: 10;
+      z-index: 11; /* Higher than header */
+      height: 85px; /* Match header height for alignment */
     }
     
     #title {
@@ -1035,16 +1143,15 @@
     </div>
 
   <div id="header" role="banner" aria-label="Site header">
-    <div style="display: flex; align-items: center;">
-      <h1 id="title">My FinCrypto Zone</h1>
-       <div class="avatar-container">
+    <h1 id="title">My FinCrypto Zone</h1>
+    <div class="avatar-container">
         <div id="avatar" class="empty"></div>
-      </div>
     </div>
   </div>
 <nav id="topRightLinks" aria-label="External crypto related links">
       <button id="briefingBtn" class="quantico-btn" style="background: #aa00ffcc;">System Briefing</button>
       <button id="aiAssistantBtn" class="quantico-btn">AI Assistant</button>
+      <button id="helpBtn" class="quantico-btn" style="background: #0088ccaa;">Guide</button> 
       <button id="printReportBtn">Print Report</button>
       <a href="https://bitcoinvn.io" target="_blank" rel="noopener">BitcoinVN</a>
       <a href="https://www.luno.com" target="_blank" rel="noopener">Luno</a>
@@ -2208,7 +2315,7 @@ function loadInitialData() {
                 recalculateAllTotals();
             }
         }, true);
-
+        $('#helpBtn').onclick = () => $('#helpModal').style.display = 'block';
         $('#addSnapshotBtn').onclick = () => saveManualSnapshot();
         $('#deleteSnapshotBtn').onclick = () => deleteSnapshot();
         
@@ -2595,7 +2702,7 @@ function loadInitialData() {
     }
 
     
-    // --- VOICE SYSTEM MODULE ---
+     // --- VOICE SYSTEM MODULE ---
     function getBriefingScript() {
         const { liquidUSD, fixedUSD } = calculateTotalAssetUSD();
         const cryptoUSD = window.myFinApp.totalCryptoUSD || 0;
@@ -2875,7 +2982,7 @@ function loadInitialData() {
                 document.getElementById("toCurrency")?.addEventListener("change", () => this.convertCurrency());
                 document.getElementById("currency-select")?.addEventListener("change", () => { this.renderUI(); this.convertGold(); });
                 
-                document.getElementById("addNewTxBtn")?.addEventListener('click', () => {
+                 document.getElementById("addNewTxBtn")?.addEventListener('click', () => {
                     const dateVal = document.getElementById('newDate').value;
                     const amtVal = parseFloat(document.getElementById('newAmount').value);
                     if (!dateVal || isNaN(amtVal)) return alert("Check inputs");
@@ -2890,7 +2997,19 @@ function loadInitialData() {
                     localStorage.setItem('finance_transactions_v41', JSON.stringify(this.transactions)); 
                     this.renderUI();
                 });
-            }
+
+                // NEW DELETE LISTENER
+                document.getElementById('tableBody')?.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('delete-btn')) {
+                        const txId = e.target.dataset.id;
+                        if (confirm("Are you sure you want to delete this transaction?")) {
+                            this.transactions = this.transactions.filter(tx => tx.id !== txId);
+                            localStorage.setItem('finance_transactions_v41', JSON.stringify(this.transactions));
+                            this.renderUI();
+                        }
+                    }
+                });
+            } // End of init function
         };
         window.newModuleInstance.init();
     }
@@ -2936,7 +3055,46 @@ function loadInitialData() {
             tbody.innerHTML += `<tr><td><div class="coin-info"><img src="${c.image}"><span>${c.symbol.toUpperCase()}</span></div></td><td>$${priceUSD.toFixed(2)}</td><td>R${priceZAR.toFixed(2)}</td><td>₫${formatVndCustom(priceVND)}</td><td>${holdings.toFixed(4)}</td><td>$${valueUSD.toFixed(2)}</td><td><span class="${change >= 0 ? 'crypto-pos' : 'crypto-neg'}">${change.toFixed(2)}%</span></td></tr>`;
         }); 
     }
+</script>
 
-  </script>
+<!-- Help / Navigation Guide Modal -->
+<div id="helpModal" class="modal">
+  <div class="modal-content" style="max-width: 700px;">
+      <span class="close-modal">&times;</span>
+      <h2 style="font-family: 'Iceland', sans-serif; letter-spacing: 2px;">SYSTEM GUIDE</h2>
+      
+      <div id="help-content" style="margin-top: 15px; line-height: 1.6; font-size: 0.9rem; color: #e0f7ff; max-height: 70vh; overflow-y: auto; padding-right: 10px;">
+    
+          <h3 style="color: var(--primary-glow); border-bottom: 1px solid #3399ff44; margin-bottom: 8px;">1. Setting Up Your Assets</h3>
+          <p>Begin by entering your <strong>Liquid Assets</strong> (Cash or money in the bank).
+          <br>• <strong>Gold:</strong> Enter your physical gold in the <em>Physical Gold Holdings (Liquid)</em> section. These figures automatically populate your Portfolio Snapshot.
+          <br>• <strong>Fixed Assets:</strong> Do the same for long-term investments like property values.</p>
+
+          <h3 style="color: var(--primary-glow); border-bottom: 1px solid #3399ff44; margin-top: 15px; margin-bottom: 8px;">2. Managing Crypto</h3>
+          <p>Track your crypto holdings in two steps:
+          <br>• Click <strong>"Add/Remove Coins"</strong> in the Crypto Assets block to choose the coins you hold.
+          <br>• Enter the <strong>Units</strong> you own into the platform blocks. This data will reflect in both the <em>Cryptocurrency Prices</em> table and your <em>Portfolio Snapshot</em>.</p>
+
+          <h3 style="color: var(--primary-glow); border-bottom: 1px solid #3399ff44; margin-top: 15px; margin-bottom: 8px;">3. Snapshots & History</h3>
+          <p>Click <strong>"Save"</strong> at any moment to create a snapshot. 
+          <br>• The system calculates your <strong>percentage change</strong> based on your last saved entry.
+          <br>• The <em>History</em> list shows percentage changes of all past entries to track your growth.</p>
+
+          <h3 style="color: var(--primary-glow); border-bottom: 1px solid #3399ff44; margin-top: 15px; margin-bottom: 8px;">4. Transaction Records & PnL</h3>
+          <p>Use the <strong>Transactions</strong> container to keep records of your crypto buys. 
+          <br>• It auto-converts between <strong>USD, ZAR, and VND</strong>.
+          <br>• It provides a full <strong>PnL calculation</strong> (Profit and Loss) automatically.</p>
+
+          <h3 style="color: var(--primary-glow); border-bottom: 1px solid #3399ff44; margin-top: 15px; margin-bottom: 8px;">5. Built-in Tools</h3>
+          <p>• <strong>Converters:</strong> Use the live Exchange Rates and Gold price conversion tools for quick calculations.
+          <br>• <strong>News:</strong> Stay updated with the <em>Crypto News</em> section, which refreshes regularly with the latest market info.</p>
+
+          <div style="margin-top: 20px; padding: 15px; background: rgba(0, 170, 255, 0.1); border-radius: 8px; text-align: center; border: 1px solid var(--primary-border);">
+              <span style="font-family: 'Iceland', sans-serif; letter-spacing: 1px;">Helping you navigate the digital and physical financial zone.</span>
+          </div>
+      </div>
+  </div>
+</div>
+  
 </body>
 </html>
