@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>MyFinCryptoZone V.97 </title>
+  <title>MyFinCryptoZone V.98 </title>
   <link rel="icon" href="data:;base64,iVBORw0KGgo=">
   <link href="https://fonts.googleapis.com/css2?family=Iceland&family=Quantico&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/three@0.146.0/build/three.min.js"></script>
@@ -2024,7 +2024,11 @@ function loadInitialData() {
         for (const coin of activeCoins) {
             const coinData = priceDataCache[coin.id] || {};
             const usd = coinData.usd || 0;
-            const holdings = parseFloat(localStorage.getItem(coin.id)) || 0;
+            
+            // FIX: Pull directly from the cryptoAssetsData object instead of individual localStorage keys
+            const holdings = platforms.reduce((sum, p) => 
+                sum + (parseFloat(cryptoAssetsData[coin.id]?.[p] || 0)), 0);
+            
             const valUSD = holdings * usd;
             currentTotalCryptoUSD += valUSD;
 
@@ -3046,13 +3050,37 @@ function loadInitialData() {
         const tbody = document.getElementById('cryptoBody');
         if (!tbody) return;
         tbody.innerHTML = ''; 
+        
         activeCoins.forEach(c => {
             const entry = priceDataCache[c.id];
             if (!entry) return;
-            const priceUSD = entry.usd ?? 0, priceZAR = entry.zar ?? 0, priceVND = entry.vnd ?? 0, change = entry.usd_24h_change ?? 0;
-            const holdings = parseFloat(localStorage.getItem(c.id)) || 0;
+            
+            const priceUSD = entry.usd ?? 0;
+            const priceZAR = entry.zar ?? 0;
+            const priceVND = entry.vnd ?? 0;
+            const change = entry.usd_24h_change ?? 0;
+            
+            // FIX: Pull directly from the source object
+            const holdings = platforms.reduce((sum, p) => 
+                sum + (parseFloat(cryptoAssetsData[c.id]?.[p] || 0)), 0);
+            
             const valueUSD = holdings * priceUSD;
-            tbody.innerHTML += `<tr><td><div class="coin-info"><img src="${c.image}"><span>${c.symbol.toUpperCase()}</span></div></td><td>$${priceUSD.toFixed(2)}</td><td>R${priceZAR.toFixed(2)}</td><td>₫${formatVndCustom(priceVND)}</td><td>${holdings.toFixed(4)}</td><td>$${valueUSD.toFixed(2)}</td><td><span class="${change >= 0 ? 'crypto-pos' : 'crypto-neg'}">${change.toFixed(2)}%</span></td></tr>`;
+            
+            tbody.innerHTML += `
+                <tr>
+                    <td>
+                        <div class="coin-info">
+                            <img src="${c.image}">
+                            <span>${c.symbol.toUpperCase()}</span>
+                        </div>
+                    </td>
+                    <td>$${priceUSD.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                    <td>R${priceZAR.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                    <td>₫${formatVndCustom(priceVND)}</td>
+                    <td>${holdings.toLocaleString(undefined, {maximumFractionDigits: 4})}</td>
+                    <td>$${valueUSD.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                    <td><span class="${change >= 0 ? 'crypto-pos' : 'crypto-neg'}">${change.toFixed(2)}%</span></td>
+                </tr>`;
         }); 
     }
 </script>
