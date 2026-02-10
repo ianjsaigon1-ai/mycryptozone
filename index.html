@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>MyFinCryptoZone V.98 </title>
+  <title>MyFinCryptoZone V.100 </title>
   <link rel="icon" href="data:;base64,iVBORw0KGgo=">
   <link href="https://fonts.googleapis.com/css2?family=Iceland&family=Quantico&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/three@0.146.0/build/three.min.js"></script>
@@ -1259,7 +1259,7 @@
 
 
 <section id="physicalGoldAssetBlock" class="panel" style="margin-bottom: 20px; border: 1px solid #FFD700; box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);">
-    <h2 style="color: #FFD700; border-bottom: 1px solid #FFD70088;">Physical Gold Holdings (Liquid)</h2>
+    <h2 style="color: #FFD700; border-bottom: 1px solid #FFD70088;">Liquid Assets 2 (Physical Gold Holdings)</h2>
     <div style="display: grid; grid-template-columns: 1fr 1fr 1.5fr 1fr 1fr 1fr; gap: 15px; align-items: center; padding: 10px;">
         <div>
             <label style="font-size: 0.7rem; display: block; opacity: 0.7;">Holdings</label>
@@ -2299,15 +2299,66 @@ function loadInitialData() {
         style.id = 'temp-print-style';
         style.innerHTML = `
             @media print {
-                body > *:not(#mainContent), #header, #topRightLinks, .background-container, .price-ticker,
-                #mainContent > *:not(.full-panel), .controls, .input-box { display: none !important; }
-                .full-panel { position: absolute; top: 0; left: 0; width: 100%; border: none; box-shadow: none; background: white !important; color: black !important; }
-                table, th, td { color: black !important; border: 1px solid #ccc !important; }
+                /* 1. Hide EVERYTHING except the Transaction Panel */
+                body > *:not(#mainContent), 
+                #header, #topRightLinks, .background-container, .price-ticker,
+                #mainContent > *:not(.full-panel), 
+                .controls, .input-box, .actions-col, .delete-btn { 
+                    display: none !important; 
+                }
+
+                /* 2. Reset the layout for the PDF */
+                .full-panel { 
+                    position: absolute; 
+                    top: 0; 
+                    left: 0; 
+                    width: 100%; 
+                    background: white !important; 
+                    color: black !important; 
+                    box-shadow: none !important;
+                    border: none !important;
+                }
+
+                /* 3. CRITICAL: Allow the table to expand across multiple pages */
+                .table-wrapper { 
+                    max-height: none !important; 
+                    overflow: visible !important; 
+                }
+
+                /* 4. Style the summary cards for the PDF */
+                .summary-cards { 
+                    display: grid !important; 
+                    grid-template-columns: repeat(3, 1fr); 
+                    gap: 10px; 
+                    margin-bottom: 20px; 
+                }
+                .card { 
+                    border: 1px solid #ccc !important; 
+                    color: black !important; 
+                    background: #f8f9fa !important; 
+                    padding: 10px !important;
+                }
+                .card h3 { font-size: 10pt !important; margin: 0; }
+                .card .amount { font-size: 14pt !important; color: black !important; }
+
+                /* 5. Make the table look professional on paper */
+                table { width: 100%; border-collapse: collapse; }
+                th, td { 
+                    color: black !important; 
+                    border: 1px solid #ddd !important; 
+                    padding: 8px; 
+                    font-size: 10pt;
+                }
+                th { background: #eee !important; }
             }
         `;
         document.head.appendChild(style);
-        window.print();
-        setTimeout(() => document.getElementById('temp-print-style').remove(), 1000);
+        
+        // Give the browser a split second to apply styles, then print
+        setTimeout(() => {
+            window.print();
+            document.getElementById('temp-print-style').remove();
+        }, 250);
     }
 
     function setupEventListeners() {
@@ -2865,6 +2916,20 @@ function loadInitialData() {
                 }
             },
 
+                updateYearFilter() {
+                const yearSelect = document.getElementById('year-filter');
+                if (!yearSelect) return;
+                const years = [...new Set(this.transactions.map(t => new Date(t.date).getFullYear()))];
+                years.sort((a, b) => b - a);
+                yearSelect.innerHTML = '<option value="all">All Years</option>';
+                years.forEach(y => {
+                    const opt = document.createElement('option');
+                    opt.value = y;
+                    opt.textContent = y;
+                    yearSelect.appendChild(opt);
+                });
+            },
+
             async loadExchangeRates() {
                 try {
                     const res = await fetch("https://open.er-api.com/v6/latest/USD");
@@ -2919,42 +2984,70 @@ function loadInitialData() {
             },
 
             renderUI() {
-                const targetCurrency = document.getElementById('currency-select').value;
-                if (!this.fxRates) return;
-                this.updateSummaries(targetCurrency);
-                const tableBody = document.getElementById('tableBody');
-                if (!tableBody) return;
-                tableBody.innerHTML = '';
-                this.transactions.forEach(tx => {
-                    const converted = (tx.amount / this.fxRates[tx.currency]) * this.fxRates[targetCurrency];
-                    tableBody.innerHTML += `<tr><td>${new Date(tx.date).toLocaleDateString('en-GB')}</td><td>${tx.type === 'deposit' ? this.formatLocalCurrency(converted, targetCurrency) : ''}</td><td>${tx.type === 'withdrawal' ? this.formatLocalCurrency(converted, targetCurrency) : ''}</td><td class="actions-col"><button class="delete-btn" data-id="${tx.id}">Delete</button></td></tr>`;
-                });
-            },
-            
-            updateSummaries(currency) {
-                let depUSD = 0, withUSD = 0;
-                this.transactions.forEach(tx => { 
-                    const usd = tx.amount / this.fxRates[tx.currency];
-                    if (tx.type === 'deposit') depUSD += usd;
-                    else withUSD += usd;
-                });
+    const targetCurrency = document.getElementById('currency-select').value;
+    const selectedYear = document.getElementById('year-filter').value;
+    const selectedMonth = document.getElementById('month-filter').value;
+    
+    if (!this.fxRates) return;
 
-                const cryptoUSD = window.myFinApp?.totalCryptoUSD || 0;
-                const pnlUSD = (withUSD + cryptoUSD) - depUSD;
+    // 1. Sort by Date (Newest First)
+    this.transactions.sort((a, b) => b.date - a.date);
 
-                document.getElementById('total-deposits-card').textContent = this.formatLocalCurrency(depUSD * this.fxRates[currency], currency);
-                document.getElementById('total-withdrawals-card').textContent = this.formatLocalCurrency(withUSD * this.fxRates[currency], currency);
-                document.getElementById('crypto-value-card').textContent = this.formatLocalCurrency(cryptoUSD * this.fxRates[currency], currency);
-                document.getElementById('net-balance-card').textContent = this.formatLocalCurrency(pnlUSD * this.fxRates[currency], currency);
-                document.getElementById('pnl-amount').textContent = `${((pnlUSD / Math.max(depUSD, 1)) * 100).toFixed(2)}%`;
+    // 2. Filter the data based on dropdowns
+    const filteredTx = this.transactions.filter(tx => {
+        const d = new Date(tx.date);
+        const matchYear = selectedYear === 'all' || d.getFullYear().toString() === selectedYear;
+        const matchMonth = selectedMonth === 'all' || d.getMonth().toString() === selectedMonth;
+        return matchYear && matchMonth;
+    });
 
-                const pnlCard = document.getElementById('pnl-card');
-                if (pnlCard) pnlCard.className = 'card ' + (pnlUSD >= 0 ? 'card-pnl-profit' : 'card-pnl-loss');
-            },
+    // 3. Update the Cards (Summaries) using the filtered data
+    this.updateSummaries(targetCurrency, filteredTx);
 
+    // 4. Draw the Table
+    const tableBody = document.getElementById('tableBody');
+    if (!tableBody) return;
+    tableBody.innerHTML = '';
+    
+    filteredTx.forEach(tx => {
+        const converted = (tx.amount / this.fxRates[tx.currency]) * this.fxRates[targetCurrency];
+        tableBody.innerHTML += `
+            <tr>
+                <td>${new Date(tx.date).toLocaleDateString('en-GB')}</td>
+                <td>${tx.type === 'deposit' ? this.formatLocalCurrency(converted, targetCurrency) : ''}</td>
+                <td>${tx.type === 'withdrawal' ? this.formatLocalCurrency(converted, targetCurrency) : ''}</td>
+                <td class="actions-col"><button class="delete-btn" data-id="${tx.id}">Delete</button></td>
+            </tr>`;
+    });
+},
+
+updateSummaries(currency, filteredData) {
+    let depUSD = 0, withUSD = 0;
+    
+    // Use filtered data for deposit/withdrawal totals
+    filteredData.forEach(tx => { 
+        const usd = tx.amount / this.fxRates[tx.currency];
+        if (tx.type === 'deposit') depUSD += usd;
+        else withUSD += usd;
+    });
+
+    // Current Crypto is ALWAYS the live total (not filtered by date)
+    const cryptoUSD = window.myFinApp?.totalCryptoUSD || 0;
+    const pnlUSD = (withUSD + cryptoUSD) - depUSD;
+
+    document.getElementById('total-deposits-card').textContent = this.formatLocalCurrency(depUSD * this.fxRates[currency], currency);
+    document.getElementById('total-withdrawals-card').textContent = this.formatLocalCurrency(withUSD * this.fxRates[currency], currency);
+    document.getElementById('crypto-value-card').textContent = this.formatLocalCurrency(cryptoUSD * this.fxRates[currency], currency);
+    document.getElementById('net-balance-card').textContent = this.formatLocalCurrency(pnlUSD * this.fxRates[currency], currency);
+    document.getElementById('pnl-amount').textContent = `${((pnlUSD / Math.max(depUSD, 1)) * 100).toFixed(2)}%`;
+
+    const pnlCard = document.getElementById('pnl-card');
+    if (pnlCard) pnlCard.className = 'card ' + (pnlUSD >= 0 ? 'card-pnl-profit' : 'card-pnl-loss');
+},
             async init() {
                 this.processRawData();
                 await this.loadExchangeRates();
+		this.updateYearFilter();
 
                 // RESTORE: Populate Dropdowns
                 const fromSelect = document.getElementById('fromCurrency');
@@ -2984,6 +3077,8 @@ function loadInitialData() {
                 document.getElementById("convertAmount")?.addEventListener("input", () => this.convertCurrency());
                 document.getElementById("fromCurrency")?.addEventListener("change", () => this.convertCurrency());
                 document.getElementById("toCurrency")?.addEventListener("change", () => this.convertCurrency());
+		document.getElementById("year-filter")?.addEventListener("change", () => this.renderUI());
+                document.getElementById("month-filter")?.addEventListener("change", () => this.renderUI());
                 document.getElementById("currency-select")?.addEventListener("change", () => { this.renderUI(); this.convertGold(); });
                 
                  document.getElementById("addNewTxBtn")?.addEventListener('click', () => {
@@ -2998,7 +3093,8 @@ function loadInitialData() {
                         currency: document.getElementById('newCurrency').value 
                     };
                     this.transactions.push(newTx); 
-                    localStorage.setItem('finance_transactions_v41', JSON.stringify(this.transactions)); 
+                    localStorage.setItem('finance_transactions_v41', JSON.stringify(this.transactions));
+ 		    this.updateYearFilter(); 
                     this.renderUI();
                 });
 
@@ -3095,7 +3191,7 @@ function loadInitialData() {
     
           <h3 style="color: var(--primary-glow); border-bottom: 1px solid #3399ff44; margin-bottom: 8px;">1. Setting Up Your Assets</h3>
           <p>Begin by entering your <strong>Liquid Assets</strong> (Cash or money in the bank).
-          <br>• <strong>Gold:</strong> Enter your physical gold in the <em>Physical Gold Holdings (Liquid)</em> section. These figures automatically populate your Portfolio Snapshot.
+          <br>• <strong>Gold:</strong> Enter your physical gold in the <em>Physical Gold Holdings (Liquid Assets 2)</em> section. These figures automatically populate your Portfolio Snapshot.
           <br>• <strong>Fixed Assets:</strong> Do the same for long-term investments like property values.</p>
 
           <h3 style="color: var(--primary-glow); border-bottom: 1px solid #3399ff44; margin-top: 15px; margin-bottom: 8px;">2. Managing Crypto</h3>
