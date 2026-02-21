@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>MyFinCryptoZone V.100 </title>
+  <title>CrypFin Cockpit V.112 </title>
   <link rel="icon" href="data:;base64,iVBORw0KGgo=">
   <link href="https://fonts.googleapis.com/css2?family=Iceland&family=Quantico&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/three@0.146.0/build/three.min.js"></script>
@@ -113,236 +113,268 @@
     .price-up { color: #00FF88; }
     .price-down { color: #FF4444; }
 
-    /* --- CLEAN HEADER SYSTEM --- */
+/* --- HUD SLIM COMMAND STRIP --- */
     #header {
       position: fixed;
-      top: 15px;
-      left: 15px;
-      /* Adjust this right value: lower = wider, higher = more gap for buttons */
-      right: 580px; 
-      height: 85px;
+      top: 0; left: 0; right: 0;
+      height: 85px; /* Slimmer height */
       display: flex;
       align-items: center;
       justify-content: space-between;
-      z-index: 10;
-      background: var(--bg-panel);
+      z-index: 9999;
+      background: rgba(5, 12, 25, 0.96); 
       padding: 0 25px;
-      border-radius: 8px;
-      box-shadow: 0 0 15px var(--primary-glow), inset 0 0 8px var(--primary-border);
-      overflow: hidden;
-      pointer-events: auto;
+      border-bottom: 2px solid #00d4ff; 
+      box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+      backdrop-filter: blur(12px);
     }
 
-    #header::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-      animation: shine 3s infinite;
-      pointer-events: none;
-    }
-
-     /* --- CLEAN HEADER SYSTEM --- */
-    #header {
-      position: fixed;
-      top: 15px;
-      left: 15px;
-      /* Adjust this right value: lower = wider, higher = more gap for buttons */
-      right: 750px; 
-      height: 85px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      z-index: 10;
-      background: var(--bg-panel);
-      padding: 0 25px;
-      border-radius: 8px;
-      box-shadow: 0 0 15px var(--primary-glow), inset 0 0 8px var(--primary-border);
-      overflow: hidden;
-      pointer-events: auto;
-    }
-
-    #header::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-      animation: shine 3s infinite;
-      pointer-events: none;
-    }
-
-    #title {
-  font-family: 'Iceland', sans-serif;
-  font-size: 2.3rem !important;    /* Small, clean size */
-  margin: 0 !important;           /* Remove all old margins */
-  padding: 0 !important;          /* Remove all old padding */
-  line-height: 85px;              /* Vertically centered in the 85px header */
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: #e0f7ff;
-  text-shadow: 0 0 5px #00aaff;
-  
-  /* These three lines are the "Secret Sauce" for one-line fixes */
-  white-space: nowrap;            /* Forces text to stay on one line */
-  overflow: visible;              /* Ensures it doesn't get clipped */
-  flex: 1;                        /* Tells it to take up available space */
-  
-  background: none !important;
-  box-shadow: none !important;
-  border: none !important;
-  width: auto !important;         /* Removes any fixed width that was pushing it out */
-}
-
-    .avatar-container {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
+    #header-left { display: flex; align-items: center; gap: 15px; flex-shrink: 0; }
+    
     #avatar {
-      width: 60px;
-      height: 60px;
+      width: 45px; height: 45px;
       background-color: #223344;
       background-size: cover;
       background-position: center;
-      background-repeat: no-repeat;
-      border-radius: 6px;
-      border: 2px solid var(--primary-glow);
+      border: 1px solid #00ffcc;
+      box-shadow: 0 0 10px #00ffcc;
+      border-radius: 4px;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #6699ccaa;
-      font-size: 0.75rem;
-      outline: none;
-      transition: box-shadow 0.3s;
     }
 
-    #avatar:hover {
-        box-shadow: 0 0 10px var(--primary-glow);
-    }
-
-    #topRightLinks {
-      position: fixed;
-      top: 15px;
-      right: 15px;
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      z-index: 11; /* Higher than header */
-      height: 85px; /* Match header height for alignment */
-    }
-    
     #title {
-      font-family: 'Iceland', sans-serif;
-      font-size: 2.8rem;
-      margin: 0 0 0 15px;
-      line-height: 65px;
-      background: var(--bg-panel);
-      padding: 12px 25px;
-      border-radius: 8px;
-      box-shadow: 0 0 15px var(--primary-glow), inset 0 0 8px var(--primary-border);
-      position: relative;
-      overflow: hidden;
+      font-family: 'Iceland', sans-serif !important;
+      font-size: 1.8rem !important;
+      color: #e0f7ff !important;
+      text-shadow: 0 0 10px #00aaff !important;
       text-transform: uppercase;
-      letter-spacing: 2px;
-      color: #e0f7ff;
-      text-shadow: 0 0 5px #00aaff, 0 0 10px #00aaff;
+      margin: 0; white-space: nowrap;
     }
-    #title::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-      animation: shine 3s infinite;
-    }
-    .avatar-container {
-      margin-left: 25px;
+
+    /* THE CONTROL TOWER (Combined Row Design) */
+    #controlTower {
       display: flex;
       flex-direction: column;
-      align-items: center;
-      gap: 6px; 
-      flex-shrink: 0;
+      align-items: flex-end;
+      gap: 5px;
     }
+
+    .ops-row {
+      display: flex;
+      align-items: center;
+      gap: 12px; /* Gap between buttons and Fortress */
+    }
+
+    #topRightLinks { display: flex; gap: 4px; }
+
+    .quantico-btn {
+      width: 75px !important; /* Smaller width to fit the row */
+      height: 28px;
+      font-size: 0.65rem !important;
+      padding: 0 !important;
+      line-height: 28px;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .fortress-strip {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(170, 0, 255, 0.1);
+      border: 1px solid #aa00ff;
+      border-radius: 4px;
+      padding: 0 10px;
+      height: 28px; /* Match button height */
+    }
+
+    .fortress-label {
+      color: #aa00ff;
+      font-family: 'Iceland';
+      font-size: 0.75rem;
+      font-weight: bold;
+    }
+
+    .header-links { display: flex; gap: 15px; margin-top: 2px; }
+    .header-links a {
+      font-size: 0.6rem; color: var(--primary-text);
+      text-decoration: none; opacity: 0.6; font-weight: bold; text-transform: uppercase;
+    }
+    .header-links a:hover { opacity: 1; color: var(--primary-glow); }
+
+    /* Adjust main content for the slimmer header */
+    #mainContent { margin-top: 105px !important; }
+
+  /* ============================================================
+       TOP HUD COMMAND CENTER (HEADER)
+    ============================================================ */
+    #header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 110px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 9999;
+      background: rgba(5, 15, 30, 0.98);
+      padding: 0 30px;
+      border-bottom: 2px solid #00d4ff;
+      box-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
+      backdrop-filter: blur(10px);
+    }
+
+    #header-left { display: flex; align-items: center; gap: 20px; }
+
     #avatar {
-      width: 65px;
-      height: 65px;
+      width: 55px; height: 55px;
       background-color: #223344;
       background-size: cover;
       background-position: center;
-      background-repeat: no-repeat;
+      border: 1px solid #00ffcc;
+      box-shadow: 0 0 10px #00ffcc;
       border-radius: 6px;
-      border: 2px solid var(--primary-glow);
       cursor: pointer;
+    }
+
+    #title {
+      font-family: 'Iceland', sans-serif !important;
+      font-size: 2.2rem !important;
+      color: #e0f7ff !important;
+      text-shadow: 0 0 10px #00aaff;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .version-tag { font-size: 0.8rem; opacity: 0.5; margin-left: 10px; }
+
+    /* RIGHT SIDE COMMAND STACK */
+    #controlTower {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+      width: 420px;
+    }
+
+    #topRightLinks { display: flex; gap: 5px; }
+
+    .quantico-btn {
+      width: 85px !important;
+      height: 30px;
+      font-size: 0.7rem !important;
+      padding: 0 !important;
+      line-height: 30px;
+      border: 1px solid rgba(255,255,255,0.2);
+      cursor: pointer;
+      background: var(--btn-bg);
+      color: var(--primary-text);
+      font-family: 'Quantico';
+      font-weight: bold;
+    }
+
+    .fortress-strip {
       display: flex;
       align-items: center;
-      justify-content: center;
-      color: #6699ccaa;
-      font-size: 0.75rem;
-      outline: none;
-      flex-shrink: 0;
+      justify-content: space-between;
+      background: rgba(170, 0, 255, 0.1);
+      border: 1px solid #aa00ff;
+      box-shadow: 0 0 10px rgba(170, 0, 255, 0.3);
+      border-radius: 4px;
+      padding: 4px 10px;
+      width: 100%;
     }
-    #topRightLinks a, #topRightLinks button {
-      font-size: 0.8rem;
-      padding: 8px 12px;
-      background: var(--btn-bg);
-      border-radius: 6px;
-      color: var(--primary-text);
-      text-decoration: none;
-      font-weight: 700;
-      box-shadow: 0 0 4px #3399ffcc;
-      font-family: 'Quantico', sans-serif;
-      border: none;
+
+    .fortress-label { color: #aa00ff; font-family: 'Iceland'; font-size: 0.8rem; font-weight: bold; }
+
+    .header-links { display: flex; gap: 18px; }
+    .header-links a {
+      font-size: 0.65rem; color: var(--primary-text);
+      text-decoration: none; opacity: 0.7; font-weight: bold; text-transform: uppercase;
     }
-    #topRightLinks a:hover, #topRightLinks button:hover { background: var(--btn-hover-bg); }
-    #printReportBtn {
-        background: #00aaffcc;
-        color: #e0f7ff;
-        cursor: pointer;
-    }
-    #printReportBtn:hover { background: #33bbffcc; }
-    #mainContent {
+
+    /* ============================================================
+       MAIN CONTENT BOX & NEON BORDERS
+    ============================================================ */
+     #mainContent {
       position: relative;
-      z-index: 1;
-      margin-top: 120px;
-      max-width: 1200px;
+      margin-top: 135px; 
       margin-left: auto;
       margin-right: auto;
+      max-width: 1300px;
       padding: 20px;
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      gap: 25px;
+      z-index: 1;
+      border-left: 2px solid rgba(0, 212, 255, 0.2);
+      border-right: 2px solid rgba(0, 212, 255, 0.2);
+      background: rgba(0, 5, 15, 0.3);
     }
+
+    /* NEON BORDERS FOR PANELS, CRYPTO BOX, AND CHART BOX */
+    section[id$="Block"], .panel, .full-panel, .crypto-column, .chart-column {
+      background: var(--bg-panel) !important;
+      border: 1px solid var(--primary-border) !important;
+      box-shadow: 0 0 15px rgba(51, 153, 255, 0.2) !important;
+      border-radius: 8px;
+      padding: 20px !important;
+    }
+
+    /* Ensure the table and chart boxes line up nicely */
+    .crypto-chart-row {
+      display: flex;
+      gap: 20px;
+      align-items: stretch;
+    }
+
+    /* ============================================================
+       TABLE REPAIR (RESTORES LINES & SPACING)
+    ============================================================ */
     table {
       width: 100%;
-      border-collapse: collapse;
-      border-radius: 8px;
-      overflow: hidden;
-      background: rgba(0,0,30,0.7);
+      border-collapse: separate; /* Allows for better border control */
+      border-spacing: 0;
+      margin-top: 10px;
       color: var(--primary-text);
-      box-shadow: 0 0 12px #00aaff88;
     }
-    table caption {
-      font-weight: 700;
-      font-size: 1.3rem;
-      margin: 12px 0;
-      padding: 8px 0;
-    }
-    th, td {
-      padding: 12px 15px;
+
+    th {
+      background: rgba(50, 100, 160, 0.4);
+      padding: 12px;
       border-bottom: 2px solid var(--primary-border);
+      font-family: 'Iceland';
+      letter-spacing: 1px;
+    }
+
+    td {
+      padding: 12px 10px;
+      border-bottom: 1px solid rgba(51, 153, 255, 0.2);
       text-align: center;
       vertical-align: middle;
+    }
+
+    tr:hover { background: rgba(0, 212, 255, 0.05); }
+
+    /* CRYPTO TABLE SPECIFIC FIXES */
+    #cryptoTable th, #cryptoTable td {
+      font-size: 0.85rem;
+      white-space: nowrap;
+    }
+
+    /* TRANSACTION TABLE SPACING FIX */
+    .table-wrapper {
+      max-height: 400px;
+      overflow-y: auto;
+      border: 1px solid rgba(51, 153, 255, 0.3);
+      padding: 5px;
+    }
+
+    #mainContent { 
+      margin-top: 135px !important; 
+    }
+
+    /* Fix Main Content Pushing */
+    #mainContent { 
+      margin-top: 135px !important; 
     }
     
     th { background: var(--bg-header); }
@@ -1142,22 +1174,43 @@
         <div class="crypto-symbols" id="cryptoSymbols"></div>
     </div>
 
-  <div id="header" role="banner" aria-label="Site header">
-    <h1 id="title">My FinCrypto Zone</h1>
-    <div class="avatar-container">
-        <div id="avatar" class="empty"></div>
+ <header id="header">
+    <div id="header-left">
+      <div id="avatar" class="empty"></div>
+      <h1 id="title">CrypFin Cockpit <span style="font-size: 0.7rem; opacity: 0.4;">V.112</span></h1>
     </div>
-  </div>
-<nav id="topRightLinks" aria-label="External crypto related links">
-      <button id="briefingBtn" class="quantico-btn" style="background: #aa00ffcc;">System Briefing</button>
-      <button id="aiAssistantBtn" class="quantico-btn">AI Assistant</button>
-      <button id="helpBtn" class="quantico-btn" style="background: #0088ccaa;">Guide</button> 
-      <button id="printReportBtn">Print Report</button>
-      <a href="https://bitcoinvn.io" target="_blank" rel="noopener">BitcoinVN</a>
-      <a href="https://www.luno.com" target="_blank" rel="noopener">Luno</a>
-      <a href="https://www.binance.com" target="_blank" rel="noopener">Binance</a>
-      <a href="https://x.com" target="_blank" rel="noopener">X</a>
-  </nav>
+
+    <div id="controlTower">
+      <!-- ROW 1: COMBINED OPS (BUTTONS + FORTRESS) -->
+      <div class="ops-row">
+        <!-- System Buttons -->
+        <nav id="topRightLinks">
+          <button id="briefingBtn" class="quantico-btn" style="background: #aa00ffcc;">Status</button>
+          <button id="aiAssistantBtn" class="quantico-btn">AI Bot</button>
+          <button id="helpBtn" class="quantico-btn" style="background: #0088ccaa;">Guide</button> 
+          <button id="printReportBtn" class="quantico-btn" style="background: #00aaffcc;">Print</button>
+        </nav>
+
+        <!-- Data Fortress -->
+        <div class="fortress-strip" id="fortressBlock">
+          <span class="fortress-label">FORTRESS</span>
+          <div style="display: flex; gap: 4px;">
+            <button class="quantico-btn" style="background: #0088cc66; width: 55px !important; height: 20px !important; line-height: 20px !important;" onclick="exportSystemData()">Backup</button>
+            <button class="quantico-btn" style="background: #aa00ff66; width: 55px !important; height: 20px !important; line-height: 20px !important;" onclick="document.getElementById('importFile').click()">Restore</button>
+          </div>
+          <input type="file" id="importFile" style="display: none;" onchange="importSystemData(event)">
+        </div>
+      </div>
+
+      <!-- ROW 2: MINI LINKS -->
+      <div class="header-links">
+        <a href="https://bitcoinvn.io" target="_blank">BitcoinVN</a>
+        <a href="https://www.luno.com" target="_blank">Luno</a>
+        <a href="https://www.binance.com" target="_blank">Binance</a>
+        <a href="https://x.com" target="_blank">X</a>
+      </div>
+    </div>
+  </header>
 
   <main id="mainContent" role="main">
 
@@ -1197,19 +1250,36 @@
             </table>
         </div>
         <div class="panel">
-            <h2>Gold (XAU) Converter</h2>
-            <label for="goldAmount">Gold Amount:</label>
-            <input type="number" id="goldAmount" value="1">
-            <label for="unitSelect">Select Unit:</label>
-            <select id="unitSelect">
-                <option value="ounce">Ounce (oz)</option><option value="gram">Gram (g)</option>
-                <option value="kg">Kilogram (kg)</option><option value="tael">Tael</option>
-                <option value="chi">Chi</option>
+            <h2>Precious Metals</h2>
+            <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 10px; margin-bottom: 10px;">
+                <div style="display: flex; flex-direction: column;">
+                    <label style="font-size: 0.7rem; opacity: 0.8; margin-bottom: 2px;">Select Metal</label>
+                    <select id="metalType" style="width: 100%; height: 35px; background: var(--dropdown-bg); color: var(--dropdown-font);">
+                        <option value="gold">Gold (XAU)</option>
+                        <option value="silver">Silver (XAG)</option>
+                        <option value="platinum">Platinum (XPT)</option>
+                    </select>
+                </div>
+                <div style="display: flex; flex-direction: column;">
+                    <label style="font-size: 0.7rem; opacity: 0.8; margin-bottom: 2px;">Amount</label>
+                    <input type="number" id="metalAmount" value="1" style="width: 100%; height: 35px; text-align: right;">
+                </div>
+            </div>
+
+            <label style="font-size: 0.7rem; opacity: 0.8; margin-bottom: 2px;">Weight Unit</label>
+            <select id="unitSelect" style="width: 100%; height: 35px; margin-bottom: 10px; background: var(--dropdown-bg); color: var(--dropdown-font);">
+                <option value="ounce">Ounce (oz)</option>
+                <option value="gram">Gram (g)</option>
+                <option value="kg">Kilogram (kg)</option>
+                <option value="tael">Tael (VN)</option>
+                <option value="chi">Chi (VN)</option>
             </select>
-            <table id="goldTable">
+
+            <table id="metalTable" style="margin-top: 5px;">
                 <thead><tr><th>Currency</th><th>Value</th></tr></thead>
-                <tbody><tr><td colspan="2">Loading data...</td></tr></tbody>
+                <tbody id="metals-tbody"><tr><td colspan="2">Loading prices...</td></tr></tbody>
             </table>
+            <div id="metalPriceRef" style="font-size: 0.65rem; text-align: center; margin-top: 8px; color: var(--primary-glow); font-weight: bold;"></div>
         </div>
         <div class="panel">
             <h2>Currency Converter</h2>
@@ -1227,7 +1297,20 @@
           <caption>Cryptocurrency Prices</caption>
           <thead><tr><th>Coin</th><th>Exchange Rate</th><th>ZAR</th><th>VND</th><th>Holdings</th><th>Value (USD)</th><th>24h Change</th></tr></thead>
           <tbody id="cryptoBody"></tbody>
-          <tfoot><tr><td colspan="5"></td><td>Total Value:</td><td id="totalValueUSD">-</td><td></td></tr></tfoot>
+          <tfoot>
+            <tr style="background: rgba(0, 212, 255, 0.05);">
+              <!-- Span first 5 columns to push the total under 'Value USD' -->
+              <td colspan="5" style="border-top: 1px dashed var(--primary-border); padding: 15px 10px; text-align: left; color: var(--primary-glow); font-family: 'Iceland'; font-size: 1.1rem; letter-spacing: 1px; font-weight: bold;">
+                TOTAL CRYPTO PORTFOLIO:
+              </td>
+              <!-- This sits exactly under the Value (USD) column -->
+              <td id="totalValueUSD" style="border-top: 1px dashed var(--primary-border); padding: 15px 5px; color: #fff; font-weight: bold; font-size: 1.1rem; text-align: center; text-shadow: 0 0 10px rgba(255,255,255,0.3);">
+                -
+              </td>
+              <!-- Empty cell for the last column (% Change) -->
+              <td style="border-top: 1px dashed var(--primary-border);"></td>
+            </tr>
+          </tfoot>
         </table>
       </div>
       <div class="chart-column">
@@ -1258,41 +1341,57 @@
     </div>
 
 
-<section id="physicalGoldAssetBlock" class="panel" style="margin-bottom: 20px; border: 1px solid #FFD700; box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);">
-    <h2 style="color: #FFD700; border-bottom: 1px solid #FFD70088;">Liquid Assets 2 (Physical Gold Holdings)</h2>
-    <div style="display: grid; grid-template-columns: 1fr 1fr 1.5fr 1fr 1fr 1fr; gap: 15px; align-items: center; padding: 10px;">
-        <div>
-            <label style="font-size: 0.7rem; display: block; opacity: 0.7;">Holdings</label>
-            <input type="number" id="pGoldAmount" class="units-input" style="width: 100%; border-color: #FFD70055;" placeholder="0.00">
-        </div>
-        <div>
-            <label style="font-size: 0.7rem; display: block; opacity: 0.7;">Unit Type</label>
-            <select id="pGoldUnit" style="width: 100%; background: #2a2a3a; color: #FFD700;">
-                <option value="ounce">Ounce (oz)</option>
-                <option value="chi">Chi (VN)</option>
-                <option value="tael">Tael (VN)</option>
-                <option value="gram">Gram (g)</option>
+<section id="physicalMetalsAssetBlock" class="panel" style="margin-bottom: 20px; border: 1px solid #FFD700; box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);">
+    <h2 style="color: #FFD700; border-bottom: 1px solid #FFD70088;">Liquid Assets 2 (Physical Metals Vault)</h2>
+    
+    <!-- GRID CONTAINER -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1.5fr 1fr 1fr 1fr; gap: 12px; align-items: center; padding: 10px;">
+        
+        <!-- HEADER ROW -->
+        <div style="font-size: 0.65rem; opacity: 0.6; font-weight: bold;">Metal</div>
+        <div style="font-size: 0.65rem; opacity: 0.6; font-weight: bold;">Holdings / Unit</div>
+        <div style="font-size: 0.65rem; opacity: 0.6; font-weight: bold; text-align: center;">Live Price (oz)</div>
+        <div style="font-size: 0.65rem; opacity: 0.6; font-weight: bold; text-align: right;">Value (USD)</div>
+        <div style="font-size: 0.65rem; opacity: 0.6; font-weight: bold; text-align: right;">Value (ZAR)</div>
+        <div style="font-size: 0.65rem; opacity: 0.6; font-weight: bold; text-align: right;">Value (VND)</div>
+
+        <!-- GOLD ROW -->
+        <div style="color: #FFD700; font-weight: bold;">GOLD</div>
+        <div style="display: flex; gap: 5px;">
+            <input type="number" id="pGoldAmount" class="units-input" style="width: 60%; border-color: #FFD70055;" placeholder="0.00">
+            <select id="pGoldUnit" style="width: 40%; background: #2a2a3a; color: #FFD700; font-size: 0.7rem;">
+                <option value="ounce">oz</option><option value="chi">chi</option>
+                <option value="tael">tael</option><option value="gram">g</option>
             </select>
         </div>
-        <div>
-            <label style="font-size: 0.7rem; display: block; opacity: 0.7;">Live Price (USD/oz)</label>
-            <span id="liveGoldPriceDisplay" style="font-weight: bold; color: #00ff88;">Fetching...</span>
+        <div id="liveGoldPriceDisplay" style="color: #00ff88; font-size: 0.85rem; text-align: center;">Fetching...</div>
+        <div id="pGoldValueUSD" style="color: #e0f7ff; text-align: right;">$0.00</div>
+        <div id="pGoldValueZAR" style="color: #66aaff; text-align: right;">R0</div>
+        <div id="pGoldValueVND" style="color: #ffaa00; text-align: right;">₫0</div>
+
+        <!-- SILVER ROW -->
+        <div style="color: #C0C0C0; font-weight: bold;">SILVER</div>
+        <div style="display: flex; gap: 5px;">
+            <input type="number" id="pSilverAmount" class="units-input" style="width: 60%; border-color: #C0C0C055;" placeholder="0.00">
+            <select id="pSilverUnit" style="width: 40%; background: #2a2a3a; color: #C0C0C0; font-size: 0.7rem;">
+                <option value="ounce">oz</option><option value="gram">g</option>
+                <option value="kg">kg</option>
+            </select>
         </div>
-        <div>
-            <label style="font-size: 0.7rem; display: block; opacity: 0.7;">Value (USD)</label>
-            <strong id="pGoldValueUSD" style="color: #e0f7ff;">$0.00</strong>
+        <div id="liveSilverPriceDisplay" style="color: #00ff88; font-size: 0.85rem; text-align: center;">Fetching...</div>
+        <div id="pSilverValueUSD" style="color: #e0f7ff; text-align: right;">$0.00</div>
+        <div id="pSilverValueZAR" style="color: #66aaff; text-align: right;">R0</div>
+        <div id="pSilverValueVND" style="color: #ffaa00; text-align: right;">₫0</div>
+
+        <!-- TOTAL VAULT ROW (Inside the Grid) -->
+        <div style="grid-column: span 3; border-top: 1px dashed #FFD70044; padding-top: 10px; margin-top: 5px; color: #FFD700; font-family: 'Iceland'; letter-spacing: 1px; font-weight: bold;">
+            TOTAL VAULT VALUE:
         </div>
-        <div>
-            <label style="font-size: 0.7rem; display: block; opacity: 0.7;">Value (ZAR)</label>
-            <strong id="pGoldValueZAR" style="color: #66aaff;">R0.00</strong>
-        </div>
-        <div>
-            <label style="font-size: 0.7rem; display: block; opacity: 0.7;">Value (VND)</label>
-            <strong id="pGoldValueVND" style="color: #ffaa00;">₫0</strong>
-        </div>
+        <div id="vaultTotalUSD" style="border-top: 1px dashed #FFD70044; padding-top: 10px; margin-top: 5px; color: #e0f7ff; font-weight: bold; text-align: right;">$0.00</div>
+        <div id="vaultTotalZAR" style="border-top: 1px dashed #FFD70044; padding-top: 10px; margin-top: 5px; color: #66aaff; font-weight: bold; text-align: right;">R0.00</div>
+        <div id="vaultTotalVND" style="border-top: 1px dashed #FFD70044; padding-top: 10px; margin-top: 5px; color: #ffaa00; font-weight: bold; text-align: right;">₫0</div>
     </div>
 </section>
-
     <section id="cryptoAssetsBlock" aria-label="Crypto assets">
         <h2>Crypto Assets <button id="manageCoinsBtn" class="quantico-btn">Add/Remove Coins</button></h2>
         <div class="crypto-header">
@@ -1317,6 +1416,7 @@
           <div class="calc-result"><span>Future Value: </span><span id="future-calculated-value">$0.00</span></div>
       </section>
     </div>
+
 
     <section id="newsBlock" aria-label="Crypto news">
         <h2>Crypto News</h2>
@@ -1650,31 +1750,41 @@ function attachCryptoPersistence() {
         return data;
     }
 
-// --- GLOBAL LIVE GOLD ENGINE ---
-window.currentGoldPriceUSD = 2650; // Default fallback
+// --- GLOBAL LIVE PRECIOUS METALS ENGINE ---
+window.metalPrices = { gold: 2650, silver: 31, platinum: 2150 }; // High fallback as requested
 
-async function fetchGoldData() {
+async function fetchMetalsData() {
     try {
-        // We add include_24hr_change=true to the API call
-        const response = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=pax-gold&vs_currencies=usd&include_24hr_change=true");
+        // Fetching Gold (PAXG), Silver (KAG), and Platinum
+        const response = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=pax-gold,kinesis-silver,platinum&vs_currencies=usd&include_24hr_change=true");
         const data = await response.json();
         
-        const price = data["pax-gold"].usd;
-        const change = data["pax-gold"].usd_24h_change; // Grab the % change
+        if (data) {
+            // 1. Update Gold Price AND % Change
+            window.metalPrices.gold = data["pax-gold"]?.usd || window.metalPrices.gold;
+            window.currentGoldPriceUSD = window.metalPrices.gold;
+            window.currentGoldChange = data["pax-gold"]?.usd_24h_change || 0; // SAVES % CHANGE
+            
+            // 2. Update Silver Price AND % Change
+            window.metalPrices.silver = data["kinesis-silver"]?.usd || window.metalPrices.silver;
+            window.currentSilverChange = data["kinesis-silver"]?.usd_24h_change || 0; // SAVES % CHANGE
 
-        if (price) {
-            window.currentGoldPriceUSD = price;
-            window.currentGoldChange = change; // Store change globally
-            localStorage.setItem('lastKnownGoldPrice', price);
-            localStorage.setItem('lastKnownGoldChange', change);
+            // 3. Update Platinum (Sovereign Logic)
+            const apiPlatinum = data["platinum"]?.usd;
+            if (apiPlatinum && apiPlatinum > 500) {
+                window.metalPrices.platinum = apiPlatinum;
+            } else {
+                window.metalPrices.platinum = 2150; // Sovereign Fallback
+            }
+            
+            // Cache results for next load
+            localStorage.setItem('cachedMetalPrices', JSON.stringify(window.metalPrices));
         }
-        return window.currentGoldPriceUSD;
     } catch (err) {
-        window.currentGoldPriceUSD = parseFloat(localStorage.getItem('lastKnownGoldPrice')) || 2650;
-        window.currentGoldChange = parseFloat(localStorage.getItem('lastKnownGoldChange')) || 0;
-        return window.currentGoldPriceUSD;
+        console.warn("Metals fetch failed. Using fallback prices.");
     }
 }
+
     async function fetchCryptoPrices() {
         if (activeCoins.length === 0) return {};
 
@@ -1908,10 +2018,17 @@ function loadInitialData() {
 */
 
         // --- THE GOLD CODE GOES HERE (OUTSIDE THE LOOP) ---
+        // Load Saved Gold
         const savedGoldAmt = localStorage.getItem('physicalGoldAmount');
         const savedGoldUnit = localStorage.getItem('physicalGoldUnit');
         if (savedGoldAmt) $('#pGoldAmount').value = savedGoldAmt;
         if (savedGoldUnit) $('#pGoldUnit').value = savedGoldUnit;
+
+        // LOAD SAVED SILVER
+        const savedSilverAmt = localStorage.getItem('physicalSilverAmount');
+        const savedSilverUnit = localStorage.getItem('physicalSilverUnit');
+        if (savedSilverAmt) $('#pSilverAmount').value = savedSilverAmt;
+        if (savedSilverUnit) $('#pSilverUnit').value = savedSilverUnit;;
 
         recalculateAllTotals();
     
@@ -1960,34 +2077,52 @@ function loadInitialData() {
             if(ER.VND) liquidUSD += (parseFloat(localStorage.getItem(`liquid-${asset.id}-VND`) || 0) / ER.VND);
         });
 
-        // 2. LIVE GOLD CALCULATION
-        // We pull directly from the inputs to ensure ZAR/VND update while typing
-        const goldAmt = parseFloat($('#pGoldAmount').value) || 0;
-        const goldUnit = $('#pGoldUnit').value;
-        const livePrice = window.currentGoldPriceUSD || 2650; 
-
-        // Unit Conversion to Troy Ounces (Vietnamese 37.5g standard)
+        // 2. PRECIOUS METALS ENGINE (VAULT)
         const unitToOunce = { 
-            ounce: 1, 
-            chi: 0.120565,   // 1 Chi = 3.75g
-            tael: 1.20565,  // 1 Tael = 37.5g
-            gram: 0.0321507 
+            ounce: 1, chi: 0.120565, tael: 1.20565, gram: 0.0321507, kg: 32.1507 
         };
 
-        const goldUSDValue = goldAmt * unitToOunce[goldUnit] * livePrice;
+        // --- GOLD CALC ---
+        const goldAmt = parseFloat($('#pGoldAmount').value) || 0;
+        const goldUnit = $('#pGoldUnit').value;
+        const liveGold = window.metalPrices?.gold || 2650;
+        const goldUSDValue = goldAmt * unitToOunce[goldUnit] * liveGold;
 
-        // ADD GOLD TO LIQUID TOTAL & SAVE SETTINGS
-        liquidUSD += goldUSDValue;
-        localStorage.setItem('physicalGoldAmount', goldAmt);
-        localStorage.setItem('physicalGoldUnit', goldUnit);
+        // --- SILVER CALC ---
+        const silverAmt = parseFloat($('#pSilverAmount').value) || 0;
+        const silverUnit = $('#pSilverUnit').value;
+        const liveSilver = window.metalPrices?.silver || 31;
+        const silverUSDValue = silverAmt * unitToOunce[silverUnit] * liveSilver;
 
-        // UPDATE THE GOLD UI LABELS
+        // UPDATE UI VAULT LABELS
         if($('#pGoldValueUSD')) {
+            // Gold UI
             $('#pGoldValueUSD').textContent = formatCurrency(goldUSDValue, 'USD');
             $('#pGoldValueZAR').textContent = formatCurrency(goldUSDValue * ER.ZAR, 'ZAR');
             $('#pGoldValueVND').textContent = formatCurrency(goldUSDValue * ER.VND, 'VND');
-            $('#liveGoldPriceDisplay').textContent = formatCurrency(livePrice, 'USD') + " /oz";
+            $('#liveGoldPriceDisplay').textContent = "$" + liveGold.toLocaleString() + " /oz";
+            
+            // Silver UI
+            $('#pSilverValueUSD').textContent = formatCurrency(silverUSDValue, 'USD');
+            $('#pSilverValueZAR').textContent = formatCurrency(silverUSDValue * ER.ZAR, 'ZAR');
+            $('#pSilverValueVND').textContent = formatCurrency(silverUSDValue * ER.VND, 'VND');
+            $('#liveSilverPriceDisplay').textContent = "$" + liveSilver.toLocaleString() + " /oz";
+
+            // Vault Totals
+            const totalVaultUSD = goldUSDValue + silverUSDValue;
+            $('#vaultTotalUSD').textContent = formatCurrency(totalVaultUSD, 'USD');
+            $('#vaultTotalZAR').textContent = formatCurrency(totalVaultUSD * ER.ZAR, 'ZAR');
+            $('#vaultTotalVND').textContent = formatCurrency(totalVaultUSD * ER.VND, 'VND');
+
+            // ADD TO MAIN SNAPSHOT LIQUID TOTAL
+            liquidUSD += totalVaultUSD;
         }
+
+        // SAVE METALS TO STORAGE
+        localStorage.setItem('physicalGoldAmount', goldAmt);
+        localStorage.setItem('physicalGoldUnit', goldUnit);
+        localStorage.setItem('physicalSilverAmount', silverAmt);
+        localStorage.setItem('physicalSilverUnit', silverUnit);
 
         // 3. Fixed Assets
         fixedAssetTypes.forEach(asset => {
@@ -2005,8 +2140,8 @@ function loadInitialData() {
         if (!force && now - lastRefresh < refreshCooldown) return;
         lastRefresh = now;
 
-        // 1. SYNC LIVE GOLD PRICE
-        await fetchGoldData(); 
+        // 1. SYNC LIVE METALS PRICE (Gold, Silver, Platinum)
+        await fetchMetalsData(); 
 
         // 2. FETCH CRYPTO
         const cryptoPrices = await fetchCryptoPrices();
@@ -2398,6 +2533,8 @@ function loadInitialData() {
 
         $('#pGoldAmount').oninput = () => refresh(true);
         $('#pGoldUnit').onchange = () => refresh(true);
+	$('#pSilverAmount').oninput = () => refresh(true);
+        $('#pSilverUnit').onchange = () => refresh(true);
     }
     
     function displaySnapshotHistory() {
@@ -2647,22 +2784,50 @@ function loadInitialData() {
     }
 
     function initPrinting() {
-        const printBtn = $('#printReportBtn'), printModal = $('#printModal'), optionsList = $('#print-options-list'), confirmBtn = $('#confirmPrintBtn');
+        const printBtn = $('#printReportBtn');
+        const printModal = $('#printModal');
+        const optionsList = $('#print-options-list');
+        const confirmBtn = $('#confirmPrintBtn');
+        
+        if (!printBtn || !printModal) return;
+
+        // Corrected list matching your current cockpit sections
         const sections = [
-            { id: 'greetingBlock', name: 'Portfolio Snapshot' }, { id: 'snapshotHistoryBlock', name: 'History' },
-            { id: 'exchangeRatesBody', name: 'Exchange Rates' }, { id: 'cryptoTable', name: 'Crypto Prices' },
-            { id: 'holdingsChartBlock', name: 'Holdings Chart' }, { id: 'liquidAssetsBlock', name: 'Liquid Assets' },
-            { id: 'fixedAssetsBlock', name: 'Fixed Assets' }, { id: 'cryptoAssetsBlock', name: 'Crypto Assets' },
-            { id: 'goldTable', name: 'Gold Converter' }, { id: 'convertResult', name: 'Currency Converter' },
+            { id: 'greetingBlock', name: 'Portfolio Snapshot' },
+            { id: 'snapshotHistoryBlock', name: 'History' },
+            { id: 'exchangeRatesBody', name: 'Exchange Rates' },
+            { id: 'metalTable', name: 'Metals Converter' },
+            { id: 'convertResult', name: 'Currency Converter' },
+            { id: 'cryptoTable', name: 'Crypto Prices' },
+            { id: 'holdingsChartBlock', name: 'Distribution Chart' },
+            { id: 'liquidAssetsBlock', name: 'Liquid Assets' },
+            { id: 'fixedAssetsBlock', name: 'Fixed Assets' },
+            { id: 'physicalMetalsAssetBlock', name: 'Physical Metals Vault' }, // FIXED ID
+            { id: 'cryptoAssetsBlock', name: 'Crypto Assets Units' },
             { id: 'newsBlock', name: 'Crypto News' }
         ];
-        optionsList.innerHTML = sections.map(s => `<li><label><input type="checkbox" data-id="${s.id}" checked> ${s.name}</label></li>`).join('');
-        printBtn.onclick = () => printModal.style.display = 'block';
+
+        // Populate the modal with checkboxes
+        optionsList.innerHTML = sections.map(s => `
+            <li><label style="color:#e0f7ff; cursor:pointer;">
+                <input type="checkbox" data-id="${s.id}" checked style="margin-right:10px;"> ${s.name}
+            </label></li>
+        `).join('');
+
+        // Open Modal
+        printBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            printModal.style.display = 'block';
+        });
+
+        // Execute Print
         confirmBtn.onclick = () => {
             $$('#print-options-list input').forEach(cb => { 
-                const element = $(`#${cb.dataset.id}`);
-                const parentPanel = element.closest('section, .panel, .full-panel') || element;
-                parentPanel.classList.toggle('no-print', !cb.checked);
+                const element = document.getElementById(cb.dataset.id);
+                if (element) {
+                    const parentPanel = element.closest('section, .panel, .full-panel') || element;
+                    parentPanel.classList.toggle('no-print', !cb.checked);
+                }
             });
             printModal.style.display = 'none';
             window.print();
@@ -2711,12 +2876,12 @@ function loadInitialData() {
             }
         }
 
-        // --- TICKER WITH GOLD INTEGRATION ---
+        // --- TICKER WITH METAL INTEGRATION ---
         const updateTicker = () => {
             const ticker = $('#tickerContent');
             if (!ticker) return;
 
-            // 1. Get Gold Price and Change
+            // 1. Gold Price and Change (XAU)
             const gPrice = window.currentGoldPriceUSD || 2650;
             const gChange = window.currentGoldChange || 0;
             const gClass = gChange >= 0 ? 'price-up' : 'price-down';
@@ -2724,32 +2889,37 @@ function loadInitialData() {
 
             const goldHtml = `
                 <div class="ticker-item" style="color: #FFD700; font-weight: bold;">
-                    XAU/USD 
-                    <span class="${gClass}">
-                        $${gPrice.toLocaleString(undefined, {minimumFractionDigits: 2})} 
-                        ${gSign}${gChange.toFixed(2)}%
-                    </span>
+                    XAU/USD <span class="${gClass}">$${gPrice.toLocaleString(undefined, {minimumFractionDigits: 2})} ${gSign}${gChange.toFixed(2)}%</span>
                 </div>`;
 
-            // 2. Get Crypto Prices
+            // 2. NEW: Silver Price and Change (XAG)
+            const sPrice = window.metalPrices?.silver || 31;
+            const sChange = window.currentSilverChange || 0;
+            const sClass = sChange >= 0 ? 'price-up' : 'price-down';
+            const sSign = sChange >= 0 ? '↗' : '↘';
+
+            const silverHtml = `
+                <div class="ticker-item" style="color: #C0C0C0; font-weight: bold;">
+                    XAG/USD <span class="${sClass}">$${sPrice.toLocaleString(undefined, {minimumFractionDigits: 2})} ${sSign}${sChange.toFixed(2)}%</span>
+                </div>`;
+
+            // 3. Crypto Prices
             const cryptoHtml = activeCoins.slice(0, 10).map(coin => {
                 const data = priceDataCache[coin.id] || {};
                 const price = data.usd ?? 0;
                 const change = data.usd_24h_change ?? 0;
-                
                 if (price === 0 || coin.id === 'pax-gold') return '';
-                
                 return `<div class="ticker-item">${coin.symbol.toUpperCase()}/USD<span class="${change >= 0 ? 'price-up' : 'price-down'}">${price.toFixed(2)}${change >= 0 ? '↗' : '↘'}${change.toFixed(2)}%</span></div>`;
             }).join('');
 
-            const combined = goldHtml + cryptoHtml;
+            // Combine everything
+            const combined = goldHtml + silverHtml + cryptoHtml;
             if (combined.length > 0) {
-                ticker.innerHTML = combined + combined;
+                ticker.innerHTML = combined + combined; // Double it for seamless loop
             }
         };
-
         // Update every minute
-        setInterval(updateTicker, 60000);
+        setInterval(updateTicker, 100000);
         
         // Initial triggers: one immediately, one after prices load
         updateTicker();
@@ -2955,22 +3125,45 @@ function loadInitialData() {
                     console.error("Rates failed to load");
                 }
             },
-
-            convertGold() {
-                const amt = parseFloat(document.getElementById("goldAmount").value) || 0;
+convertMetals() {
+                const amt = parseFloat(document.getElementById("metalAmount").value) || 0;
                 const unit = document.getElementById("unitSelect").value;
-                const tbody = document.querySelector("#goldTable tbody");
-                const livePrice = window.currentGoldPriceUSD || 2650;
-                if (!this.fxRates) return;
+                const type = document.getElementById("metalType").value;
+                const tbody = document.getElementById("metals-tbody");
+                const priceRef = document.getElementById("metalPriceRef");
                 
-                const unitToOunce = { ounce: 1, gram: 1 / 31.103, kg: 32.15, tael: 1.203, chi: 0.1203 };
-                const goldUSDValue = amt * unitToOunce[unit] * livePrice;
+                if (!this.fxRates || !window.metalPrices || !window.metalPrices[type]) return;
+
+                const livePrice = window.metalPrices[type];
+                
+                // Units: Ounce is base, Gram is 1/31.1, kg is 32.15, Tael/Chi are VN standards
+                const unitToOunce = { 
+                    ounce: 1, 
+                    gram: 0.03215, 
+                    kg: 32.1507, 
+                    tael: 1.20565, 
+                    chi: 0.12056 
+                };
+
+                const usdValue = amt * unitToOunce[unit] * livePrice;
                 
                 if (tbody) {
                     tbody.innerHTML = `
-                        <tr><td><img class="flag" src="${this.getFlagUrl('us')}"> USD</td><td>$${goldUSDValue.toLocaleString(undefined, {minimumFractionDigits: 2})}</td></tr>
-                        <tr><td><img class="flag" src="${this.getFlagUrl('za')}"> ZAR</td><td>R${(goldUSDValue * this.fxRates.ZAR).toLocaleString(undefined, {minimumFractionDigits: 2})}</td></tr>
-                        <tr><td><img class="flag" src="${this.getFlagUrl('vn')}"> VND</td><td>₫${(goldUSDValue * this.fxRates.VND).toLocaleString(undefined, {maximumFractionDigits: 0})}</td></tr>`;
+                        <tr>
+                            <td><img src="${this.getFlagUrl('us')}" style="width:20px; margin-right:8px; vertical-align:middle; border-radius:2px;"> USD</td>
+                            <td style="font-weight:bold; color:#fff;">$${usdValue.toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
+                        </tr>
+                        <tr>
+                            <td><img src="${this.getFlagUrl('za')}" style="width:20px; margin-right:8px; vertical-align:middle; border-radius:2px;"> ZAR</td>
+                            <td style="font-weight:bold; color:var(--primary-glow);">R${(usdValue * this.fxRates.ZAR).toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
+                        </tr>
+                        <tr>
+                            <td><img src="${this.getFlagUrl('vn')}" style="width:20px; margin-right:8px; vertical-align:middle; border-radius:2px;"> VND</td>
+                            <td style="font-weight:bold; color:var(--crypto-color);">₫${(usdValue * this.fxRates.VND).toLocaleString(undefined, {maximumFractionDigits: 0})}</td>
+                        </tr>`;
+                }
+                if (priceRef) {
+                    priceRef.innerHTML = `LIVE ${type.toUpperCase()} SPOT: <span style="color:#fff;">$${livePrice.toLocaleString()}/oz</span>`;
                 }
             },
 
@@ -2978,11 +3171,24 @@ function loadInitialData() {
                 const amount = parseFloat(document.getElementById("convertAmount").value) || 0;
                 const from = document.getElementById("fromCurrency").value;
                 const to = document.getElementById("toCurrency").value;
-                if (!this.fxRates || !this.fxRates[from] || !this.fxRates[to]) return;
-                const converted = amount * (this.fxRates[to] / this.fxRates[from]);
-                document.getElementById("convertResult").innerHTML = `${amount.toLocaleString()} ${from} = ${converted.toLocaleString(undefined, {minimumFractionDigits: 2})} ${to}`;
-            },
+                const resultDiv = document.getElementById("convertResult");
 
+                if (!this.fxRates || !this.fxRates[from] || !this.fxRates[to]) return;
+
+                const converted = amount * (this.fxRates[to] / this.fxRates[from]);
+                const dec = (to === 'VND' || to === 'JPY') ? 0 : 2;
+                
+                // Find flags from your currency list
+                const fromFlag = this.currencies.find(c => c.code === from)?.flag || 'us';
+                const toFlag = this.currencies.find(c => c.code === to)?.flag || 'us';
+
+                resultDiv.innerHTML = `
+                    <img src="${this.getFlagUrl(fromFlag)}" style="width:20px; vertical-align:middle; border-radius:2px; margin-right:5px;"> 
+                    ${amount.toLocaleString()} ${from} = 
+                    <img src="${this.getFlagUrl(toFlag)}" style="width:20px; vertical-align:middle; border-radius:2px; margin-left:10px; margin-right:5px;"> 
+                    <strong style="color:var(--primary-glow)">${converted.toLocaleString(undefined, {minimumFractionDigits: dec, maximumFractionDigits: dec})} ${to}</strong>
+                `;
+            },
             renderUI() {
     const targetCurrency = document.getElementById('currency-select').value;
     const selectedYear = document.getElementById('year-filter').value;
@@ -3047,7 +3253,7 @@ updateSummaries(currency, filteredData) {
             async init() {
                 this.processRawData();
                 await this.loadExchangeRates();
-		this.updateYearFilter();
+                this.updateYearFilter();
 
                 // RESTORE: Populate Dropdowns
                 const fromSelect = document.getElementById('fromCurrency');
@@ -3066,22 +3272,29 @@ updateSummaries(currency, filteredData) {
                     toSelect.value = 'VND';
                 }
 
-                // RESTORE: Initial Calculation calls
-                this.convertGold();
-                this.convertCurrency();
-                this.renderUI();
+                // --- MASTER FIX: INITIAL CALCULATION CALLS ---
+                // We wait 800ms to ensure global metalPrices and fxRates are fully mapped in memory
+                setTimeout(() => {
+                    this.convertMetals(); 
+                    this.convertCurrency();
+                    this.renderUI();
+                }, 800);
 
                 // RESTORE: Event Listeners for the panels
-                document.getElementById("goldAmount")?.addEventListener("input", () => this.convertGold());
-                document.getElementById("unitSelect")?.addEventListener("change", () => this.convertGold());
+                document.getElementById("metalAmount")?.addEventListener("input", () => this.convertMetals());
+                document.getElementById("metalType")?.addEventListener("change", () => this.convertMetals());
+                document.getElementById("unitSelect")?.addEventListener("change", () => this.convertMetals());
                 document.getElementById("convertAmount")?.addEventListener("input", () => this.convertCurrency());
                 document.getElementById("fromCurrency")?.addEventListener("change", () => this.convertCurrency());
                 document.getElementById("toCurrency")?.addEventListener("change", () => this.convertCurrency());
-		document.getElementById("year-filter")?.addEventListener("change", () => this.renderUI());
+                document.getElementById("year-filter")?.addEventListener("change", () => this.renderUI());
                 document.getElementById("month-filter")?.addEventListener("change", () => this.renderUI());
-                document.getElementById("currency-select")?.addEventListener("change", () => { this.renderUI(); this.convertGold(); });
+                document.getElementById("currency-select")?.addEventListener("change", () => { 
+                    this.renderUI(); 
+                    this.convertMetals(); 
+                });
                 
-                 document.getElementById("addNewTxBtn")?.addEventListener('click', () => {
+                document.getElementById("addNewTxBtn")?.addEventListener('click', () => {
                     const dateVal = document.getElementById('newDate').value;
                     const amtVal = parseFloat(document.getElementById('newAmount').value);
                     if (!dateVal || isNaN(amtVal)) return alert("Check inputs");
@@ -3094,7 +3307,7 @@ updateSummaries(currency, filteredData) {
                     };
                     this.transactions.push(newTx); 
                     localStorage.setItem('finance_transactions_v41', JSON.stringify(this.transactions));
- 		    this.updateYearFilter(); 
+                    this.updateYearFilter(); 
                     this.renderUI();
                 });
 
@@ -3177,8 +3390,40 @@ updateSummaries(currency, filteredData) {
                     <td>$${valueUSD.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
                     <td><span class="${change >= 0 ? 'crypto-pos' : 'crypto-neg'}">${change.toFixed(2)}%</span></td>
                 </tr>`;
-        }); 
+        });
+
+window.exportSystemData = function() {
+    const data = {};
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        data[key] = localStorage.getItem(key);
     }
+    const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `MyFinCrypto_FORTRESS_${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+};
+
+window.importSystemData = function(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const data = JSON.parse(e.target.result);
+            if (confirm("Restore from backup? This will overwrite your current data.")) {
+                localStorage.clear();
+                for (const key in data) { localStorage.setItem(key, data[key]); }
+                location.reload();
+            }
+        } catch (err) { alert("Invalid backup file."); }
+    };
+    reader.readAsText(file);
+}; 
+    }
+
 </script>
 
 <!-- Help / Navigation Guide Modal -->
@@ -3189,33 +3434,47 @@ updateSummaries(currency, filteredData) {
       
       <div id="help-content" style="margin-top: 15px; line-height: 1.6; font-size: 0.9rem; color: #e0f7ff; max-height: 70vh; overflow-y: auto; padding-right: 10px;">
     
-          <h3 style="color: var(--primary-glow); border-bottom: 1px solid #3399ff44; margin-bottom: 8px;">1. Setting Up Your Assets</h3>
-          <p>Begin by entering your <strong>Liquid Assets</strong> (Cash or money in the bank).
-          <br>• <strong>Gold:</strong> Enter your physical gold in the <em>Physical Gold Holdings (Liquid Assets 2)</em> section. These figures automatically populate your Portfolio Snapshot.
-          <br>• <strong>Fixed Assets:</strong> Do the same for long-term investments like property values.</p>
+          <h3 style="color: #aa00ff; border-bottom: 1px solid #aa00ff44; margin-bottom: 8px;">0. SECURITY: The Data Fortress</h3>
+<p>Because this app is "Zero-Knowledge" (no servers), your data exists <strong>only</strong> in your browser.
+<br>• <strong>Backup:</strong> Click "Backup" regularly. It downloads a .json file of your entire system.
+<br>• <strong>Restore:</strong> If you clear your cache or change computers, click "Restore" and select your backup file to instantly rebuild your Cockpit.</p>
 
-          <h3 style="color: var(--primary-glow); border-bottom: 1px solid #3399ff44; margin-top: 15px; margin-bottom: 8px;">2. Managing Crypto</h3>
-          <p>Track your crypto holdings in two steps:
-          <br>• Click <strong>"Add/Remove Coins"</strong> in the Crypto Assets block to choose the coins you hold.
-          <br>• Enter the <strong>Units</strong> you own into the platform blocks. This data will reflect in both the <em>Cryptocurrency Prices</em> table and your <em>Portfolio Snapshot</em>.</p>
+<h3 style="color: var(--primary-glow); border-bottom: 1px solid #3399ff44; margin-top: 15px; margin-bottom: 8px;">1. Primary Asset Setup</h3>
+<p>Initialize your net worth by entering values in the <strong>Assets</strong> rows.
+<br>• <strong>Liquid Assets:</strong> Cash and Bank balances in USD, ZAR, or VND.
+<br>• <strong>Fixed Assets:</strong> Long-term holdings like Property or vehicles. 
+<br>• <em>Note:</em> All non-USD values are converted using live FX rates in your Snapshot.</p>
 
-          <h3 style="color: var(--primary-glow); border-bottom: 1px solid #3399ff44; margin-top: 15px; margin-bottom: 8px;">3. Snapshots & History</h3>
-          <p>Click <strong>"Save"</strong> at any moment to create a snapshot. 
-          <br>• The system calculates your <strong>percentage change</strong> based on your last saved entry.
-          <br>• The <em>History</em> list shows percentage changes of all past entries to track your growth.</p>
+<h3 style="color: #FFD700; border-bottom: 1px solid #FFD70044; margin-top: 15px; margin-bottom: 8px;">2. The Physical Vault (Liquid 2)</h3>
+<p>Manage your physical Gold and Silver bullion here.
+<br>• Enter your <strong>Units</strong> and select the type (Ounce, Gram, or VN Chi/Tael).
+<br>• The system fetches <strong>Live Spot Prices</strong> and calculates the total value automatically. This total is added to your Liquid Asset snapshot.</p>
 
-          <h3 style="color: var(--primary-glow); border-bottom: 1px solid #3399ff44; margin-top: 15px; margin-bottom: 8px;">4. Transaction Records & PnL</h3>
-          <p>Use the <strong>Transactions</strong> container to keep records of your crypto buys. 
-          <br>• It auto-converts between <strong>USD, ZAR, and VND</strong>.
-          <br>• It provides a full <strong>PnL calculation</strong> (Profit and Loss) automatically.</p>
+<h3 style="color: var(--crypto-color); border-bottom: 1px solid #ffaa0044; margin-top: 15px; margin-bottom: 8px;">3. Crypto Command</h3>
+<p>Track your digital assets across multiple platforms:
+<br>• <strong>Add Coins:</strong> Use "Add/Remove Coins" to select your assets (XRP, BTC, etc).
+<br>• <strong>Inventory:</strong> Enter units held in specific wallets (Binance, Luno, Xaman, etc).
+<br>• <strong>Live Market:</strong> The <em>Cryptocurrency Prices</em> table shows your real-time value and 24h market performance.</p>
 
-          <h3 style="color: var(--primary-glow); border-bottom: 1px solid #3399ff44; margin-top: 15px; margin-bottom: 8px;">5. Built-in Tools</h3>
-          <p>• <strong>Converters:</strong> Use the live Exchange Rates and Gold price conversion tools for quick calculations.
-          <br>• <strong>News:</strong> Stay updated with the <em>Crypto News</em> section, which refreshes regularly with the latest market info.</p>
+<h3 style="color: var(--positive-change); border-bottom: 1px solid #00ff8844; margin-top: 15px; margin-bottom: 8px;">4. Tracking Growth (Snapshots)</h3>
+<p>The <strong>Portfolio Snapshot</strong> at the top is your HUD.
+<br>• Click <strong>"Save"</strong> to record a point-in-time entry of your wealth.
+<br>• The <strong>History</strong> list calculates the percentage of growth or decay between your current live data and your previous saves.</p>
 
-          <div style="margin-top: 20px; padding: 15px; background: rgba(0, 170, 255, 0.1); border-radius: 8px; text-align: center; border: 1px solid var(--primary-border);">
-              <span style="font-family: 'Iceland', sans-serif; letter-spacing: 1px;">Helping you navigate the digital and physical financial zone.</span>
-          </div>
+<h3 style="color: var(--primary-border); border-bottom: 1px solid #3399ff44; margin-top: 15px; margin-bottom: 8px;">5. Accounting & PnL</h3>
+<p>Use the <strong>Transactions</strong> module at the bottom for total financial clarity.
+<br>• <strong>Entries:</strong> Record every Deposit (money in) and Withdrawal (money out).
+<br>• <strong>Live ROI:</strong> The system compares your net deposits against your <em>Live Crypto Value</em> to give you an exact Profit/Loss percentage.
+<br>• <strong>Reporting:</strong> Filter by Year or Month and click <strong>PDF</strong> to generate a professional financial statement.</p>
+
+<h3 style="color: #aa00ff; border-bottom: 1px solid #aa00ff44; margin-top: 15px; margin-bottom: 8px;">6. Intelligence Tools</h3>
+<p>• <strong>Status:</strong> Activate the voice briefing for an audio system update.
+<br>• <strong>AI Bot:</strong> Consult the built-in AI for market analysis (requires API key).
+<br>• <strong>Calculators:</strong> Use the <em>Future Value</em> tool to simulate price targets for your XRP or BTC holdings.</p>
+
+<div style="margin-top: 25px; padding: 15px; background: rgba(0, 212, 255, 0.1); border-radius: 8px; text-align: center; border: 1px solid #00d4ff;">
+    <span style="font-family: 'Iceland', sans-serif; letter-spacing: 1px; color: #00d4ff;">SYSTEM OPERATIONAL: NAVIGATING THE FINANCIAL FRONTIER.</span>
+</div>
       </div>
   </div>
 </div>
