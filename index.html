@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>CrypFin Cockpit V.112 </title>
+  <title>CrypFin Cockpit V.118 </title>
   <link rel="icon" href="data:;base64,iVBORw0KGgo=">
   <link href="https://fonts.googleapis.com/css2?family=Iceland&family=Quantico&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/three@0.146.0/build/three.min.js"></script>
@@ -113,236 +113,180 @@
     .price-up { color: #00FF88; }
     .price-down { color: #FF4444; }
 
-/* --- HUD SLIM COMMAND STRIP --- */
-    #header {
+/* --- ULTIMATE NEON COCKPIT HEADER (V.112) --- */
+    body #header {
       position: fixed;
       top: 0; left: 0; right: 0;
-      height: 85px; /* Slimmer height */
+      height: 120px !important; 
       display: flex;
       align-items: center;
       justify-content: space-between;
       z-index: 9999;
-      background: rgba(5, 12, 25, 0.96); 
-      padding: 0 25px;
+      background: rgba(5, 12, 25, 0.98); 
+      padding: 0 30px;
       border-bottom: 2px solid #00d4ff; 
-      box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
-      backdrop-filter: blur(12px);
+      box-shadow: 0 5px 25px rgba(0, 212, 255, 0.4);
+      backdrop-filter: blur(15px);
     }
 
-    #header-left { display: flex; align-items: center; gap: 15px; flex-shrink: 0; }
+    /* LEFT WING: IDENTITY */
+    #header-left { 
+      display: flex; 
+      align-items: center; 
+      gap: 25px; 
+      flex: 1;
+    }
     
     #avatar {
-      width: 45px; height: 45px;
+      width: 90px !important; /* Massive Pilot Avatar */
+      height: 90px !important;
       background-color: #223344;
       background-size: cover;
       background-position: center;
-      border: 1px solid #00ffcc;
-      box-shadow: 0 0 10px #00ffcc;
-      border-radius: 4px;
+      border: 2px solid #00ffcc !important; /* Neon Cyan */
+      box-shadow: 0 0 20px rgba(0, 255, 204, 0.6);
+      border-radius: 8px;
       cursor: pointer;
+      flex-shrink: 0;
     }
 
     #title {
       font-family: 'Iceland', sans-serif !important;
-      font-size: 1.8rem !important;
+      font-size: 5.5rem !important; /* MATCHES AVATAR SIZE */
       color: #e0f7ff !important;
-      text-shadow: 0 0 10px #00aaff !important;
-      text-transform: uppercase;
-      margin: 0; white-space: nowrap;
+      text-shadow: 0 0 15px #00aaff, 0 0 30px rgba(0, 170, 255, 0.5) !important;
+      text-transform: uppercase !important;
+      margin: 0 !important;
+      line-height: 90px !important; 
+      white-space: nowrap !important;
+      display: flex !important;
+      align-items: baseline !important;
     }
 
-    /* THE CONTROL TOWER (Combined Row Design) */
-    #controlTower {
+    #title .version-tag {
+      font-size: 1rem !important;
+      opacity: 0.3;
+      margin-left: 15px;
+      letter-spacing: 4px;
+      font-family: 'Quantico', sans-serif;
+    }
+
+    /* RIGHT WING: THE 2x2 POD CLUSTER */
+    #pod-cluster {
       display: flex;
-      flex-direction: column;
-      align-items: flex-end;
+      gap: 15px;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .pod {
+      display: grid;
+      grid-template-columns: repeat(2, 45px); /* Square shape */
+      grid-template-rows: repeat(2, 35px);
       gap: 5px;
+      padding: 6px;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(0, 212, 255, 0.3);
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 212, 255, 0.2);
     }
 
-    .ops-row {
-      display: flex;
-      align-items: center;
-      gap: 12px; /* Gap between buttons and Fortress */
-    }
+    .pod-fortress { border-color: rgba(170, 0, 255, 0.5); }
 
-    #topRightLinks { display: flex; gap: 4px; }
-
-    .quantico-btn {
-      width: 75px !important; /* Smaller width to fit the row */
-      height: 28px;
-      font-size: 0.65rem !important;
-      padding: 0 !important;
-      line-height: 28px;
-      border: 1px solid rgba(255,255,255,0.2);
-    }
-
-    .fortress-strip {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      background: rgba(170, 0, 255, 0.1);
-      border: 1px solid #aa00ff;
-      border-radius: 4px;
-      padding: 0 10px;
-      height: 28px; /* Match button height */
-    }
-
-    .fortress-label {
-      color: #aa00ff;
+    .fort-label {
+      grid-column: span 1;
       font-family: 'Iceland';
-      font-size: 0.75rem;
+      font-size: 0.65rem;
+      color: #aa00ff;
       font-weight: bold;
-    }
-
-    .header-links { display: flex; gap: 15px; margin-top: 2px; }
-    .header-links a {
-      font-size: 0.6rem; color: var(--primary-text);
-      text-decoration: none; opacity: 0.6; font-weight: bold; text-transform: uppercase;
-    }
-    .header-links a:hover { opacity: 1; color: var(--primary-glow); }
-
-    /* Adjust main content for the slimmer header */
-    #mainContent { margin-top: 105px !important; }
-
-  /* ============================================================
-       TOP HUD COMMAND CENTER (HEADER)
-    ============================================================ */
-    #header {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      height: 110px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      z-index: 9999;
-      background: rgba(5, 15, 30, 0.98);
-      padding: 0 30px;
-      border-bottom: 2px solid #00d4ff;
-      box-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
-      backdrop-filter: blur(10px);
+      justify-content: center;
+      text-align: center;
+      line-height: 1;
+      border: 1px dashed rgba(170, 0, 255, 0.3);
     }
 
-    #header-left { display: flex; align-items: center; gap: 20px; }
-
-    #avatar {
-      width: 55px; height: 55px;
-      background-color: #223344;
-      background-size: cover;
-      background-position: center;
-      border: 1px solid #00ffcc;
-      box-shadow: 0 0 10px #00ffcc;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-
-    #title {
-      font-family: 'Iceland', sans-serif !important;
-      font-size: 2.2rem !important;
-      color: #e0f7ff !important;
-      text-shadow: 0 0 10px #00aaff;
-      text-transform: uppercase;
-      white-space: nowrap;
-    }
-
-    .version-tag { font-size: 0.8rem; opacity: 0.5; margin-left: 10px; }
-
-    /* RIGHT SIDE COMMAND STACK */
-    #controlTower {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 6px;
-      width: 420px;
-    }
-
-    #topRightLinks { display: flex; gap: 5px; }
-
-    .quantico-btn {
-      width: 85px !important;
-      height: 30px;
-      font-size: 0.7rem !important;
+    /* MINI COMMAND BUTTONS */
+    .btn-pod {
+      width: 100% !important;
+      height: 100% !important;
+      font-size: 0.6rem !important;
       padding: 0 !important;
-      line-height: 30px;
-      border: 1px solid rgba(255,255,255,0.2);
-      cursor: pointer;
-      background: var(--btn-bg);
+      margin: 0 !important;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
       color: var(--primary-text);
+      cursor: pointer;
       font-family: 'Quantico';
-      font-weight: bold;
     }
 
-    .fortress-strip {
+    .pod-logo-link {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      background: rgba(170, 0, 255, 0.1);
-      border: 1px solid #aa00ff;
-      box-shadow: 0 0 10px rgba(170, 0, 255, 0.3);
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.05);
       border-radius: 4px;
-      padding: 4px 10px;
-      width: 100%;
+      transition: all 0.3s ease;
     }
 
-    .fortress-label { color: #aa00ff; font-family: 'Iceland'; font-size: 0.8rem; font-weight: bold; }
+    .pod-logo-link img { width: 24px; height: 24px; }
+    .pod-logo-link:hover { background: rgba(0, 212, 255, 0.2); transform: scale(1.1); }
 
-    .header-links { display: flex; gap: 18px; }
-    .header-links a {
-      font-size: 0.65rem; color: var(--primary-text);
-      text-decoration: none; opacity: 0.7; font-weight: bold; text-transform: uppercase;
-    }
-
+    /* SPACE FOR THE APP CONTENT */
     /* ============================================================
-       MAIN CONTENT BOX & NEON BORDERS
+       MAIN HUD FRAME: CENTERING & NEON SIDE BORDERS
     ============================================================ */
-     #mainContent {
+    #mainContent {
       position: relative;
-      margin-top: 135px; 
-      margin-left: auto;
-      margin-right: auto;
-      max-width: 1300px;
+      margin-top: 160px !important; /* Pushes content below massive header */
+      margin-left: auto !important;
+      margin-right: auto !important;
+      max-width: 1400px !important; /* PULLS EVERYTHING BACK ONTO SCREEN */
+      width: 95% !important;
       padding: 20px;
       display: flex;
       flex-direction: column;
-      gap: 25px;
+      gap: 30px;
       z-index: 1;
-      border-left: 2px solid rgba(0, 212, 255, 0.2);
-      border-right: 2px solid rgba(0, 212, 255, 0.2);
-      background: rgba(0, 5, 15, 0.3);
+
+      /* NEON SIDE BORDERS FOR THE WHOLE APP */
+      border-left: 2px solid rgba(0, 212, 255, 0.3);
+      border-right: 2px solid rgba(0, 212, 255, 0.3);
+      background: rgba(0, 5, 15, 0.2);
+      box-shadow: inset 30px 0 60px -30px rgba(0, 212, 255, 0.1), 
+                  inset -30px 0 60px -30px rgba(0, 212, 255, 0.1);
     }
 
-    /* NEON BORDERS FOR PANELS, CRYPTO BOX, AND CHART BOX */
+    /* NEON BORDERS AROUND EVERY BLOCK & CONTAINER */
     section[id$="Block"], .panel, .full-panel, .crypto-column, .chart-column {
       background: var(--bg-panel) !important;
       border: 1px solid var(--primary-border) !important;
       box-shadow: 0 0 15px rgba(51, 153, 255, 0.2) !important;
       border-radius: 8px;
       padding: 20px !important;
-    }
-
-    /* Ensure the table and chart boxes line up nicely */
-    .crypto-chart-row {
-      display: flex;
-      gap: 20px;
-      align-items: stretch;
+      width: 100% !important;
+      box-sizing: border-box !important;
     }
 
     /* ============================================================
-       TABLE REPAIR (RESTORES LINES & SPACING)
+       TABLE REPAIR: RESTORES LINES & SPACING
     ============================================================ */
     table {
-      width: 100%;
-      border-collapse: separate; /* Allows for better border control */
+      width: 100% !important;
+      border-collapse: separate !important;
       border-spacing: 0;
       margin-top: 10px;
-      color: var(--primary-text);
+      table-layout: auto !important;
     }
 
     th {
-      background: rgba(50, 100, 160, 0.4);
+      background: rgba(50, 100, 160, 0.4) !important;
       padding: 12px;
       border-bottom: 2px solid var(--primary-border);
       font-family: 'Iceland';
       letter-spacing: 1px;
+      color: var(--primary-text);
     }
 
     td {
@@ -350,155 +294,100 @@
       border-bottom: 1px solid rgba(51, 153, 255, 0.2);
       text-align: center;
       vertical-align: middle;
+      color: var(--primary-text);
     }
 
     tr:hover { background: rgba(0, 212, 255, 0.05); }
+    .empty { opacity: 0.4; }
 
-    /* CRYPTO TABLE SPECIFIC FIXES */
-    #cryptoTable th, #cryptoTable td {
-      font-size: 0.85rem;
+    #cryptoTable th, #cryptoTable td { 
+      font-size: 0.85rem; 
+      padding: 12px 8px; 
       white-space: nowrap;
     }
 
-    /* TRANSACTION TABLE SPACING FIX */
-    .table-wrapper {
-      max-height: 400px;
-      overflow-y: auto;
-      border: 1px solid rgba(51, 153, 255, 0.3);
-      padding: 5px;
-    }
-
-    #mainContent { 
-      margin-top: 135px !important; 
-    }
-
-    /* Fix Main Content Pushing */
-    #mainContent { 
-      margin-top: 135px !important; 
-    }
-    
-    th { background: var(--bg-header); }
-    tr:hover { background: rgba(60, 130, 220, 0.3); }
-    .empty { opacity: 0.4; }
-    #cryptoTable { width: 100%; table-layout: fixed;}
-    #cryptoTable th, #cryptoTable td { font-size: 0.85rem; padding: 10px 8px; }
-    #cryptoTable th,
-    #cryptoTable td {
-     text-align: center;
-     white-space: nowrap;
-     overflow: hidden;
-     text-overflow: ellipsis;
-}
-
-#cryptoTable th:nth-child(1) { width: 12%; } /* Coin */
-#cryptoTable th:nth-child(2) { width: 14%; } /* USD */
-#cryptoTable th:nth-child(3) { width: 14%; } /* ZAR */
-#cryptoTable th:nth-child(4) { width: 14%; } /* VND */
-#cryptoTable th:nth-child(5) { width: 12%; } /* Holdings */
-#cryptoTable th:nth-child(6) { width: 18%; } /* Value USD */
-#cryptoTable th:nth-child(7) { width: 16%; } /* % Change */
-#cryptoTable th:first-child,
-#cryptoTable td:first-child {
-  text-align: left;
-}
     #cryptoTable tfoot td {
       font-weight: 700;
-      background: var(--bg-input);
+      background: rgba(0, 212, 255, 0.05);
       text-align: center;
-      padding: 12px 8px;
+      padding: 15px 8px;
     }
 
-.crypto-pos {
-  color: #2ecc71;
-  font-weight: 600;
-}
+    .crypto-pos { color: #2ecc71; font-weight: 600; }
+    .crypto-neg { color: #e74c3c; font-weight: 600; }
 
-.crypto-neg {
-  color: #e74c3c;
-  font-weight: 600;
-}
+    .coin-info { display: inline-flex; align-items: center; gap: 10px; white-space: nowrap; }
+    .coin-info img { width: 24px; height: 24px; border-radius: 50%; object-fit: contain; }
 
-    .coin-info {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      white-space: nowrap;
-    }
-    .coin-info img {
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      flex-shrink: 0;
-      object-fit: contain;
-    }
-    .coin-info img:hover { box-shadow: 0 0 4px var(--primary-glow); }
-    .change-positive { color: var(--positive-change); }
-    .change-negative { color: var(--negative-change); }
+    /* ============================================================
+       CHART & DISTRIBUTION HUD FIX
+    ============================================================ */
     .crypto-chart-row {
       display: flex;
       gap: 20px;
       align-items: stretch;
       width: 100%;
     }
-    .crypto-chart-row .crypto-column { flex: 1; display: flex; flex-direction: column; min-width: 0; }
-    .crypto-chart-row .chart-column { flex: 0 0 350px; display: flex; flex-direction: column; }
-    .chart-title {
-      font-weight: 700;
-      font-size: 1.1rem;
-      margin-bottom: 12px;
-      text-align: center;
-      padding: 8px 0;
+
+    .crypto-column { flex: 1; min-width: 0; }
+
+    .chart-column {
+      flex: 0 0 400px !important; /* Locks width to prevent elongation */
+      display: flex;
+      flex-direction: column;
     }
+
     #holdingsChartBlock {
-      background: var(--bg-panel);
-      background-image: repeating-linear-gradient(45deg, rgba(255,255,255,0.05) 0px, rgba(255,255,255,0.05) 2px, transparent 2px, transparent 4px);
+      background: rgba(0,0,0,0.3) !important;
       border-radius: 8px;
-      padding: 15px;
-      box-shadow: 0 0 8px #004488aa;
-      color: var(--primary-text);
+      padding: 15px !important;
       flex: 1;
       display: flex;
       flex-direction: column;
+      align-items: center;
       position: relative;
+      overflow: visible !important;
     }
+
     #holdingsChart {
       display: block;
-      width: 100%;
-      height: 280px;
-      margin: 0 auto;
-      flex-shrink: 0;
+      width: 100% !important;
+      height: 300px !important; /* Locks height for 1:1 aspect ratio */
       cursor: grab;
     }
+
     #chartLabelsContainer {
-        margin-top: 15px;
-        padding-top: 15px;
-        border-top: 1px solid #3399ff88;
-    }
-    .chart-labels {
-      font-size: 13px;
       width: 100%;
-      text-align: center;
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px dashed rgba(0, 212, 255, 0.3);
+    }
+
+    .chart-labels {
       display: flex;
-      flex-wrap: wrap;
+      flex-wrap: wrap; /* Forces labels to next line if too many */
       justify-content: center;
-      gap: 6px 10px;
+      gap: 8px;
     }
-    section[id$="Block"] {
-      background: var(--bg-panel);
-      border-radius: 8px;
-      padding: 15px;
-      color: var(--primary-text);
-      font-size: 0.85rem;
-      box-shadow: 0 0 8px #004488aa;
+
+    /* NEON LABEL TAGS */
+    .chart-label-tag {
+      background: rgba(10, 20, 35, 0.8);
+      border: 1px solid rgba(0, 212, 255, 0.3);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      white-space: nowrap;
       display: flex;
-      flex-direction: column;
-      max-width: 100%;
+      align-items: center;
+      gap: 5px;
     }
-    #greetingBlock, #snapshotHistoryBlock {
-      display: flex;
-      flex-direction: column;
-    }
+
+    /* ============================================================
+       REST OF PORTFOLIO COMPONENTS
+    ============================================================ */
+    #greetingBlock, #snapshotHistoryBlock { display: flex; flex-direction: column; }
+    
     section[id$="Block"] h2, h3 {
       margin-top: 0;
       font-weight: 600;
@@ -513,25 +402,10 @@
       font-family: 'Iceland', sans-serif;
       letter-spacing: 1px;
     }
-    .snapshot-container {
-        display: flex;
-        align-items: center;
-        gap: 20px;
-    }
-    #greetingBlock p {
-      margin: 0;
-      flex: 1;
-      line-height: 1.6;
-    }
-    #assetAllocationChart {
-        flex-shrink: 0;
-        cursor: grab;
-    }
-    #greetingBlock p {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-    }
+
+    .snapshot-container { display: flex; align-items: center; gap: 20px; }
+    #greetingBlock p { margin: 0; flex: 1; line-height: 1.6; }
+    
     .value-line {
         display: grid;
         grid-template-columns: 110px 1fr 75px;
@@ -540,36 +414,10 @@
         font-size: 0.95rem;
         margin-bottom: 6px;
     }
-    .value-line > span:first-child {
-        font-weight: bold;
-        text-align: left;
-    }
-    .value-line > span:nth-child(2),
-    .value-line > strong {
-        text-align: right;
-    }
-    .value-line .change-positive,
-    .value-line .change-negative {
-        font-size: 0.9em;
-        font-weight: 700;
-        text-align: right;
-    }
-    .liquid-label { color: var(--liquid-color); }
-    .fixed-label { color: var(--fixed-color); }
-    .crypto-label { color: var(--crypto-color); }
-    .value-label { color: var(--primary-text); }
-    #assetAllocationChart {
-        width: 160px !important;
-        height: 160px !important;
-    }
-    #snapshotHistoryList {
-        flex: 1; /* Make list grow to fill space */
-        overflow-y: auto;
-        list-style: none;
-        padding: 0;
-        margin: 10px 0 0 0;
-        font-size: 0.8rem;
-    }
+
+    #assetAllocationChart { width: 140px !important; height: 140px !important; flex-shrink: 0; cursor: grab; }
+    #snapshotHistoryList { flex: 1; overflow-y: auto; list-style: none; padding: 0; margin: 10px 0 0 0; font-size: 0.8rem; }
+    
     #snapshotHistoryList li {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -577,19 +425,7 @@
         padding: 6px 0;
         border-bottom: 1px solid #3399ff33;
     }
-    #snapshotHistoryList li:last-child { border-bottom: none; }
-    .snapshot-date {
-        grid-column: 1 / -1;
-        font-style: italic;
-        color: var(--primary-glow);
-        text-align: left;
-        margin-bottom: 6px;
-    }
-    .snapshot-total {
-        background: rgba(30,40,50,0.5);
-        border-radius: 4px;
-        padding: 4px 8px;
-    }
+
     select, input[type=number], input[type=date] {
       background: var(--bg-input);
       border: 1px solid #3399ff55;
@@ -600,17 +436,6 @@
       padding: 8px;
       outline: none;
     }
-    input[type=number] { text-align: right; }
-    select:focus, input[type=number]:focus, input[type=date]:focus {
-      border-color: var(--primary-glow);
-      box-shadow: 0 0 4px #3399ffcc;
-    }
-    input[type=number]::-webkit-outer-spin-button,
-    input[type=number]::-webkit-inner-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
-    }
-    input[type=number] { -moz-appearance: textfield; }
 
     .asset-grid, .asset-grid-header {
       display: grid;
@@ -619,14 +444,7 @@
       margin-bottom: 10px;
       align-items: center;
     }
-    .asset-grid-header span {
-      text-align: center;
-      font-weight: 700;
-      background: var(--bg-header);
-      padding: 8px;
-      border-radius: 4px;
-    }
-    .asset-grid-header span:first-child { background: none; }
+
     #liquidAssetsBlock .grand-total-row, #fixedAssetsBlock .grand-total-row {
         grid-column: 1 / -1;
         display: flex;
@@ -639,6 +457,7 @@
         font-weight: 700;
         font-size: 0.95rem;
     }
+
     #cryptoAssetsBlock .crypto-header, #cryptoAssetsBlock .crypto-row {
       display: grid;
       grid-template-columns: 110px repeat(6, 1fr) 110px;
@@ -646,49 +465,7 @@
       margin-bottom: 10px;
       align-items: center;
     }
-    #cryptoAssetsBlock .crypto-header span {
-      text-align: center;
-      font-weight: 700;
-      background: var(--bg-header);
-      padding: 8px;
-      border-radius: 4px;
-      font-size: 0.75rem; 
-    }
-    #cryptoAssetsBlock .crypto-header span:first-child,
-    #cryptoAssetsBlock .crypto-row .coin-info {
-      background: none;
-      font-weight: 700;
-      text-align: left;
-      justify-content: flex-start;
-    }
-    #manual-column-header {
-        cursor: text;
-        border-bottom: 1px dashed var(--primary-text);
-    }
-    #cryptoAssetsBlock .crypto-row span {
-      text-align: center;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 8px;
-      background: var(--bg-input);
-      border-radius: 4px;
-      min-height: 38px;
-    }
 
-    .totals-row {
-        border-top: 2px solid var(--primary-border);
-        padding-top: 10px;
-        margin-top: 10px;
-    }
-    .totals-row span {
-      text-align: center;
-    }
-    .totals-row span:first-child {
-      background: none;
-      border: none;
-      font-weight: 700;
-    }
     .quantico-btn {
       width: 85px;
       background: var(--btn-bg);
@@ -701,29 +478,8 @@
       font-family: 'Quantico', sans-serif;
       font-size: 0.8rem;
       padding: 6px 10px;
-      transition: background-color 0.2s;
     }
-    .asset-grid .quantico-btn, #cryptoAssetsBlock .quantico-btn {
-        width: 100%;
-        padding: 10px 6px;
-    }
-    #greetingBlock h2 .quantico-btn, #snapshotHistoryBlock h2 .quantico-btn, #cryptoAssetsBlock h2 .quantico-btn {
-        width: auto;
-        padding: 5px 10px;
-        font-size: 0.75rem;
-    }
-    .quantico-btn:hover {
-      background: var(--btn-hover-bg);
-      color: #e0f7ff;
-    }
-    .quantico-btn:disabled {
-      background: #556677;
-      cursor: not-allowed;
-    }
-    #addSnapshotBtn { background: #006622cc; }
-    #addSnapshotBtn:hover { background: #008844cc; }
-    #deleteSnapshotBtn { background: #882222cc; }
-    #deleteSnapshotBtn:hover { background: #ff4444cc; }
+
     .usd-input, .zar-input, .vnd-input, .units-input { width: 100%; }
     
     /* --- NEW LAYOUT STYLES --- */
@@ -1157,6 +913,67 @@
         .assets-row, .crypto-chart-row, .bottomBlocksRow, .top-row-grid, .converter-row-grid { page-break-inside: avoid; flex-direction: column !important; }
         .no-print { display: none !important; }
     }
+/* --- ULTIMATE CHART TITLE CENTERING --- */
+    .chart-column .chart-title {
+      width: 100% !important;
+      text-align: center !important;
+      display: block !important;
+      font-family: 'Iceland', sans-serif !important;
+      font-size: 1.8rem !important;
+      color: #00d4ff !important;
+      /* THIS LINE BELOW STOPS THE ALL-CAPS */
+      text-transform: none !important; 
+      letter-spacing: 1px !important;
+      margin: 0 0 15px 0 !important;
+      padding: 0 !important;
+      text-shadow: 0 0 10px rgba(0, 212, 255, 0.5) !important;
+      border: none !important;
+      background: none !important;
+    }
+
+    /* Keep the column aligned */
+    .chart-column {
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+    }
+/* --- V.118 SUMMARY CARDS: OVERFLOW & ALIGNMENT FIX --- */
+    /* --- V.118 SUMMARY CARDS: CENTER ALIGNMENT --- */
+    .summary-cards .card {
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important; /* Centers titles and amounts horizontally */
+      justify-content: center !important; /* Centers them vertically */
+      text-align: center !important;
+    }
+
+    .summary-cards .card h3 {
+      margin-bottom: 5px !important; /* Spacing between title and amount */
+      font-size: 0.85rem !important;
+      font-family: 'Iceland', sans-serif !important;
+    }
+
+    /* --- TACTICAL BUTTONS: ROUNDED HUD EDGES --- */
+    /* Targets STAT, AI, HELP, PRNT, SAVE, LOAD, WIPE */
+    .btn-pod {
+      border-radius: 8px !important; /* Matches the rounded look of your pod links */
+      border: 1px solid rgba(0, 212, 255, 0.4) !important; /* HUD blue border */
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+      overflow: hidden;
+    }
+
+    .btn-pod:hover {
+      background: rgba(0, 212, 255, 0.2) !important;
+      box-shadow: 0 0 10px rgba(0, 212, 255, 0.5) !important;
+      border-color: #fff !important;
+      transform: scale(1.05);
+    }
+
+    /* Ensure the Data Vault label also looks neat */
+    .fort-label {
+      border-radius: 6px !important;
+      background: rgba(170, 0, 255, 0.05) !important;
+    }
   </style>
 <script type="importmap">
 {
@@ -1176,38 +993,42 @@
 
  <header id="header">
     <div id="header-left">
-      <div id="avatar" class="empty"></div>
-      <h1 id="title">CrypFin Cockpit <span style="font-size: 0.7rem; opacity: 0.4;">V.112</span></h1>
+      <div id="avatar" class="empty" onclick="document.getElementById('newAvatarModal').style.display='block'"></div>
+      <h1 id="title">CrypFin Cockpit <span class="version-tag">V.118</span></h1>
     </div>
 
-    <div id="controlTower">
-      <!-- ROW 1: COMBINED OPS (BUTTONS + FORTRESS) -->
-      <div class="ops-row">
-        <!-- System Buttons -->
-        <nav id="topRightLinks">
-          <button id="briefingBtn" class="quantico-btn" style="background: #aa00ffcc;">Status</button>
-          <button id="aiAssistantBtn" class="quantico-btn">AI Bot</button>
-          <button id="helpBtn" class="quantico-btn" style="background: #0088ccaa;">Guide</button> 
-          <button id="printReportBtn" class="quantico-btn" style="background: #00aaffcc;">Print</button>
-        </nav>
-
-        <!-- Data Fortress -->
-        <div class="fortress-strip" id="fortressBlock">
-          <span class="fortress-label">FORTRESS</span>
-          <div style="display: flex; gap: 4px;">
-            <button class="quantico-btn" style="background: #0088cc66; width: 55px !important; height: 20px !important; line-height: 20px !important;" onclick="exportSystemData()">Backup</button>
-            <button class="quantico-btn" style="background: #aa00ff66; width: 55px !important; height: 20px !important; line-height: 20px !important;" onclick="document.getElementById('importFile').click()">Restore</button>
-          </div>
-          <input type="file" id="importFile" style="display: none;" onchange="importSystemData(event)">
-        </div>
+    <div id="pod-cluster">
+      <!-- POD 1: SYSTEM (2x2) -->
+      <div class="pod">
+        <button id="briefingBtn" class="btn-pod" style="background: #aa00ff44;">STAT</button>
+        <button id="aiAssistantBtn" class="btn-pod">AI</button>
+        <button id="helpBtn" class="btn-pod" style="background: #0088cc44;">HELP</button> 
+        <button id="printReportBtn" class="btn-pod" style="background: #00aaff44;">PRNT</button>
       </div>
 
-      <!-- ROW 2: MINI LINKS -->
-      <div class="header-links">
-        <a href="https://bitcoinvn.io" target="_blank">BitcoinVN</a>
-        <a href="https://www.luno.com" target="_blank">Luno</a>
-        <a href="https://www.binance.com" target="_blank">Binance</a>
-        <a href="https://x.com" target="_blank">X</a>
+      <!-- POD 2: FORTRESS (2x2) -->
+      <div class="pod pod-fortress" id="fortressBlock">
+        <div class="fort-label">DATA<br>VAULT</div>
+        <button class="btn-pod" style="background: #0088cc44;" onclick="exportSystemData()">SAVE</button>
+        <button class="btn-pod" style="background: #aa00ff44;" onclick="document.getElementById('importFile').click()">LOAD</button>
+        <button id="wipeBtn" class="btn-pod" style="background: #bb2d3b44;" onclick="wipeAllData()">WIPE</button>
+        <input type="file" id="importFile" style="display: none;" onchange="importSystemData(event)">
+      </div>
+
+      <!-- POD 3: EXCHANGES (2x2) -->
+      <div class="pod">
+        <a href="https://bitcoinvn.io" target="_blank" class="pod-logo-link" title="BitcoinVN">
+          <img src="https://www.google.com/s2/favicons?sz=64&domain=bitcoinvn.io">
+        </a>
+        <a href="https://www.luno.com" target="_blank" class="pod-logo-link" title="Luno">
+          <img src="https://www.google.com/s2/favicons?sz=64&domain=luno.com">
+        </a>
+        <a href="https://www.binance.com" target="_blank" class="pod-logo-link" title="Binance">
+          <img src="https://www.google.com/s2/favicons?sz=64&domain=binance.com">
+        </a>
+        <a href="https://x.com" target="_blank" class="pod-logo-link" title="X">
+          <img src="https://www.google.com/s2/favicons?sz=64&domain=x.com">
+        </a>
       </div>
     </div>
   </header>
@@ -2323,7 +2144,7 @@ function loadInitialData() {
         const canvas = $('#holdingsChart');
         if (!canvas) return;
         holdingsScene = new THREE.Scene();
-        holdingsCamera = new THREE.PerspectiveCamera(50, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
+        holdingsCamera = new THREE.PerspectiveCamera(50, 400 / 300, 0.1, 1000);
         holdingsCamera.position.set(0, 0, 12);
         holdingsRenderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
         holdingsRenderer.setSize(canvas.clientWidth, canvas.clientHeight);
@@ -2403,9 +2224,10 @@ function loadInitialData() {
         const labelDiv = document.createElement('div');
         labelDiv.className = 'chart-labels';
         labelDiv.innerHTML = data.map(({label, value, color}) => 
-            `<span style="background: rgba(0,0,30,0.7); padding: 4px 8px; border-radius: 4px; border: 1px solid ${color};">
-                <span style="color:${color}">${label}</span> (${((value / total) * 100).toFixed(1)}%)
-            </span>`
+            `<div class="chart-label-tag" style="border-left: 3px solid ${color};">
+                <span style="color:${color}; font-weight:bold;">${label}</span> 
+                <span style="opacity:0.8;">(${((value / total) * 100).toFixed(1)}%)</span>
+            </div>`
         ).join('');
         chartLabelsContainer.appendChild(labelDiv);
     } 
@@ -3392,6 +3214,23 @@ updateSummaries(currency, filteredData) {
                 </tr>`;
         }); 
     } // This correctly closes the renderCryptoPricesTable function
+
+// --- THE NUCLEAR OPTION: WIPE ALL DATA ---
+    window.wipeAllData = function() {
+        const secretCode = "DELETE";
+        const confirmation = confirm("CRITICAL WARNING: This will permanently destroy all your asset data, transaction history, and settings from this browser.\n\nAre you absolutely sure you want to proceed?");
+        
+        if (confirmation) {
+            const finalCheck = prompt("To confirm total deletion, type '" + secretCode + "' in the box below:");
+            if (finalCheck === secretCode) {
+                localStorage.clear();
+                alert("Database Wiped. System Rebooting...");
+                location.reload();
+            } else {
+                alert("Deletion Aborted. Code incorrect.");
+            }
+        }
+    };
 
     // --- MOVE THESE OUTSIDE ALL OTHER FUNCTIONS TO THE BOTTOM ---
     window.exportSystemData = function() {
