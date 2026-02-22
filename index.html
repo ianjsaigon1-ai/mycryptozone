@@ -3390,40 +3390,57 @@ updateSummaries(currency, filteredData) {
                     <td>$${valueUSD.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
                     <td><span class="${change >= 0 ? 'crypto-pos' : 'crypto-neg'}">${change.toFixed(2)}%</span></td>
                 </tr>`;
-        });
+        }); 
+    } // This correctly closes the renderCryptoPricesTable function
 
-window.exportSystemData = function() {
-    const data = {};
-    for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        data[key] = localStorage.getItem(key);
-    }
-    const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `MyFinCrypto_FORTRESS_${new Date().toISOString().split('T')[0]}.json`;
-    a.click();
-};
-
-window.importSystemData = function(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        try {
-            const data = JSON.parse(e.target.result);
-            if (confirm("Restore from backup? This will overwrite your current data.")) {
-                localStorage.clear();
-                for (const key in data) { localStorage.setItem(key, data[key]); }
-                location.reload();
-            }
-        } catch (err) { alert("Invalid backup file."); }
+    // --- MOVE THESE OUTSIDE ALL OTHER FUNCTIONS TO THE BOTTOM ---
+    window.exportSystemData = function() {
+        const data = {};
+        if (localStorage.length === 0) {
+            alert("Fortress Error: No data found to backup.");
+            return;
+        }
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            data[key] = localStorage.getItem(key);
+        }
+        const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        
+        // Append to body for better compatibility with GitHub/Hosted environments
+        document.body.appendChild(a);
+        a.style = "display: none";
+        a.href = url;
+        a.download = `CrypFin_FORTRESS_${new Date().toISOString().split('T')[0]}.json`;
+        a.click();
+        
+        // Cleanup
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
     };
-    reader.readAsText(file);
-}; 
-    }
 
+    window.importSystemData = function(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const data = JSON.parse(e.target.result);
+                if (confirm("RESTORE DATA? This will wipe your current GitHub dashboard and replace it with your backup file.")) {
+                    localStorage.clear();
+                    for (const key in data) { 
+                        localStorage.setItem(key, data[key]); 
+                    }
+                    alert("Fortress Restored Successfully.");
+                    location.reload();
+                }
+            } catch (err) { 
+                alert("Fortress Error: Invalid or corrupted backup file."); 
+            }
+        };
+        reader.readAsText(file);
+    };
 </script>
 
 <!-- Help / Navigation Guide Modal -->
