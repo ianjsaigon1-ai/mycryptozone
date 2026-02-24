@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+﻿F<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>CrypFin Cockpit V.118 </title>
+  <title>CrypFin Cockpit V.127 </title>
   <link rel="icon" href="data:;base64,iVBORw0KGgo=">
   <link href="https://fonts.googleapis.com/css2?family=Iceland&family=Quantico&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/three@0.146.0/build/three.min.js"></script>
@@ -937,8 +937,8 @@
       flex-direction: column !important;
       align-items: center !important;
     }
-/* --- V.118 SUMMARY CARDS: OVERFLOW & ALIGNMENT FIX --- */
-    /* --- V.118 SUMMARY CARDS: CENTER ALIGNMENT --- */
+/* --- V.127 SUMMARY CARDS: OVERFLOW & ALIGNMENT FIX --- */
+    /* --- V.127 SUMMARY CARDS: CENTER ALIGNMENT --- */
     .summary-cards .card {
       display: flex !important;
       flex-direction: column !important;
@@ -974,11 +974,154 @@
       border-radius: 6px !important;
       background: rgba(170, 0, 255, 0.05) !important;
     }
+/* --- AI PILOT HUD STYLES --- */
+    #aiAssistantModal .modal-content {
+      border: 1px solid #00d4ff !important;
+      max-width: 600px !important;
+      background: rgba(5, 10, 20, 0.98) !important;
+    }
+
+    #chat-log {
+      height: 380px;
+      overflow-y: auto;
+      background: rgba(0, 0, 0, 0.4);
+      padding: 15px;
+      border: 1px solid rgba(0, 212, 255, 0.2);
+      border-radius: 6px;
+      margin-bottom: 15px;
+    }
+
+    .chat-message {
+      margin-bottom: 12px;
+      padding: 10px;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      line-height: 1.4;
+    }
+
+    .user-message {
+      background: rgba(0, 212, 255, 0.1);
+      border-left: 3px solid #00d4ff;
+      margin-left: 20px;
+    }
+
+    .ai-message {
+      background: rgba(255, 255, 255, 0.05);
+      border-left: 3px solid #aa00ff;
+      margin-right: 20px;
+      color: #e0f7ff;
+    }
+
+    #ai-input-container {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+/* =========================================================
+   MOBILE OPTIMIZATION – NO EDGE CUTOFF FIX
+   Add this at the VERY BOTTOM of your CSS
+========================================================= */
+
+@media (max-width: 768px) {
+
+  /* ---------- HEADER FIX ---------- */
+  body #header {
+    height: auto !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    padding: 15px !important;
+    gap: 10px;
+  }
+
+  #header-left {
+    width: 100%;
+    gap: 15px;
+  }
+
+  #avatar {
+    width: 55px !important;
+    height: 55px !important;
+  }
+
+  #title {
+    font-size: 2rem !important;
+    line-height: normal !important;
+    white-space: normal !important;
+  }
+
+  #pod-cluster {
+    width: 100%;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+
+  .pod {
+    transform: scale(0.9);
+  }
+
+  /* ---------- MAIN CONTENT ---------- */
+  #mainContent {
+    margin-top: 220px !important;
+    width: 100% !important;
+    padding: 15px !important;
+    border-left: none !important;
+    border-right: none !important;
+  }
+
+  /* ---------- CRYPTO TABLE ---------- */
+  #cryptoTable {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  #cryptoTable th,
+  #cryptoTable td {
+    font-size: 0.75rem !important;
+    padding: 8px 6px !important;
+  }
+
+  /* ---------- CHART COLUMN ---------- */
+  .crypto-chart-row {
+    flex-direction: column !important;
+  }
+
+  .chart-column {
+    flex: 1 1 auto !important;
+    width: 100% !important;
+  }
+
+  #holdingsChart {
+    height: 250px !important;
+  }
+
+  /* ---------- ASSETS STACK ---------- */
+  .assets-row {
+    flex-direction: column !important;
+  }
+
+  .asset-grid,
+  .asset-grid-header {
+    grid-template-columns: 70px 1fr 1fr 1fr !important;
+  }
+
+  /* ---------- SUMMARY CARDS ---------- */
+  .summary-cards {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* ---------- BOTTOM BLOCKS ---------- */
+  .bottomBlocksRow {
+    grid-template-columns: 1fr !important;
+  }
+
+}
   </style>
 <script type="importmap">
 {
   "imports": {
-    "@google/generative-ai": "https://esm.run/@google/generative-ai"
+    "@google/generative-ai": "https://esm.run/@google/generative-ai@0.21.0"
   }
 }
 </script>
@@ -994,7 +1137,7 @@
  <header id="header">
     <div id="header-left">
       <div id="avatar" class="empty" onclick="document.getElementById('newAvatarModal').style.display='block'"></div>
-      <h1 id="title">CrypFin Cockpit <span class="version-tag">V.118</span></h1>
+      <h1 id="title">CrypFin Cockpit <span class="version-tag">V.127</span></h1>
     </div>
 
     <div id="pod-cluster">
@@ -1330,19 +1473,25 @@
   <div id="aiAssistantModal" class="modal">
     <div class="modal-content">
         <span class="close-modal">&times;</span>
-        <h2>AI Assistant</h2>
+        <h2 style="font-family: 'Iceland'; color: #00d4ff; border-bottom: 1px solid #00d4ff44; padding-bottom: 10px;">AI PILOT INTERFACE</h2>
+        
         <div id="chat-log"></div>
+
+        <!-- Initialize Screen -->
         <div id="api-key-container">
-            <p class="subtitle">Please enter your Google AI Studio API key to begin.</p>
-            <input type="password" id="api-key-input" class="units-input" placeholder="Enter your API key here...">
-            <button id="save-api-key-btn" class="quantico-btn" style="width: 100%; margin-top: 10px;">Save Key</button>
+            <p style="font-size: 0.8rem; margin-bottom: 10px; opacity: 0.8;">Pilot offline. Enter Google AI Studio Key to initialize.</p>
+            <input type="password" id="api-key-input" class="units-input" style="width: 100%;" placeholder="Paste AI Key...">
+            <button id="save-api-key-btn" class="quantico-btn" style="width: 100%; margin-top: 10px; background: #0088ccaa;">INITIALIZE</button>
         </div>
+
+        <!-- Active Command Input -->
         <div id="ai-input-container" style="display: none;">
-            <input type="text" id="ai-input" class="units-input" placeholder="Ask a question...">
-            <button id="send-ai-btn" class="quantico-btn">Send</button>
+            <input type="text" id="ai-input" class="units-input" style="flex: 1;" placeholder="Enter command...">
+            <button id="sync-ai-btn" class="quantico-btn btn-mini" style="background: #00d4ff44; border: 1px solid #00d4ff;">SYNC</button>
+            <button id="send-ai-btn" class="quantico-btn btn-mini" style="background: #28a74544; border: 1px solid #28a745;">SEND</button>
         </div>
     </div>
-</div>
+  </div>
   
     <script type="module">
     import { GoogleGenerativeAI } from "@google/generative-ai";
@@ -1717,7 +1866,7 @@ async function fetchMetalsData() {
         }
 
         try {
-            const url = `https://min-api.cryptocompare.com/data/v2/histoday?fsym=XRP&tsym=USD&limit=365&api_key=${CRYPTOCOMPARE_API_KEY}`;
+            const url = `https://min-api.cryptocompare.com/data/v2/histoday?fsym=XRP&tsym=USD&limit=1825&api_key=${CRYPTOCOMPARE_API_KEY}`;
             const data = await fetchWithCache(url);
             if (data.Response !== 'Success') throw new Error(data.Message);
             localStorage.setItem(CACHE_KEY, JSON.stringify(data));
@@ -2808,21 +2957,27 @@ function loadInitialData() {
         window.speechSynthesis.speak(brief);
     }
 
-    function initAiAssistant() {
+   function initAiAssistant() {
         const modal = $('#aiAssistantModal');
         const apiKeyContainer = $('#api-key-container');
         const aiInputContainer = $('#ai-input-container');
         const saveApiKeyBtn = $('#save-api-key-btn');
         const apiKeyInput = $('#api-key-input');
         const sendBtn = $('#send-ai-btn');
+        const syncBtn = $('#sync-ai-btn');
         const aiInput = $('#ai-input');
         const chatLog = $('#chat-log');
         let genAI;
 
+        // Using a brand new key name to bypass browser cache/expired loops
+        const storageKeyName = 'COCKPIT_PILOT_KEY_V2';
+
         const checkApiKey = () => {
-            const apiKey = localStorage.getItem('googleAiApiKey');
-            if (apiKey) {
-                genAI = new GoogleGenerativeAI(apiKey);
+            const apiKey = localStorage.getItem(storageKeyName);
+            if (apiKey && apiKey.length > 20) {
+                // Ensure no quotes or spaces are in the key
+                const cleanKey = apiKey.trim().replace(/["']/g, "");
+                genAI = new GoogleGenerativeAI(cleanKey);
                 apiKeyContainer.style.display = 'none';
                 aiInputContainer.style.display = 'flex';
             } else {
@@ -2831,36 +2986,81 @@ function loadInitialData() {
             }
         };
 
-        saveApiKeyBtn.addEventListener('click', () => {
-            const key = apiKeyInput.value.trim();
-            if (key) { localStorage.setItem('googleAiApiKey', key); checkApiKey(); }
-        });
-        
-        $('#aiAssistantBtn').addEventListener('click', () => { modal.style.display = 'block'; checkApiKey(); });
-
-        const sendMessage = async () => {
-            const message = aiInput.value.trim();
-            if (!message || !genAI) return;
-            appendMessage(message, 'user');
-            aiInput.value = '';
-            try {
-                const model = genAI.getGenerativeModel({ model: "gemini-pro"});
-                const result = await model.generateContent(message);
-                const response = await result.response;
-                appendMessage(response.text(), 'ai');
-            } catch (error) { appendMessage("Error encountered. Check API key.", 'ai'); }
-        };
-
         const appendMessage = (text, sender) => {
             const messageDiv = document.createElement('div');
             messageDiv.className = `chat-message ${sender}-message`;
-            messageDiv.textContent = text;
+            messageDiv.innerHTML = `<strong style="font-size:0.6rem; opacity:0.5;">${sender.toUpperCase()}</strong><br>${text}`;
             chatLog.appendChild(messageDiv);
             chatLog.scrollTop = chatLog.scrollHeight;
         };
 
-        sendBtn.addEventListener('click', sendMessage);
-        aiInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
+        const sendMessage = async () => {
+    const message = aiInput.value.trim();
+    if (!message) return;
+
+    appendMessage(message, 'user');
+    aiInput.value = '';
+
+    const apiKey = localStorage.getItem(storageKeyName);
+    if (!apiKey) return;
+
+    try {
+        const response = await fetch(
+            `https://generativelanguage.googleapis.com/v1/models/gemini-1.0-pro:generateContent?key=${apiKey}`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    contents: [
+                        {
+                            parts: [{ text: message }]
+                        }
+                    ]
+                })
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(JSON.stringify(data));
+        }
+
+        const aiText =
+            data.candidates?.[0]?.content?.parts?.[0]?.text ||
+            "No response from AI.";
+
+        appendMessage(aiText, 'ai');
+
+    } catch (e) {
+        console.error("Full AI Error:", e);
+        appendMessage("AI CONNECTION FAILURE. Check key or network.", "ai");
+    }
+};
+
+        syncBtn.onclick = () => {
+            const cryptoUSD = window.myFinApp.totalCryptoUSD || 0;
+            const { liquidUSD, fixedUSD } = calculateTotalAssetUSD();
+            aiInput.value = `MISSION REPORT: Net Worth $${(cryptoUSD + liquidUSD + fixedUSD).toFixed(0)}. Analyze my risk level.`;
+            sendMessage();
+        };
+
+        saveApiKeyBtn.onclick = () => {
+            const key = apiKeyInput.value.trim();
+            if (key.startsWith("AIza")) { 
+                localStorage.setItem(storageKeyName, key); 
+                checkApiKey(); 
+                appendMessage("New Pilot Key Encrypted and Stored.", "ai");
+            } else {
+                alert("Invalid Key Format. Must start with 'AIza'");
+            }
+        };
+        
+        $('#aiAssistantBtn').onclick = () => { modal.style.display = 'block'; checkApiKey(); };
+        sendBtn.onclick = sendMessage;
+        aiInput.onkeypress = (e) => { if (e.key === 'Enter') sendMessage(); };
     }
 
     function initNewModules() {
