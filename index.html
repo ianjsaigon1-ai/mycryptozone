@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>CrypFin Cockpit V.127 </title>
+  <title>CrypFin Cockpit V.145 </title>
   <link rel="icon" href="data:;base64,iVBORw0KGgo=">
   <link href="https://fonts.googleapis.com/css2?family=Iceland&family=Quantico&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/three@0.146.0/build/three.min.js"></script>
@@ -659,50 +659,7 @@
     }
     #print-options-list li label { cursor: pointer; display: flex; align-items: center; gap: 12px; }
 
-    /* --- AI Assistant Styles --- */
-    #aiAssistantModal .modal-content {
-        max-width: 600px;
-        height: 70vh;
-    }
-    #chat-log {
-        flex-grow: 1;
-        overflow-y: auto;
-        padding: 10px;
-        margin-bottom: 15px;
-        background: var(--bg-dark);
-        border: 1px solid var(--primary-border);
-        border-radius: 6px;
-    }
-    .chat-message {
-        margin-bottom: 12px;
-        padding: 8px 12px;
-        border-radius: 8px;
-        max-width: 85%;
-        line-height: 1.5;
-    }
-    .user-message {
-        background: var(--primary-border);
-        color: #fff;
-        margin-left: auto;
-        text-align: right;
-    }
-    .ai-message {
-        background: var(--bg-input);
-        margin-right: auto;
-        text-align: left;
-    }
-    #ai-input-container {
-        display: flex;
-        gap: 10px;
-    }
-    #ai-input {
-        flex-grow: 1;
-    }
-    #api-key-container {
-        border-top: 1px solid var(--primary-border);
-        margin-top: 20px;
-        padding-top: 20px;
-    }
+    
     
     /* --- NEW MODULE STYLES --- */
     .panel {
@@ -937,8 +894,8 @@
       flex-direction: column !important;
       align-items: center !important;
     }
-/* --- V.127 SUMMARY CARDS: OVERFLOW & ALIGNMENT FIX --- */
-    /* --- V.127 SUMMARY CARDS: CENTER ALIGNMENT --- */
+/* --- V.145 SUMMARY CARDS: OVERFLOW & ALIGNMENT FIX --- */
+    /* --- V.145 SUMMARY CARDS: CENTER ALIGNMENT --- */
     .summary-cards .card {
       display: flex !important;
       flex-direction: column !important;
@@ -974,49 +931,7 @@
       border-radius: 6px !important;
       background: rgba(170, 0, 255, 0.05) !important;
     }
-/* --- AI PILOT HUD STYLES --- */
-    #aiAssistantModal .modal-content {
-      border: 1px solid #00d4ff !important;
-      max-width: 600px !important;
-      background: rgba(5, 10, 20, 0.98) !important;
-    }
 
-    #chat-log {
-      height: 380px;
-      overflow-y: auto;
-      background: rgba(0, 0, 0, 0.4);
-      padding: 15px;
-      border: 1px solid rgba(0, 212, 255, 0.2);
-      border-radius: 6px;
-      margin-bottom: 15px;
-    }
-
-    .chat-message {
-      margin-bottom: 12px;
-      padding: 10px;
-      border-radius: 4px;
-      font-size: 0.85rem;
-      line-height: 1.4;
-    }
-
-    .user-message {
-      background: rgba(0, 212, 255, 0.1);
-      border-left: 3px solid #00d4ff;
-      margin-left: 20px;
-    }
-
-    .ai-message {
-      background: rgba(255, 255, 255, 0.05);
-      border-left: 3px solid #aa00ff;
-      margin-right: 20px;
-      color: #e0f7ff;
-    }
-
-    #ai-input-container {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
 
 /* =========================================================
    MOBILE OPTIMIZATION – NO EDGE CUTOFF FIX
@@ -1117,13 +1032,105 @@
   }
 
 }
-  </style>
-<script type="importmap">
-{
-  "imports": {
-    "@google/generative-ai": "https://esm.run/@google/generative-ai@0.21.0"
-  }
 }
+  /* --- LOADING INDICATOR --- */
+  .loading-overlay {
+      display: none;
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      background: rgba(0, 0, 0, 0.9) !important;
+      backdrop-filter: blur(8px) !important;
+      justify-content: center !important;
+      align-items: center !important;
+      z-index: 999999 !important;
+  }
+
+  .loading-overlay[style*="display: flex"] {
+      display: flex !important;
+  }
+
+  .loading-container {
+      text-align: center !important;
+      background: rgba(10, 20, 35, 0.95) !important;
+      padding: 40px !important;
+      border-radius: 20px !important;
+      border: 2px solid #00d4ff !important;
+      box-shadow: 0 0 30px rgba(0, 212, 255, 0.3) !important;
+  }
+
+  .loading-spinner {
+      width: 70px !important;
+      height: 70px !important;
+      margin: 0 auto 20px !important;
+      border: 5px solid rgba(0, 212, 255, 0.2) !important;
+      border-radius: 50% !important;
+      border-top-color: #00d4ff !important;
+      border-right-color: #00d4ff !important;
+      animation: spin 1s ease-in-out infinite !important;
+  }
+
+  @keyframes spin {
+      to { transform: rotate(360deg); }
+  }
+
+  .loading-text {
+      color: #00d4ff !important;
+      font-family: 'Iceland', sans-serif !important;
+      font-size: 1.5rem !important;
+      letter-spacing: 2px !important;
+      text-shadow: 0 0 10px #00d4ff !important;
+      margin-bottom: 10px !important;
+  }
+
+  .loading-subtext {
+      color: #a0d8f7 !important;
+      font-family: 'Quantico', sans-serif !important;
+      font-size: 0.9rem !important;
+      opacity: 0.8 !important;
+  }
+
+  .loading-progress {
+      width: 300px !important;
+      height: 4px !important;
+      background: rgba(0, 212, 255, 0.2) !important;
+      border-radius: 4px !important;
+      margin-top: 20px !important;
+      overflow: hidden !important;
+  }
+
+  .loading-progress-bar {
+      height: 100% !important;
+      background: linear-gradient(90deg, #00d4ff, #aa00ff) !important;
+      width: 0% !important;
+      animation: progress 2s ease-in-out infinite !important;
+  }
+
+  @keyframes progress {
+      0% { width: 0%; }
+      50% { width: 100%; }
+      100% { width: 0%; }
+  }
+
+  </style>
+
+<script>
+// Load Google Generative AI library
+window.loadGemini = new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/@google/generative-ai@0.21.0/dist/index.min.js';
+    script.onload = () => {
+        console.log('✅ Gemini library loaded');
+        resolve();
+    };
+    script.onerror = () => {
+        console.log('❌ Failed to load Gemini library');
+        reject();
+    };
+    document.head.appendChild(script);
+});
 </script>
 </head>
 <body>
@@ -1137,14 +1144,14 @@
  <header id="header">
     <div id="header-left">
       <div id="avatar" class="empty" onclick="document.getElementById('newAvatarModal').style.display='block'"></div>
-      <h1 id="title">CrypFin Cockpit <span class="version-tag">V.127</span></h1>
+      <h1 id="title">CrypFin Cockpit <span class="version-tag">V.145</span></h1>
     </div>
 
     <div id="pod-cluster">
       <!-- POD 1: SYSTEM (2x2) -->
       <div class="pod">
         <button id="briefingBtn" class="btn-pod" style="background: #aa00ff44;">STAT</button>
-        <button id="aiAssistantBtn" class="btn-pod">AI</button>
+        <button id="apiManagerBtn" class="btn-pod" style="background: #00aaff44;">API</button>
         <button id="helpBtn" class="btn-pod" style="background: #0088cc44;">HELP</button> 
         <button id="printReportBtn" class="btn-pod" style="background: #00aaff44;">PRNT</button>
       </div>
@@ -1470,38 +1477,120 @@
     </div>
   </div>
   
-  <div id="aiAssistantModal" class="modal">
-    <div class="modal-content">
-        <span class="close-modal">&times;</span>
-        <h2 style="font-family: 'Iceland'; color: #00d4ff; border-bottom: 1px solid #00d4ff44; padding-bottom: 10px;">AI PILOT INTERFACE</h2>
-        
-        <div id="chat-log"></div>
-
-        <!-- Initialize Screen -->
-        <div id="api-key-container">
-            <p style="font-size: 0.8rem; margin-bottom: 10px; opacity: 0.8;">Pilot offline. Enter Google AI Studio Key to initialize.</p>
-            <input type="password" id="api-key-input" class="units-input" style="width: 100%;" placeholder="Paste AI Key...">
-            <button id="save-api-key-btn" class="quantico-btn" style="width: 100%; margin-top: 10px; background: #0088ccaa;">INITIALIZE</button>
-        </div>
-
-        <!-- Active Command Input -->
-        <div id="ai-input-container" style="display: none;">
-            <input type="text" id="ai-input" class="units-input" style="flex: 1;" placeholder="Enter command...">
-            <button id="sync-ai-btn" class="quantico-btn btn-mini" style="background: #00d4ff44; border: 1px solid #00d4ff;">SYNC</button>
-            <button id="send-ai-btn" class="quantico-btn btn-mini" style="background: #28a74544; border: 1px solid #28a745;">SEND</button>
-        </div>
+  <!-- API Key Manager Modal -->
+<div id="apiManagerModal" class="modal">
+  <div class="modal-content" style="max-width: 500px;">
+    <span class="close-modal">&times;</span>
+    <h2 style="font-family: 'Iceland', sans-serif; color: #00d4ff;">🔑 API CONSOLE</h2>
+    
+    <!-- Free Services Notice -->
+    <div style="background: rgba(0, 212, 255, 0.1); padding: 12px; border-radius: 8px; margin-bottom: 20px; border-left: 3px solid #00d4ff;">
+      <p style="color: #e0f7ff; font-size: 0.8rem; margin: 0;">
+        <span style="color: #00ff88;">✓</span> <strong>Exchange Rates, Gold & Silver</strong> update automatically - no keys needed.<br>
+        <span style="color: #ffaa00;">⚠️</span> Keys below are for premium data only and stay in your browser.
+      </p>
+    </div>
+    
+    <!-- GoldAPI.io -->
+    <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+      <h3 style="color: #FFD700; font-size: 0.9rem; margin-bottom: 5px;">💰 Platinum Prices (GoldAPI.io)</h3>
+      <p style="font-size: 0.7rem; opacity: 0.8; margin-bottom: 8px;">
+        <span style="color: #00d4ff;">Free tier:</span> Updates platinum price 3x per day<br>
+        <span style="color: #FFD700;">Premium:</span> For more frequent updates, upgrade at 
+        <a href="https://www.goldapi.io/" target="_blank" style="color: #00d4ff;">goldapi.io</a>
+      </p>
+      <div style="display: flex; gap: 8px;">
+        <input type="text" id="goldApiKey" class="units-input" placeholder="Enter GoldAPI key" style="flex: 2;" value="">
+        <button id="saveGoldApiBtn" class="quantico-btn" style="background: #28a745; width: auto; padding: 8px 12px; font-size: 0.7rem;">SAVE</button>
+      </div>
+      <span id="goldApiStatus" style="margin-left: 5px; color: #00ff88; font-size: 0.7rem;"></span>
+    </div>
+    
+    <!-- CryptoCompare -->
+    <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+      <h3 style="color: #00d4ff; font-size: 0.9rem; margin-bottom: 5px;">📰 News & XRP History (CryptoCompare)</h3>
+      <p style="font-size: 0.7rem; opacity: 0.8; margin-bottom: 8px;">
+        <span style="color: #00d4ff;">Free tier:</span> Required for live news and historical XRP data.<br>
+        Get your free key at 
+        <a href="https://www.cryptocompare.com/" target="_blank" style="color: #00d4ff;">cryptocompare.com</a>
+      </p>
+      <div style="display: flex; gap: 8px;">
+        <input type="text" id="cryptoCompareKey" class="units-input" placeholder="Enter CryptoCompare key" style="flex: 2;" value="">
+        <button id="saveCryptoCompareBtn" class="quantico-btn" style="background: #28a745; width: auto; padding: 8px 12px; font-size: 0.7rem;">SAVE</button>
+      </div>
+      <span id="cryptoCompareStatus" style="margin-left: 5px; color: #00ff88; font-size: 0.7rem;"></span>
+    </div>
+    
+    <!-- Reset Button -->
+    <div style="margin-top: 20px; padding: 10px; background: rgba(255, 255, 255, 0.05); border-radius: 8px; text-align: center;">
+      <p style="color: #a0d8f7; font-size: 0.65rem; margin-bottom: 8px;">
+        🔒 All keys stored locally in your browser. Never sent to any server.
+      </p>
+      <button id="resetAllKeysBtn" class="quantico-btn" style="background: #bb2d3b; font-size: 0.7rem; padding: 6px 10px;">RESET ALL KEYS</button>
     </div>
   </div>
+</div>
   
-    <script type="module">
-    import { GoogleGenerativeAI } from "@google/generative-ai";
-    // --- APP STATE & CONFIG ---
-    window.myFinApp = {
-        totalCryptoUSD: 0,
-        lastApiCall: 0
-    };
+    <script>
+   
+console.log("MAIN SCRIPT RUNNING");
 
-    const CRYPTOCOMPARE_API_KEY = '30eb96c83a3a177efc3569cbdb16ea81239d471c2e2ac8b61e7d1799eefe0091';
+/*
+ * CRYPFIN COCKPIT - Personal Finance Dashboard
+ * Version: 1.3.7
+ * 
+ * APP STRUCTURE:
+ * 
+ * 1. CONFIG & STATE (lines 30-80)
+ *    - API keys, global variables, asset types
+ * 
+ * 2. UTILITY FUNCTIONS (lines 80-200)
+ *    - $, $$ selectors, formatting, error handling
+ * 
+ * 3. DATA FETCHING (lines 200-500)
+ *    - Metals (Gold/Silver from CoinGecko, Platinum from GoldAPI)
+ *    - Crypto prices from CoinGecko
+ *    - News from CryptoCompare
+ *    - XRP history from CryptoCompare
+ * 
+ * 4. UI RENDERING (lines 500-900)
+ *    - Asset tables, crypto tables, charts
+ *    - Greeting block with snapshots
+ * 
+ * 5. THREE.JS CHARTS (lines 900-1100)
+ *    - 3D asset allocation chart
+ *    - 3D holdings distribution chart
+ * 
+ * 6. USER INTERACTIONS (lines 1100-1500)
+ *    - Event listeners, modals, printing
+ *    - Voice briefing, AI assistant
+ * 
+ * 7. TRANSACTION MODULE (lines 1500-1800)
+ *    - Deposit/withdrawal tracking
+ *    - P&L calculations
+ * 
+ * 8. INITIALIZATION (lines 1800-end)
+ *    - Loads data, starts refresh intervals
+ * 
+ * DATA PERSISTENCE:
+ * - All user inputs save to localStorage
+ * - API responses cached to reduce calls
+ * - Platinum API calls limited to 3 per day
+ * 
+ * REQUIRED API KEYS (FREE):
+ * - GoldAPI.io: For platinum prices (100 calls/month free)
+ * - Google AI Studio: For AI Assistant (free tier)
+ * - All other data sources are free/no key needed
+ */
+
+// --- APP STATE & CONFIG ---
+window.myFinApp = {
+    totalCryptoUSD: 0,
+    lastApiCall: 0
+};
+
+    // Get API key from localStorage or use empty string
+const CRYPTOCOMPARE_API_KEY = localStorage.getItem('CRYPTOCOMPARE_API_KEY') || '';
 
     let activeCoins = [];
     let priceDataCache = {};
@@ -1564,6 +1653,34 @@ function attachLiquidAssetsPersistence() {
       recalculateAllTotals();
     });
   });
+}
+// --- LOADING INDICATOR FUNCTIONS ---
+function showLoading(message = 'FETCHING MARKET DATA', subtext = 'Updating prices...') {
+    const overlay = document.getElementById('loadingOverlay');
+    const text = document.getElementById('loadingText');
+    const subtextEl = document.getElementById('loadingSubtext');
+    
+    if (overlay) {
+        if (text) text.innerText = message;
+        if (subtextEl) subtextEl.innerText = subtext;
+        overlay.style.display = 'flex';
+        console.log('✅ LOADING SHOWN');
+    } else {
+        console.log('❌ OVERLAY NOT FOUND!');
+    }
+}
+
+function hideLoading() {
+    const overlay = document.getElementById('loadingOverlay');
+    if (overlay) {
+        overlay.style.display = 'none';
+        console.log('✅ LOADING HIDDEN');
+    }
+}
+
+function showLoadingWithTimeout(message = 'FETCHING MARKET DATA', subtext = 'Updating prices...', timeout = 8000) {
+    showLoading(message, subtext);
+    setTimeout(hideLoading, timeout);
 }
 
 
@@ -1721,35 +1838,101 @@ function attachCryptoPersistence() {
     }
 
 // --- GLOBAL LIVE PRECIOUS METALS ENGINE ---
-window.metalPrices = { gold: 2650, silver: 31, platinum: 2150 }; // High fallback as requested
+window.metalPrices = { gold: 2650, silver: 31, platinum: 915 };
+window.currentGoldPriceUSD = 2650; // Initialize with fallback
+window.currentGoldChange = 0;
+window.currentSilverChange = 0;
 
 async function fetchMetalsData() {
+
     try {
-        // Fetching Gold (PAXG), Silver (KAG), and Platinum
-        const response = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=pax-gold,kinesis-silver,platinum&vs_currencies=usd&include_24hr_change=true");
+
+        // ---------------------------
+        // GOLD + SILVER (CoinGecko)
+        // ---------------------------
+        const response = await fetch(
+            "https://api.coingecko.com/api/v3/simple/price?ids=pax-gold,kinesis-silver&vs_currencies=usd&include_24hr_change=true"
+        );
+
         const data = await response.json();
-        
+
         if (data) {
-            // 1. Update Gold Price AND % Change
+            // Update GOLD price and the ticker variables
             window.metalPrices.gold = data["pax-gold"]?.usd || window.metalPrices.gold;
             window.currentGoldPriceUSD = window.metalPrices.gold;
-            window.currentGoldChange = data["pax-gold"]?.usd_24h_change || 0; // SAVES % CHANGE
-            
-            // 2. Update Silver Price AND % Change
-            window.metalPrices.silver = data["kinesis-silver"]?.usd || window.metalPrices.silver;
-            window.currentSilverChange = data["kinesis-silver"]?.usd_24h_change || 0; // SAVES % CHANGE
+            window.currentGoldChange = data["pax-gold"]?.usd_24h_change || 0;
 
-            // 3. Update Platinum (Sovereign Logic)
-            const apiPlatinum = data["platinum"]?.usd;
-            if (apiPlatinum && apiPlatinum > 500) {
-                window.metalPrices.platinum = apiPlatinum;
-            } else {
-                window.metalPrices.platinum = 2150; // Sovereign Fallback
-            }
+            // Update SILVER price and ticker variables
+            window.metalPrices.silver = data["kinesis-silver"]?.usd || window.metalPrices.silver;
+            window.currentSilverChange = data["kinesis-silver"]?.usd_24h_change || 0;
             
-            // Cache results for next load
-            localStorage.setItem('cachedMetalPrices', JSON.stringify(window.metalPrices));
+            console.log("Gold price updated:", window.currentGoldPriceUSD);
         }
+
+        // ---------------------------
+        // PLATINUM (GoldAPI - Limited 3x per day)
+        // ---------------------------
+        try {
+
+            const today = new Date().toISOString().split("T")[0];
+            let platCache = JSON.parse(localStorage.getItem("platCache") || "{}");
+
+            if (!platCache.date || platCache.date !== today) {
+                platCache = { date: today, calls: 0, price: platCache.price || 915 };
+            }
+
+            if (platCache.calls < 3) {
+
+                const platRes = await fetch("https://www.goldapi.io/api/XPT/USD", {
+                    headers: {
+                        "x-access-token": localStorage.getItem('GOLD_API_KEY') || '',
+                        "Content-Type": "application/json"
+                    }
+                });
+
+                const platData = await platRes.json();
+
+                if (platData.price && typeof platData.price === "number") {
+
+                    window.metalPrices.platinum = platData.price;
+
+                    platCache.price = platData.price;
+                    platCache.calls += 1;
+
+                    localStorage.setItem("platCache", JSON.stringify(platCache));
+
+                    console.log("Platinum updated from GoldAPI:", platData.price);
+                }
+
+            } else if (platCache.price) {
+
+                window.metalPrices.platinum = platCache.price;
+                console.log("Using cached platinum price:", platCache.price);
+            }
+
+        } catch (err) {
+
+            const platCache = JSON.parse(localStorage.getItem("platCache") || "{}");
+
+            if (platCache.price) {
+                window.metalPrices.platinum = platCache.price;
+                console.log("Using cached platinum after error:", platCache.price);
+            } else {
+                console.warn("Platinum failed and no cache available.");
+            }
+        }
+
+        // ---------------------------
+        // SAVE CACHE + FORCE UI UPDATE
+        // ---------------------------
+        localStorage.setItem(
+            "cachedMetalPrices",
+            JSON.stringify(window.metalPrices)
+        );
+
+        // 🔥 THIS FIXES YOUR TICKER
+        updateTicker();
+
     } catch (err) {
         console.warn("Metals fetch failed. Using fallback prices.");
     }
@@ -2106,66 +2289,86 @@ function loadInitialData() {
     
 
     async function refresh(force = false) {
-        const now = Date.now();
-        if (!force && now - lastRefresh < refreshCooldown) return;
-        lastRefresh = now;
+    const now = Date.now();
+    if (!force && now - lastRefresh < refreshCooldown) {
+        console.log("Using cached data, refresh skipped");
+        return;
+    }
+    lastRefresh = now;
 
-        // 1. SYNC LIVE METALS PRICE (Gold, Silver, Platinum)
-        await fetchMetalsData(); 
+    // Show loading indicator
+    showLoadingWithTimeout('UPDATING PORTFOLIO', 'Fetching live prices...', 8000);
 
-        // 2. FETCH CRYPTO
-        const cryptoPrices = await fetchCryptoPrices();
-        priceDataCache = cryptoPrices;
+    try {
+            // 1. SYNC LIVE METALS PRICE (Gold, Silver, Platinum)
+            await fetchMetalsData(); 
 
-        // 3. RENDER LIVE CRYPTO TABLE
-        renderCryptoPricesTable();
+            // 2. FETCH CRYPTO
+            const cryptoPrices = await fetchCryptoPrices();
+            priceDataCache = cryptoPrices;
 
-        // 4. CALCULATE TOTALS (Gold + Liquid + Fixed)
-        const { liquidUSD, fixedUSD } = calculateTotalAssetUSD();
+            // 3. RENDER LIVE CRYPTO TABLE
+            renderCryptoPricesTable();
 
-        // 5. CALCULATE CRYPTO PORTFOLIO VALUE
-        let currentTotalCryptoUSD = 0;
-        const chartData = [];
-        for (const coin of activeCoins) {
-            const coinData = priceDataCache[coin.id] || {};
-            const usd = coinData.usd || 0;
-            
-            // FIX: Pull directly from the cryptoAssetsData object instead of individual localStorage keys
-            const holdings = platforms.reduce((sum, p) => 
-                sum + (parseFloat(cryptoAssetsData[coin.id]?.[p] || 0)), 0);
-            
-            const valUSD = holdings * usd;
-            currentTotalCryptoUSD += valUSD;
+            // 4. CALCULATE TOTALS (Gold + Liquid + Fixed)
+            const { liquidUSD, fixedUSD } = calculateTotalAssetUSD();
 
-            if (valUSD > 0.01) {
-                chartData.push({
-                    label: coin.symbol.toUpperCase(),
-                    value: valUSD,
-                    color: coin.color || `#${(Math.random().toString(16) + '000000').substring(2,8)}`
-                });
+            // 5. CALCULATE CRYPTO PORTFOLIO VALUE
+            let currentTotalCryptoUSD = 0;
+            const chartData = [];
+            for (const coin of activeCoins) {
+                const coinData = priceDataCache[coin.id] || {};
+                const usd = coinData.usd || 0;
+                
+                // FIX: Pull directly from the cryptoAssetsData object instead of individual localStorage keys
+                const holdings = platforms.reduce((sum, p) => 
+                    sum + (parseFloat(cryptoAssetsData[coin.id]?.[p] || 0)), 0);
+                
+                const valUSD = holdings * usd;
+                currentTotalCryptoUSD += valUSD;
+
+                if (valUSD > 0.01) {
+                    chartData.push({
+                        label: coin.symbol.toUpperCase(),
+                        value: valUSD,
+                        color: coin.color || `#${(Math.random().toString(16) + '000000').substring(2,8)}`
+                    });
+                }
             }
-        }
 
-        // 🔑 THE BRIDGE: Store value globally for the Transaction Module
-        window.myFinApp = window.myFinApp || {};
-        window.myFinApp.totalCryptoUSD = currentTotalCryptoUSD;
+            // 🔑 THE BRIDGE: Store value globally for the Transaction Module
+            window.myFinApp = window.myFinApp || {};
+            window.myFinApp.totalCryptoUSD = currentTotalCryptoUSD;
 
-        // 6. UPDATE GLOBAL UI
-        const totalAssetValue = currentTotalCryptoUSD + liquidUSD + fixedUSD;
-        $('#totalValueUSD').textContent = formatCurrency(currentTotalCryptoUSD, 'USD');
-        updateGreetingBlock(totalAssetValue, liquidUSD, fixedUSD, currentTotalCryptoUSD);
-        updateHoldingsChart(chartData);
-        displaySnapshotHistory();
+            // 6. UPDATE GLOBAL UI
+            const totalAssetValue = currentTotalCryptoUSD + liquidUSD + fixedUSD;
+            $('#totalValueUSD').textContent = formatCurrency(currentTotalCryptoUSD, 'USD');
+            updateGreetingBlock(totalAssetValue, liquidUSD, fixedUSD, currentTotalCryptoUSD);
+            updateHoldingsChart(chartData);
+            displaySnapshotHistory();
 
-        // 7. SYNC THE XAU CONVERTER PANEL
-        const goldInput = document.getElementById("goldAmount");
-        if (goldInput) goldInput.dispatchEvent(new Event('input'));
+            // 7. SYNC THE XAU CONVERTER PANEL
+            const goldInput = document.getElementById("goldAmount");
+            if (goldInput) goldInput.dispatchEvent(new Event('input'));
 
-        // 8. 🔑 NEW: Tell the Transaction Module to update its cards
-        if (window.newModuleInstance) {
-            window.newModuleInstance.renderUI();
+            // 8. 🔑 NEW: Tell the Transaction Module to update its cards
+            if (window.newModuleInstance) {
+                window.newModuleInstance.renderUI();
+            }
+            
+            // Hide loading on success
+            hideLoading();
+            
+        } catch (error) {
+            console.error("Refresh error:", error);
+            hideLoading();
         }
     }
+	// Test loading indicator on page load
+	setTimeout(() => {
+   	 showLoading('SYSTEM STARTUP', 'Loading dashboard...');
+   	 setTimeout(hideLoading, 3000);
+	}, 1000);
     
     // --- SINGLE DECLARATION OF GREETING BLOCK (Live vs Last Save) ---
     function updateGreetingBlock(totalAssetValue, liquidUSD, fixedUSD, cryptoUSD) {
@@ -2500,7 +2703,7 @@ function loadInitialData() {
 
         setupModalEvents();
         initPrinting();
-        initAiAssistant();
+        
 
         $('#pGoldAmount').oninput = () => refresh(true);
         $('#pGoldUnit').onchange = () => refresh(true);
@@ -2754,6 +2957,99 @@ function loadInitialData() {
         $('#saveCoinsBtn').addEventListener('click', saveSelectedCoins);
     }
 
+// --- API KEY MANAGER ---
+function initApiManager() {
+    const modal = document.getElementById('apiManagerModal');
+    const btn = document.getElementById('apiManagerBtn');
+    
+    // Check if modal exists (prevents errors)
+    if (!modal) return;
+    
+    // Load saved keys into inputs (with null checks)
+    const goldInput = document.getElementById('goldApiKey');
+    const cryptoInput = document.getElementById('cryptoCompareKey');
+    
+    if (goldInput) goldInput.value = localStorage.getItem('GOLD_API_KEY') || '';
+    if (cryptoInput) cryptoInput.value = localStorage.getItem('CRYPTOCOMPARE_API_KEY') || '';
+    
+    // Show status indicators (with null checks)
+    const goldStatus = document.getElementById('goldApiStatus');
+    const cryptoStatus = document.getElementById('cryptoCompareStatus');
+    
+    if (goldStatus && localStorage.getItem('GOLD_API_KEY')) {
+        goldStatus.innerText = '✓ Saved';
+    }
+    if (cryptoStatus && localStorage.getItem('CRYPTOCOMPARE_API_KEY')) {
+        cryptoStatus.innerText = '✓ Saved';
+    }
+    
+    // Save GoldAPI key
+    const saveGoldBtn = document.getElementById('saveGoldApiBtn');
+    if (saveGoldBtn) {
+        saveGoldBtn.onclick = () => {
+            const key = document.getElementById('goldApiKey')?.value.trim() || '';
+            const status = document.getElementById('goldApiStatus');
+            if (key) {
+                localStorage.setItem('GOLD_API_KEY', key);
+                if (status) status.innerText = '✓ Saved';
+            } else {
+                localStorage.removeItem('GOLD_API_KEY');
+                if (status) status.innerText = '';
+            }
+        };
+    }
+    
+    // Save CryptoCompare key
+    const saveCryptoBtn = document.getElementById('saveCryptoCompareBtn');
+    if (saveCryptoBtn) {
+        saveCryptoBtn.onclick = () => {
+            const key = document.getElementById('cryptoCompareKey')?.value.trim() || '';
+            const status = document.getElementById('cryptoCompareStatus');
+            if (key) {
+                localStorage.setItem('CRYPTOCOMPARE_API_KEY', key);
+                if (status) status.innerText = '✓ Saved';
+            } else {
+                localStorage.removeItem('CRYPTOCOMPARE_API_KEY');
+                if (status) status.innerText = '';
+            }
+        };
+    }
+    
+    // Reset all keys
+    const resetBtn = document.getElementById('resetAllKeysBtn');
+    if (resetBtn) {
+        resetBtn.onclick = () => {
+            if (confirm('Reset all API keys?')) {
+                localStorage.removeItem('GOLD_API_KEY');
+                localStorage.removeItem('CRYPTOCOMPARE_API_KEY');
+                location.reload();
+            }
+        };
+    }
+    
+    // Open modal
+    if (btn) {
+        btn.onclick = () => {
+            if (modal) modal.style.display = 'block';
+        };
+    }
+    
+    // Close modal when clicking outside
+    if (modal) {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal || e.target.classList.contains('close-modal')) {
+                modal.style.display = 'none';
+            }
+        });
+    }
+}
+
+// Update your fetch functions to use stored keys
+function updateGoldApiKey(key) {
+    // This will be used in your fetchMetalsData function
+    console.log('GoldAPI key updated');
+}
+
     function initPrinting() {
         const printBtn = $('#printReportBtn');
         const printModal = $('#printModal');
@@ -2804,6 +3100,7 @@ function loadInitialData() {
             window.print();
         };
     }
+
     
     function populateFutureAssetDropdown() {
         $('#future-asset-select').innerHTML = activeCoins.map(c => `<option value="${c.id}">${c.symbol.toUpperCase()}</option>`).join('');
@@ -2849,46 +3146,48 @@ function loadInitialData() {
 
         // --- TICKER WITH METAL INTEGRATION ---
         const updateTicker = () => {
-            const ticker = $('#tickerContent');
-            if (!ticker) return;
+    const ticker = $('#tickerContent');
+    if (!ticker) return;
 
-            // 1. Gold Price and Change (XAU)
-            const gPrice = window.currentGoldPriceUSD || 2650;
-            const gChange = window.currentGoldChange || 0;
-            const gClass = gChange >= 0 ? 'price-up' : 'price-down';
-            const gSign = gChange >= 0 ? '↗' : '↘';
+    // 1. Gold Price and Change (XAU)
+    const gPrice = window.currentGoldPriceUSD || window.metalPrices?.gold || 2650; // Use currentGoldPriceUSD first
+    const gChange = window.currentGoldChange || 0;
+    const gClass = gChange >= 0 ? 'price-up' : 'price-down';
+    const gSign = gChange >= 0 ? '↗' : '↘';
 
-            const goldHtml = `
-                <div class="ticker-item" style="color: #FFD700; font-weight: bold;">
-                    XAU/USD <span class="${gClass}">$${gPrice.toLocaleString(undefined, {minimumFractionDigits: 2})} ${gSign}${gChange.toFixed(2)}%</span>
-                </div>`;
+    const goldHtml = `
+        <div class="ticker-item" style="color: #FFD700; font-weight: bold;">
+            XAU/USD <span class="${gClass}">$${gPrice.toLocaleString(undefined, {minimumFractionDigits: 2})} ${gSign}${Math.abs(gChange).toFixed(2)}%</span>
+        </div>`;
 
-            // 2. NEW: Silver Price and Change (XAG)
-            const sPrice = window.metalPrices?.silver || 31;
-            const sChange = window.currentSilverChange || 0;
-            const sClass = sChange >= 0 ? 'price-up' : 'price-down';
-            const sSign = sChange >= 0 ? '↗' : '↘';
+    // 2. Silver Price and Change (XAG)
+    const sPrice = window.metalPrices?.silver || 31;
+    const sChange = window.currentSilverChange || 0;
+    const sClass = sChange >= 0 ? 'price-up' : 'price-down';
+    const sSign = sChange >= 0 ? '↗' : '↘';
 
-            const silverHtml = `
-                <div class="ticker-item" style="color: #C0C0C0; font-weight: bold;">
-                    XAG/USD <span class="${sClass}">$${sPrice.toLocaleString(undefined, {minimumFractionDigits: 2})} ${sSign}${sChange.toFixed(2)}%</span>
-                </div>`;
+    const silverHtml = `
+        <div class="ticker-item" style="color: #C0C0C0; font-weight: bold;">
+            XAG/USD <span class="${sClass}">$${sPrice.toLocaleString(undefined, {minimumFractionDigits: 2})} ${sSign}${Math.abs(sChange).toFixed(2)}%</span>
+        </div>`;
 
-            // 3. Crypto Prices
-            const cryptoHtml = activeCoins.slice(0, 10).map(coin => {
-                const data = priceDataCache[coin.id] || {};
-                const price = data.usd ?? 0;
-                const change = data.usd_24h_change ?? 0;
-                if (price === 0 || coin.id === 'pax-gold') return '';
-                return `<div class="ticker-item">${coin.symbol.toUpperCase()}/USD<span class="${change >= 0 ? 'price-up' : 'price-down'}">${price.toFixed(2)}${change >= 0 ? '↗' : '↘'}${change.toFixed(2)}%</span></div>`;
-            }).join('');
+    // 3. Crypto Prices
+    const cryptoHtml = activeCoins.slice(0, 10).map(coin => {
+        const data = priceDataCache[coin.id] || {};
+        const price = data.usd ?? 0;
+        const change = data.usd_24h_change ?? 0;
+        if (price === 0 || coin.id === 'pax-gold') return '';
+        const changeClass = change >= 0 ? 'price-up' : 'price-down';
+        const changeSign = change >= 0 ? '↗' : '↘';
+        return `<div class="ticker-item">${coin.symbol.toUpperCase()}/USD <span class="${changeClass}">$${price.toFixed(2)} ${changeSign}${Math.abs(change).toFixed(2)}%</span></div>`;
+    }).join('');
 
-            // Combine everything
-            const combined = goldHtml + silverHtml + cryptoHtml;
-            if (combined.length > 0) {
-                ticker.innerHTML = combined + combined; // Double it for seamless loop
-            }
-        };
+    // Combine everything
+    const combined = goldHtml + silverHtml + cryptoHtml;
+    if (combined.length > 0) {
+        ticker.innerHTML = combined + combined; // Double it for seamless loop
+    }
+};
         // Update every minute
         setInterval(updateTicker, 100000);
         
@@ -2957,111 +3256,7 @@ function loadInitialData() {
         window.speechSynthesis.speak(brief);
     }
 
-   function initAiAssistant() {
-        const modal = $('#aiAssistantModal');
-        const apiKeyContainer = $('#api-key-container');
-        const aiInputContainer = $('#ai-input-container');
-        const saveApiKeyBtn = $('#save-api-key-btn');
-        const apiKeyInput = $('#api-key-input');
-        const sendBtn = $('#send-ai-btn');
-        const syncBtn = $('#sync-ai-btn');
-        const aiInput = $('#ai-input');
-        const chatLog = $('#chat-log');
-        let genAI;
-
-        // Using a brand new key name to bypass browser cache/expired loops
-        const storageKeyName = 'COCKPIT_PILOT_KEY_V2';
-
-        const checkApiKey = () => {
-            const apiKey = localStorage.getItem(storageKeyName);
-            if (apiKey && apiKey.length > 20) {
-                // Ensure no quotes or spaces are in the key
-                const cleanKey = apiKey.trim().replace(/["']/g, "");
-                genAI = new GoogleGenerativeAI(cleanKey);
-                apiKeyContainer.style.display = 'none';
-                aiInputContainer.style.display = 'flex';
-            } else {
-                apiKeyContainer.style.display = 'block';
-                aiInputContainer.style.display = 'none';
-            }
-        };
-
-        const appendMessage = (text, sender) => {
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `chat-message ${sender}-message`;
-            messageDiv.innerHTML = `<strong style="font-size:0.6rem; opacity:0.5;">${sender.toUpperCase()}</strong><br>${text}`;
-            chatLog.appendChild(messageDiv);
-            chatLog.scrollTop = chatLog.scrollHeight;
-        };
-
-        const sendMessage = async () => {
-    const message = aiInput.value.trim();
-    if (!message) return;
-
-    appendMessage(message, 'user');
-    aiInput.value = '';
-
-    const apiKey = localStorage.getItem(storageKeyName);
-    if (!apiKey) return;
-
-    try {
-        const response = await fetch(
-            `https://generativelanguage.googleapis.com/v1/models/gemini-1.0-pro:generateContent?key=${apiKey}`,
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    contents: [
-                        {
-                            parts: [{ text: message }]
-                        }
-                    ]
-                })
-            }
-        );
-
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(JSON.stringify(data));
-        }
-
-        const aiText =
-            data.candidates?.[0]?.content?.parts?.[0]?.text ||
-            "No response from AI.";
-
-        appendMessage(aiText, 'ai');
-
-    } catch (e) {
-        console.error("Full AI Error:", e);
-        appendMessage("AI CONNECTION FAILURE. Check key or network.", "ai");
-    }
-};
-
-        syncBtn.onclick = () => {
-            const cryptoUSD = window.myFinApp.totalCryptoUSD || 0;
-            const { liquidUSD, fixedUSD } = calculateTotalAssetUSD();
-            aiInput.value = `MISSION REPORT: Net Worth $${(cryptoUSD + liquidUSD + fixedUSD).toFixed(0)}. Analyze my risk level.`;
-            sendMessage();
-        };
-
-        saveApiKeyBtn.onclick = () => {
-            const key = apiKeyInput.value.trim();
-            if (key.startsWith("AIza")) { 
-                localStorage.setItem(storageKeyName, key); 
-                checkApiKey(); 
-                appendMessage("New Pilot Key Encrypted and Stored.", "ai");
-            } else {
-                alert("Invalid Key Format. Must start with 'AIza'");
-            }
-        };
-        
-        $('#aiAssistantBtn').onclick = () => { modal.style.display = 'block'; checkApiKey(); };
-        sendBtn.onclick = sendMessage;
-        aiInput.onkeypress = (e) => { if (e.key === 'Enter') sendMessage(); };
-    }
+   
 
     function initNewModules() {
         window.newModuleInstance = {
@@ -3368,6 +3563,7 @@ updateSummaries(currency, filteredData) {
             buildAssetTable('#liquid-assets-body', liquidAssetTypes, 'liquid');
             buildAssetTable('#fixed-assets-body', fixedAssetTypes, 'fixed');
             buildCryptoAssetsTable();
+	    initApiManager(); // Initialize API Key Manager
             await refresh(true);
             setupEventListeners(); populateFutureAssetDropdown();
             await fetchNews(true); await fetchXRPHistoryData(true);
@@ -3482,55 +3678,144 @@ updateSummaries(currency, filteredData) {
     };
 </script>
 
+<!-- Loading Indicator -->
+<div id="loadingOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 9999999; justify-content: center; align-items: center;">
+    <div style="text-align: center; background: #0a1423; padding: 40px; border-radius: 20px; border: 2px solid #00d4ff; box-shadow: 0 0 30px #00d4ff;">
+        <div style="width: 70px; height: 70px; margin: 0 auto 20px; border: 5px solid rgba(0,212,255,0.2); border-radius: 50%; border-top-color: #00d4ff; border-right-color: #00d4ff; animation: spin 1s linear infinite;"></div>
+        <div style="color: #00d4ff; font-family: Iceland; font-size: 1.5rem;" id="loadingText">FETCHING MARKET DATA</div>
+        <div style="color: #a0d8f7; font-family: Quantico; font-size: 0.9rem; margin-top: 10px;" id="loadingSubtext">Updating prices...</div>
+    </div>
+</div>
+
+
 <!-- Help / Navigation Guide Modal -->
 <div id="helpModal" class="modal">
   <div class="modal-content" style="max-width: 700px;">
       <span class="close-modal">&times;</span>
-      <h2 style="font-family: 'Iceland', sans-serif; letter-spacing: 2px;">SYSTEM GUIDE</h2>
+      <h2 style="font-family: 'Iceland', sans-serif; letter-spacing: 2px; color: #00d4ff;">📋 SYSTEM GUIDE</h2>
       
       <div id="help-content" style="margin-top: 15px; line-height: 1.6; font-size: 0.9rem; color: #e0f7ff; max-height: 70vh; overflow-y: auto; padding-right: 10px;">
     
-          <h3 style="color: #aa00ff; border-bottom: 1px solid #aa00ff44; margin-bottom: 8px;">0. SECURITY: The Data Fortress</h3>
-<p>Because this app is "Zero-Knowledge" (no servers), your data exists <strong>only</strong> in your browser.
-<br>• <strong>Backup:</strong> Click "Backup" regularly. It downloads a .json file of your entire system.
-<br>• <strong>Restore:</strong> If you clear your cache or change computers, click "Restore" and select your backup file to instantly rebuild your Cockpit.</p>
+          <!-- QUICK START - IMPORTANT! -->
+          <div style="background: linear-gradient(135deg, #00d4ff22, #aa00ff22); padding: 20px; border-radius: 12px; margin-bottom: 25px; border: 2px solid #00d4ff;">
+            <h3 style="color: #00d4ff; font-size: 1.3rem; margin-top: 0; margin-bottom: 15px; text-align: center;">🚀 QUICK START - ADD SAMPLE DATA</h3>
+            
+            <p style="text-align: center; margin-bottom: 20px;">The app shows live data but you need to add YOUR assets first. Try these examples:</p>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+              
+              <!-- Cash -->
+              <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; border-left: 4px solid #00ff88;">
+                <h4 style="color: #00ff88; margin: 0 0 8px 0;">💰 Cash / Bank</h4>
+                <p style="font-size: 0.8rem; margin: 0;">Go to <strong>Liquid Assets</strong> and add:</p>
+                <ul style="font-size: 0.75rem; margin-top: 8px; padding-left: 20px;">
+                  <li>Cash: <strong style="color: #fff;">$5,000 USD</strong></li>
+                  <li>Bank 1: <strong style="color: #fff;">R10,000 ZAR</strong></li>
+                  <li>Bank 2: <strong style="color: #fff;">₫5,000,000 VND</strong></li>
+                </ul>
+              </div>
+              
+              <!-- Physical Metals -->
+              <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; border-left: 4px solid #FFD700;">
+                <h4 style="color: #FFD700; margin: 0 0 8px 0;">🏦 Physical Metals</h4>
+                <p style="font-size: 0.8rem; margin: 0;">Go to <strong>Physical Metals Vault</strong>:</p>
+                <ul style="font-size: 0.75rem; margin-top: 8px; padding-left: 20px;">
+                  <li>Gold: <strong style="color: #fff;">2 oz</strong></li>
+                  <li>Silver: <strong style="color: #fff;">50 oz</strong></li>
+                  <li>Or try <strong style="color: #fff;">5 chi gold</strong> (VN unit)</li>
+                </ul>
+              </div>
+              
+              <!-- Crypto -->
+              <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; border-left: 4px solid #ffaa00;">
+                <h4 style="color: #ffaa00; margin: 0 0 8px 0;">📊 Crypto Holdings</h4>
+                <p style="font-size: 0.8rem; margin: 0;">Go to <strong>Crypto Assets</strong>:</p>
+                <ul style="font-size: 0.75rem; margin-top: 8px; padding-left: 20px;">
+                  <li>Bitcoin: <strong style="color: #fff;">0.5 BTC</strong> (Binance)</li>
+                  <li>XRP: <strong style="color: #fff;">1000 XRP</strong> (Xaman)</li>
+                  <li>Ethereum: <strong style="color: #fff;">2 ETH</strong> (Luno)</li>
+                </ul>
+              </div>
+              
+              <!-- Fixed Assets -->
+              <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; border-left: 4px solid #66aaff;">
+                <h4 style="color: #66aaff; margin: 0 0 8px 0;">🏠 Fixed Assets</h4>
+                <p style="font-size: 0.8rem; margin: 0;">Go to <strong>Fixed Assets</strong>:</p>
+                <ul style="font-size: 0.75rem; margin-top: 8px; padding-left: 20px;">
+                  <li>Property: <strong style="color: #fff;">$250,000 USD</strong></li>
+                  <li>Vehicle: <strong style="color: #fff;">R350,000 ZAR</strong></li>
+                </ul>
+              </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 20px; padding-top: 15px; border-top: 1px dashed #00d4ff44;">
+              <p style="color: #00d4ff; font-size: 0.9rem;">
+                ⚡ After adding assets, click <strong style="color: #fff;">"Save"</strong> in Portfolio Snapshot to track growth!
+              </p>
+              <p style="font-size: 0.75rem; opacity: 0.7;">
+                All data stays in YOUR browser - safe to experiment and delete later
+              </p>
+            </div>
+          </div>
 
-<h3 style="color: var(--primary-glow); border-bottom: 1px solid #3399ff44; margin-top: 15px; margin-bottom: 8px;">1. Primary Asset Setup</h3>
-<p>Initialize your net worth by entering values in the <strong>Assets</strong> rows.
-<br>• <strong>Liquid Assets:</strong> Cash and Bank balances in USD, ZAR, or VND.
-<br>• <strong>Fixed Assets:</strong> Long-term holdings like Property or vehicles. 
-<br>• <em>Note:</em> All non-USD values are converted using live FX rates in your Snapshot.</p>
+          <h3 style="color: #aa00ff; border-bottom: 1px solid #aa00ff44; margin-bottom: 8px;">🔒 0. SECURITY: The Data Fortress</h3>
+          <p>Because this app is "Zero-Knowledge" (no servers), your data exists <strong>only</strong> in your browser.
+          <br>• <strong>Backup:</strong> Click "Backup" regularly. It downloads a .json file of your entire system.
+          <br>• <strong>Restore:</strong> If you clear your cache or change computers, click "Restore" and select your backup file to instantly rebuild your Cockpit.</p>
 
-<h3 style="color: #FFD700; border-bottom: 1px solid #FFD70044; margin-top: 15px; margin-bottom: 8px;">2. The Physical Vault (Liquid 2)</h3>
-<p>Manage your physical Gold and Silver bullion here.
-<br>• Enter your <strong>Units</strong> and select the type (Ounce, Gram, or VN Chi/Tael).
-<br>• The system fetches <strong>Live Spot Prices</strong> and calculates the total value automatically. This total is added to your Liquid Asset snapshot.</p>
+          <h3 style="color: var(--primary-glow); border-bottom: 1px solid #3399ff44; margin-top: 15px; margin-bottom: 8px;">💰 1. Primary Asset Setup</h3>
+          <p>Initialize your net worth by entering values in the <strong>Assets</strong> rows.
+          <br>• <strong>Liquid Assets:</strong> Cash and Bank balances in USD, ZAR, or VND.
+          <br>• <strong>Fixed Assets:</strong> Long-term holdings like Property or vehicles. 
+          <br>• <em>Note:</em> All non-USD values are converted using live FX rates in your Snapshot.</p>
 
-<h3 style="color: var(--crypto-color); border-bottom: 1px solid #ffaa0044; margin-top: 15px; margin-bottom: 8px;">3. Crypto Command</h3>
-<p>Track your digital assets across multiple platforms:
-<br>• <strong>Add Coins:</strong> Use "Add/Remove Coins" to select your assets (XRP, BTC, etc).
-<br>• <strong>Inventory:</strong> Enter units held in specific wallets (Binance, Luno, Xaman, etc).
-<br>• <strong>Live Market:</strong> The <em>Cryptocurrency Prices</em> table shows your real-time value and 24h market performance.</p>
+          <h3 style="color: #FFD700; border-bottom: 1px solid #FFD70044; margin-top: 15px; margin-bottom: 8px;">🏦 2. The Physical Vault (Liquid 2)</h3>
+          <p>Manage your physical Gold and Silver bullion here.
+          <br>• Enter your <strong>Units</strong> and select the type (Ounce, Gram, or VN Chi/Tael).
+          <br>• The system fetches <strong>Live Spot Prices</strong> and calculates the total value automatically. This total is added to your Liquid Asset snapshot.</p>
 
-<h3 style="color: var(--positive-change); border-bottom: 1px solid #00ff8844; margin-top: 15px; margin-bottom: 8px;">4. Tracking Growth (Snapshots)</h3>
-<p>The <strong>Portfolio Snapshot</strong> at the top is your HUD.
-<br>• Click <strong>"Save"</strong> to record a point-in-time entry of your wealth.
-<br>• The <strong>History</strong> list calculates the percentage of growth or decay between your current live data and your previous saves.</p>
+          <h3 style="color: var(--crypto-color); border-bottom: 1px solid #ffaa0044; margin-top: 15px; margin-bottom: 8px;">📊 3. Crypto Command</h3>
+          <p>Track your digital assets across multiple platforms:
+          <br>• <strong>Add Coins:</strong> Use "Add/Remove Coins" to select your assets (XRP, BTC, etc).
+          <br>• <strong>Inventory:</strong> Enter units held in specific wallets (Binance, Luno, Xaman, etc).
+          <br>• <strong>Live Market:</strong> The <em>Cryptocurrency Prices</em> table shows your real-time value and 24h market performance.</p>
 
-<h3 style="color: var(--primary-border); border-bottom: 1px solid #3399ff44; margin-top: 15px; margin-bottom: 8px;">5. Accounting & PnL</h3>
-<p>Use the <strong>Transactions</strong> module at the bottom for total financial clarity.
-<br>• <strong>Entries:</strong> Record every Deposit (money in) and Withdrawal (money out).
-<br>• <strong>Live ROI:</strong> The system compares your net deposits against your <em>Live Crypto Value</em> to give you an exact Profit/Loss percentage.
-<br>• <strong>Reporting:</strong> Filter by Year or Month and click <strong>PDF</strong> to generate a professional financial statement.</p>
+          <h3 style="color: var(--positive-change); border-bottom: 1px solid #00ff8844; margin-top: 15px; margin-bottom: 8px;">📸 4. Tracking Growth (Snapshots)</h3>
+          <p>The <strong>Portfolio Snapshot</strong> at the top is your HUD.
+          <br>• Click <strong>"Save"</strong> to record a point-in-time entry of your wealth.
+          <br>• The <strong>History</strong> list calculates the percentage of growth or decay between your current live data and your previous saves.</p>
 
-<h3 style="color: #aa00ff; border-bottom: 1px solid #aa00ff44; margin-top: 15px; margin-bottom: 8px;">6. Intelligence Tools</h3>
-<p>• <strong>Status:</strong> Activate the voice briefing for an audio system update.
-<br>• <strong>AI Bot:</strong> Consult the built-in AI for market analysis (requires API key).
-<br>• <strong>Calculators:</strong> Use the <em>Future Value</em> tool to simulate price targets for your XRP or BTC holdings.</p>
+          <h3 style="color: var(--primary-border); border-bottom: 1px solid #3399ff44; margin-top: 15px; margin-bottom: 8px;">📈 5. Accounting & PnL</h3>
+          <p>Use the <strong>Transactions</strong> module at the bottom for total financial clarity.
+          <br>• <strong>Entries:</strong> Record every Deposit (money in) and Withdrawal (money out).
+          <br>• <strong>Live ROI:</strong> The system compares your net deposits against your <em>Live Crypto Value</em> to give you an exact Profit/Loss percentage.
+          <br>• <strong>Reporting:</strong> Filter by Year or Month and click <strong>PDF</strong> to generate a professional financial statement.</p>
 
-<div style="margin-top: 25px; padding: 15px; background: rgba(0, 212, 255, 0.1); border-radius: 8px; text-align: center; border: 1px solid #00d4ff;">
-    <span style="font-family: 'Iceland', sans-serif; letter-spacing: 1px; color: #00d4ff;">SYSTEM OPERATIONAL: NAVIGATING THE FINANCIAL FRONTIER.</span>
-</div>
+          <h3 style="color: #aa00ff; border-bottom: 1px solid #aa00ff44; margin-top: 15px; margin-bottom: 8px;">🔑 6. API Console</h3>
+          <p><strong style="color: #00ff88;">No keys needed for:</strong> Exchange rates, Gold/Silver prices, Crypto prices (all auto-update)</p>
+          <p><strong style="color: #FFD700;">Premium data (free keys available):</strong>
+          <br>• <strong>Platinum prices (GoldAPI.io):</strong> Free tier = 3 updates/day. Get key at goldapi.io
+          <br>• <strong>News & XRP History (CryptoCompare):</strong> Required for live news. Get free key at cryptocompare.com
+          <br><em>All keys stay in your browser - never sent to any server.</em></p>
+
+          <h3 style="color: #00d4ff; border-bottom: 1px solid #00d4ff44; margin-top: 15px; margin-bottom: 8px;">🛠️ 7. Utility Tools</h3>
+          <p>• <strong>Status:</strong> Voice briefing of your current portfolio
+          <br>• <strong>Currency Converter:</strong> Convert between 30+ currencies
+          <br>• <strong>Future Value Calculator:</strong> Project portfolio at target prices
+          <br>• <strong>XRP History:</strong> View monthly prices (requires CryptoCompare key)</p>
+
+          <h3 style="color: #aa00ff; border-bottom: 1px solid #aa00ff44; margin-top: 15px; margin-bottom: 8px;">🖨️ 8. Reports</h3>
+          <p>Click <strong>PRNT</strong> to generate professional reports:
+          <br>• Select which sections to include
+          <br>• Creates printer-friendly layout for tax records or portfolio reviews</p>
+
+          <div style="margin-top: 25px; padding: 15px; background: rgba(0, 212, 255, 0.1); border-radius: 8px; text-align: center; border: 1px solid #00d4ff;">
+              <span style="font-family: 'Iceland', sans-serif; letter-spacing: 1px; color: #00d4ff;">SYSTEM OPERATIONAL: NAVIGATING THE FINANCIAL FRONTIER.</span>
+          </div>
+          
+          <div style="margin-top: 15px; text-align: center; font-size: 0.7rem; opacity: 0.6;">
+            CrypFin Cockpit V.145 - Your data stays in your browser
+          </div>
       </div>
   </div>
 </div>
